@@ -15,7 +15,9 @@ module.exports = function(io) {
 		})
 
 		socket.on('disconnect', function() {
-			io.emit('remove', socket.player.id);
+			if (socket.player) {
+				io.emit('remove', socket.player.id);
+			}
 		})
 
 	})
