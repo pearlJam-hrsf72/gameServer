@@ -8,10 +8,7 @@
     "node": ">=6.4.0"
   },
   "scripts": {
-    "start": "babel-node mainServer/mainServer.js",
-    "build": "node_modules/.bin/webpack -p --watch",
-    "heroku-postbuild": "webpack -p --config ./webpack.prod.config.js --progress",
-    "dev-server": "node_modules/.bin/webpack-dev-server --progress"
+    "start": "node gameServer.js",
   },
   "dependencies": {
     "babel-cli": "^6.7.5",
