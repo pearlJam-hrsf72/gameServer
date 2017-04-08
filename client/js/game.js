@@ -1,4 +1,5 @@
 var Game = {};
+Game.playerMap = {};
 
 Game.init = function() {
 	game.state.disableVisibilityChange = true;
@@ -10,7 +11,6 @@ Game.preload = function() {
 }
 
 Game.create = function() {
-	Game.playerMap = {};
 	Game.add.sprite(0, 0, 'background');
 	Client.askNewPlayer();
 	Game.cursor = {x: 450, y: 300};
@@ -37,6 +37,8 @@ Game.remove = function(id) {
 Game.updatePlayer = function(id, x, y) {
 	var player = Game.playerMap[id];
 	if (player) {
+		//try making this velocity to git rid of the jerkyness
+
 		var tween = Game.add.tween(player);
 		var travel = Game.distance(player.x, player.y, x, y);
 		var time = travel * 3;
