@@ -14,7 +14,7 @@ Game.create = function() {
 	Game.add.sprite(0, 0, 'background');
 	Client.askNewPlayer();
 	Game.cursor = {x: 450, y: 300};
-	Game.pulse = setInterval(Game.heartBeat, 16);
+	Game.pulse = setInterval(Game.heartBeat, 100);
 }
 
 Game.update = function() {
@@ -38,7 +38,14 @@ Game.remove = function(id) {
 Game.updatePlayer = function(id, x, y) {
 	var player = Game.playerMap[id];
 	var tween = game.add.tween(player);
-	console.log(tween);
-	tween.to({x: x, y: y}, 50);
+	var travel = Game.distance(player.x, player.y, x, y);
+	var time = travel * 3;
+	tween.to({x: x, y: y}, time);
 	tween.start();
+}
+
+Game.distance = function(x, y, xTo, yTo) {
+	var xDistance = Math.pow(x - xTo, 2);
+	var yDistance = Math.pow(y - yTo, 2);
+	return Math.sqrt(xDistance + yDistance);
 }
