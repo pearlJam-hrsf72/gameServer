@@ -20,6 +20,7 @@ module.exports = function(io) {
 				socket.broadcast.emit('updatePlayer', socket.player);
 			})
 		})
+		
 
 		socket.on('disconnect', function() {
 			if (socket.player) {
