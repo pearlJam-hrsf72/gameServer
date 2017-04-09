@@ -27,6 +27,8 @@ Game.heartBeat = function() {
 
 Game.addNewPlayer = function(id, x, y) {
 	Game.playerMap[id] = Game.add.sprite(x, y, 'character');
+	Game.playerMap[id].anchor.x = 0.5;
+	Game.playerMap[id].anchor.y = 0.5;	
 }
 
 Game.remove = function(id) {
