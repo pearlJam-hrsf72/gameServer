@@ -7,12 +7,20 @@ module.exports = function(io) {
 		socket.on('addNewPlayer', function() {
 			socket.player = {
 				id: lastPlayerId++,
-				x: Math.random() * 900,
-				y: Math.random() * 600
+				x: Math.random() * 500 + 200,
+				y: Math.random() * 200 + 200
 			}
 			socket.emit('allPlayers', getAllPlayers());
 			socket.broadcast.emit('newPlayer', socket.player);
+
+			socket.on('heartBeat', function(data) {
+				socket.player.x = data.x;
+				socket.player.y = data.y;
+				socket.emit('updatePlayer', socket.player);
+				socket.broadcast.emit('updatePlayer', socket.player);
+			})
 		})
+		
 
 		socket.on('disconnect', function() {
 			if (socket.player) {
