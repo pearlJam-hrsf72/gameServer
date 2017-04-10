@@ -11,7 +11,7 @@ Game.preload = function() {
 }
 
 Game.create = function() {
-	Game.add.sprite(0, 0, 'background');
+	//Game.add.sprite(0, 0, 'background');
 	Client.askNewPlayer();
 	Game.cursor = {x: 450, y: 300};
 	Game.pulse = setInterval(Game.heartBeat, 300);
