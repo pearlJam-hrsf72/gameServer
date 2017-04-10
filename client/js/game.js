@@ -1,5 +1,5 @@
 var Game = {};
-Game.playerMap = {};
+Game.Players = {};
 
 Game.init = function() {
 	game.state.disableVisibilityChange = true;
@@ -12,13 +12,19 @@ Game.preload = function() {
 
 Game.create = function() {
 	//Game.add.sprite(0, 0, 'background');
+	game.physics.startSystem(Phaser.Physics.Arcade);
 	Client.askNewPlayer();
 	Game.cursor = {x: 450, y: 300};
 	Game.pulse = setInterval(Game.heartBeat, 16);
+	Game.Player = game.add.physicsGroup(Phaser.Physics.Arcade);
 }
 
 Game.update = function() {
 	Game.cursor = {x: game.input.mousePointer.x, y: game.input.mousePointer.y};
+	var playerCollide = game.physics.arcade.collide(Game.Player);
+	if (playerCollide === true) {
+		console.log('collision');
+	}
 }
 
 Game.heartBeat = function() {
@@ -26,10 +32,11 @@ Game.heartBeat = function() {
 }
 
 Game.addNewPlayer = function(id, x, y) {
-	Game.playerMap[id] = Game.add.sprite(x, y, 'character');
-	Game.playerMap[id].anchor.x = 0.5;
-	Game.playerMap[id].anchor.y = 0.5;
-	game.physics.enable(Game.playerMap[id]);	
+	Game.Players[id] = Game.Player.create(x, y, 'character');
+	Game.Players[id].anchor.x = 0.5;
+	Game.Players[id].anchor.y = 0.5;
+	game.physics.enable(Game.Players[id]);
+	Game.Players[id].body.collideWorldBounds = true;	
 }
 
 Game.remove = function(id) {
@@ -38,7 +45,7 @@ Game.remove = function(id) {
 }
 
 Game.updatePlayer = function(id, x, y) {
-	var player = Game.playerMap[id];
+	var player = Game.Players[id];
 	if (player) {
 		var velocity = 1000;
 		var xDistance = x - player.x;
