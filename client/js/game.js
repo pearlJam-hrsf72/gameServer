@@ -22,8 +22,8 @@ Game.create = function() {
 Game.update = function() {
 	Game.cursor = {x: game.input.mousePointer.x, y: game.input.mousePointer.y};
 	var playerCollide = game.physics.arcade.collide(Game.Player);
-	if (playerCollide === true) {
-		console.log('collision');
+	if (playerCollide) {
+		console.log(playerCollide);
 	}
 }
 
@@ -31,12 +31,29 @@ Game.heartBeat = function() {
 	Client.heartBeat(Game.cursor);
 }
 
+Game.colission = function(player1, player2) {
+	var velocity = 500;
+	xDistance = player1.x - player2.x;
+	yDistance = player1.y - player2.y;
+	var distance = Game.distance(player1.x, player1.y, player2.x, player2.y);
+	var yVelocity = yDistance/distance;
+	var xVelocity = xDistance/distance;
+	player1.body.velocity.x = xVelocity * velocity;
+	player1.body.velocity.y = yVelocity * velocity;
+	player1.body.hasCollided = true;
+	setTimeout(function(player1) {
+		this.body.hasCollided = false;
+	}.bind(player1), 1000);
+}
+
 Game.addNewPlayer = function(id, x, y) {
 	Game.Players[id] = Game.Player.create(x, y, 'character');
 	Game.Players[id].anchor.x = 0.5;
 	Game.Players[id].anchor.y = 0.5;
 	game.physics.enable(Game.Players[id]);
-	Game.Players[id].body.collideWorldBounds = true;	
+	Game.Players[id].body.collideWorldBounds = true;
+	Game.Players[id].body.onCollide = new Phaser.Signal();
+	Game.Players[id].body.onCollide.add(Game.colission, this);	
 }
 
 Game.remove = function(id) {
@@ -46,14 +63,14 @@ Game.remove = function(id) {
 
 Game.updatePlayer = function(id, x, y) {
 	var player = Game.Players[id];
-	if (player) {
+	if (player && !player.body.hasCollided) {
 		var velocity = 1000;
 		var xDistance = x - player.x;
 		var yDistance = y - player.y;
 		var distance = Game.distance(player.x, player.y, x, y);
 		var yVelocity = yDistance/distance;
 		var xVelocity = xDistance/distance;
-		if (Math.abs(yDistance) < 5 && Math.abs(xDistance) < 5) {
+		if (Math.abs(yDistance) < 10 && Math.abs(xDistance) < 10) {
 			player.body.velocity.x = 0;
 			player.body.velocity.y = 0;
 		} else {
