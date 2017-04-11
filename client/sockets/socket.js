@@ -36,3 +36,11 @@ Client.joinLobby = function() {
 Client.socket.on('playerJoined', function(username) {
 	lobbyState.onPlayerJoin(username);
 })
+
+Client.ready = function() {
+	Client.socket.emit('playerReady');
+}
+
+Client.socket.on('playerReady', function(username) {
+	lobbyState.playerReady(username);
+})

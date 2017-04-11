@@ -24,7 +24,12 @@ module.exports = function(io) {
     socket.on('joinLobby', function(username) {
       // TODO: Grab username from client
       // emit default username for now
-      io.emit('playerJoined', 'EddieWasHere');
+      socket.username = 'Eddie';
+      io.emit('playerJoined', socket.username);
+    });
+
+    socket.on('playerReady', function() {
+      io.emit('playerReady', socket.username);
     });
 
     socket.on('disconnect', function() {

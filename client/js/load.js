@@ -8,11 +8,12 @@ var loadState = {
     game.load.image('vertical', 'assets/rectanglevertical.png');
     game.load.image('horiontal', 'assets/rectangle.png');
     game.load.image('theHOLE', 'assets/hole.png');
+    game.load.image('joinAsPlayerButton', 'assets/playButton.jpg');
+    game.load.image('joinAsSpectatorButton', 'assets/spectateButton.png');
   },
 
   create: function() {
     game.state.start('Menu');
   }
-
 
 }
