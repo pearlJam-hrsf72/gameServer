@@ -3,7 +3,7 @@ var lobbyState = {
   playerNameHeight: 0,
 
   preload: function() {
-
+    setLobbyEventHandlers();
   },
 
   create: function() {
@@ -42,6 +42,7 @@ var lobbyState = {
       }
     }
     if (allReady) {
+      removeAllSocketListeners();
       game.state.start('Game');
     }
     console.log('allReady: ', allReady);

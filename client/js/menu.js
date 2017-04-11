@@ -17,6 +17,7 @@ var menuState = {
   },
 
   joinAsPlayer: function() {
+    game.state.add('Lobby', lobbyState);
     game.state.start('Lobby');
   },
 
