@@ -7,8 +7,8 @@ module.exports = function(io) {
 		socket.on('addNewPlayer', function() {
 			socket.player = {
 				id: lastPlayerId++,
-				x: Math.random() * 500 + 200,
-				y: Math.random() * 200 + 200
+				x: Math.random() * 200,
+				y: Math.random() * 200
 			}
 			socket.emit('allPlayers', getAllPlayers());
 			socket.broadcast.emit('newPlayer', socket.player);
