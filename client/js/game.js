@@ -34,12 +34,13 @@ Game.create = function() {
 		bound.body.immovable = true;
 	})
 
-	Game.holes.push(Game.hole.create(game.world.width / 3, game.world.height / 3, 'theHOLE'));
-	Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height / 3, 'theHOLE'));
-	Game.holes.push(Game.hole.create(game.world.width / 3, game.world.height * 2 / 3, 'theHOLE'));
-	Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height  * 2 / 3, 'theHOLE'));
+	Game.holes.push(Game.hole.create(game.world.width / 2, game.world.height / 2, 'theHOLE'));
+	// Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height / 3, 'theHOLE'));
+	// Game.holes.push(Game.hole.create(game.world.width / 3, game.world.height * 2 / 3, 'theHOLE'));
+	// Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height  * 2 / 3, 'theHOLE'));
 	Game.physics.enable(Game.holes);
 	Game.holes.forEach( (hole) => {
+		hole.padding = 0;
 		hole.anchor.y = 0.5;
 		hole.anchor.x = 0.5;
 	})
