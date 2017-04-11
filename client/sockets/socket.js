@@ -29,3 +29,10 @@ Client.heartBeat = function(coordinates) {
 	Client.socket.emit('heartBeat', coordinates);
 }
 
+Client.joinLobby = function() {
+	Client.socket.emit('joinLobby');
+}
+
+Client.socket.on('playerJoined', function(username) {
+	lobbyState.onPlayerJoin(username);
+})

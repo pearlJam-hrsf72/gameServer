@@ -7,17 +7,10 @@ Game.init = function() {
 	game.state.disableVisibilityChange = true;
 };
 
-Game.preload = function() {
-	game.load.image('background', 'assets/board.png');
-	game.load.image('character', 'assets/ball.png');
-	game.load.image('vertical', 'assets/rectanglevertical.png');
-	game.load.image('horiontal', 'assets/rectangle.png');
-	game.load.image('theHOLE', 'assets/hole.png');
-}
+
 
 Game.create = function() {
 	Game.add.sprite(0, 0, 'background');
-	game.physics.startSystem(Phaser.Physics.Arcade);
 	Client.askNewPlayer();
 	Game.cursor = {x: 450, y: 300};
 	Game.pulse = setInterval(Game.heartBeat, 16);
