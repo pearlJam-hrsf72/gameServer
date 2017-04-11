@@ -1,5 +1,6 @@
 var Game = {};
 Game.Players = {};
+Game.boundaries = [];
 
 Game.init = function() {
 	game.state.disableVisibilityChange = true;
@@ -8,42 +9,72 @@ Game.init = function() {
 Game.preload = function() {
 	game.load.image('background', 'assets/board.png');
 	game.load.image('character', 'assets/ball.png');
+	game.load.image('vertical', 'assets/rectanglevertical.png');
+	game.load.image('horiontal', 'assets/rectangle.png');
 }
 
 Game.create = function() {
-	//Game.add.sprite(0, 0, 'background');
+	Game.add.sprite(0, 0, 'background');
 	game.physics.startSystem(Phaser.Physics.Arcade);
 	Client.askNewPlayer();
 	Game.cursor = {x: 450, y: 300};
 	Game.pulse = setInterval(Game.heartBeat, 16);
-	Game.Player = game.add.physicsGroup(Phaser.Physics.Arcade);
+	Game.Player = game.add.group();
+	Game.bound = game.add.group();
+
+
+	Game.boundaries.push(Game.bound.create(0, 0, 'horiontal'));
+	Game.boundaries.push(Game.bound.create(0, game.world.height - 10, 'horiontal'));
+	Game.boundaries.push(Game.bound.create(0, 0, 'vertical'));
+	Game.boundaries.push(Game.bound.create(game.world.width-10, 0, 'vertical'));
+	game.physics.enable(Game.boundaries);
+	Game.boundaries.forEach( (bound) => {
+		bound.body.immovable = true;
+	})
 }
 
 Game.update = function() {
 	Game.cursor = {x: game.input.mousePointer.x, y: game.input.mousePointer.y};
-	var playerCollide = game.physics.arcade.collide(Game.Player);
-	if (playerCollide) {
-		console.log(playerCollide);
-	}
+	var playerCollide = game.physics.arcade.collide(Game.Player, Game.boundaries);
+	game.physics.arcade.collide(Game.Player);
+
 }
 
 Game.heartBeat = function() {
 	Client.heartBeat(Game.cursor);
 }
 
-Game.colission = function(player1, player2) {
-	var velocity = 500;
-	xDistance = player1.x - player2.x;
-	yDistance = player1.y - player2.y;
-	var distance = Game.distance(player1.x, player1.y, player2.x, player2.y);
-	var yVelocity = yDistance/distance;
-	var xVelocity = xDistance/distance;
-	player1.body.velocity.x = xVelocity * velocity;
-	player1.body.velocity.y = yVelocity * velocity;
-	player1.body.hasCollided = true;
-	setTimeout(function(player1) {
-		this.body.hasCollided = false;
-	}.bind(player1), 1000);
+Game.colission = function(player1, object2) {
+	if (object2.x === 0 || object2.y === 0) {
+		var bounce = 1000
+		if (object2 === Game.boundaries[1]) {
+			player1.body.velocity.y = -1 * bounce;
+		} 
+		else if (object2 === Game.boundaries[0]) {
+			player1.body.velocity.y = bounce;
+		} else if (object2 === Game.boundaries[3]) {
+ 			player1.body.velocity.x = -1 * bounce;
+		} else {
+			player1.body.velocity.x = bounce;
+		}
+		player1.body.hasCollided = true;
+		setTimeout(function(player1) {
+			this.body.hasCollided = false;
+		}.bind(player1), 500);
+	} else {
+		var velocity = 500;
+		xDistance = player1.x - object2.x;
+		yDistance = player1.y - object2.y;
+		var distance = Game.distance(player1.x, player1.y, object2.x, object2.y);
+		var yVelocity = yDistance/distance;
+		var xVelocity = xDistance/distance;
+		player1.body.velocity.x = xVelocity * velocity;
+		player1.body.velocity.y = yVelocity * velocity;
+		player1.body.hasCollided = true;
+		setTimeout(function(player1) {
+			this.body.hasCollided = false;
+		}.bind(player1), 1000);
+	}
 }
 
 Game.addNewPlayer = function(id, x, y) {
