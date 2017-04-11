@@ -1,6 +1,7 @@
 var Game = {};
 Game.Players = {};
 Game.boundaries = [];
+Game.holes = [];
 
 Game.init = function() {
 	game.state.disableVisibilityChange = true;
@@ -11,6 +12,7 @@ Game.preload = function() {
 	game.load.image('character', 'assets/ball.png');
 	game.load.image('vertical', 'assets/rectanglevertical.png');
 	game.load.image('horiontal', 'assets/rectangle.png');
+	game.load.image('theHOLE', 'assets/hole.png');
 }
 
 Game.create = function() {
@@ -21,7 +23,7 @@ Game.create = function() {
 	Game.pulse = setInterval(Game.heartBeat, 16);
 	Game.Player = game.add.group();
 	Game.bound = game.add.group();
-
+	Game.hole = game.add.group();
 
 	Game.boundaries.push(Game.bound.create(0, 0, 'horiontal'));
 	Game.boundaries.push(Game.bound.create(0, game.world.height - 10, 'horiontal'));
@@ -31,17 +33,33 @@ Game.create = function() {
 	Game.boundaries.forEach( (bound) => {
 		bound.body.immovable = true;
 	})
+
+	Game.holes.push(Game.hole.create(game.world.width / 3, game.world.height / 3, 'theHOLE'));
+	Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height / 3, 'theHOLE'));
+	Game.holes.push(Game.hole.create(game.world.width / 3, game.world.height * 2 / 3, 'theHOLE'));
+	Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height  * 2 / 3, 'theHOLE'));
+	Game.physics.enable(Game.holes);
+	Game.holes.forEach( (hole) => {
+		hole.anchor.y = 0.5;
+		hole.anchor.x = 0.5;
+	})
 }
 
 Game.update = function() {
 	Game.cursor = {x: game.input.mousePointer.x, y: game.input.mousePointer.y};
-	var playerCollide = game.physics.arcade.collide(Game.Player, Game.boundaries);
+	var playerCollide = game.physics.arcade.collide(Game.Player, Game.bound);
 	game.physics.arcade.collide(Game.Player);
-
+	var overlap = game.physics.arcade.overlap(Game.Player, Game.hole, Game.fallInTheHole);
 }
 
 Game.heartBeat = function() {
 	Client.heartBeat(Game.cursor);
+}
+
+Game.fallInTheHole = function(player, hole) {
+	console.log(player, '<-- haha you died');
+	console.log(hole, '<-- wins agian');
+	player.kill();
 }
 
 Game.colission = function(player1, object2) {
