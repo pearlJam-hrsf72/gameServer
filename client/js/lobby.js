@@ -1,5 +1,6 @@
 var lobbyState = {
   players: {},
+  playerNameHeight: 0,
 
   preload: function() {
 
@@ -22,7 +23,9 @@ var lobbyState = {
   },
 
   onPlayerJoin: function(username) {
-    var playerName = game.add.text(80, 150, username);
+    console.log('onPlayerJoin');
+    var playerName = game.add.text(80, lobbyState.playerNameHeight, username);
+    lobbyState.playerNameHeight += 100;
     var playerObj = {ready: false};
     lobbyState.players[username] = playerObj;
 
