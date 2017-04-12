@@ -4,6 +4,7 @@ var lobbyState = {
 
   preload: function() {
     setLobbyEventHandlers();
+    lobbyState.players = {};
   },
 
   create: function() {
