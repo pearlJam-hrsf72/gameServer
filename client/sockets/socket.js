@@ -12,7 +12,7 @@ var setGameEventHandlers = function() {
     //data is series of players
     players.forEach((player) => {
       Game.addNewPlayer(player.id, player.x, player.y);
-      Spectate.addNewPlayer(player.id, player.x, player.y);
+      // spectateState.addNewPlayer(player.id, player.x, player.y);
     });
   });
 
