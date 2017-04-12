@@ -53,6 +53,11 @@ Game.fallInTheHole = function(player, hole) {
   console.log(player, '<-- haha you died');
   console.log(hole, '<-- wins agian');
   player.kill();
+
+  // FIX: Do this on game end.
+  // It currently goes to lose screen whenever ANYONE falls in the hole
+  removeAllSocketListeners();
+  game.state.start('Lose');
 };
 
 Game.colission = function(player1, object2) {

@@ -31,7 +31,7 @@ spectateState.create = function() {
     hole.anchor.y = 0.5;
     hole.anchor.x = 0.5;
   });
-  
+
   Client.askNewSpectator();
 };
 
