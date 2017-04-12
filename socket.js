@@ -4,18 +4,24 @@ module.exports = function(io) {
 
   io.on('connection', function(socket) {
     console.log('connected');
+    
     socket.on('addNewPlayer', function() {
       socket.player.x = Math.random() * 200;
       socket.player.y = Math.random() * 200;
       socket.emit('allPlayers', getAllPlayers());
       socket.broadcast.emit('newPlayer', socket.player);
 
-      socket.on('heartBeat', function(data) {
-        socket.player.x = data.x;
-        socket.player.y = data.y;
-        socket.emit('updatePlayer', socket.player);
-        socket.broadcast.emit('updatePlayer', socket.player);
-      });
+    });
+
+    socket.on('heartBeat', function(data) {
+      socket.player.x = data.x;
+      socket.player.y = data.y;
+      socket.emit('updatePlayer', socket.player);
+      socket.broadcast.emit('updatePlayer', socket.player);
+    });
+
+    socket.on('newSpectator', function() {
+      socket.emit('allPlayers', getAllPlayers());
     });
     
     socket.on('joinLobby', function(username) {
@@ -35,7 +41,6 @@ module.exports = function(io) {
         io.emit('remove', socket.player.id);
       }
     });
-
   });
 
   function getAllPlayers() {
