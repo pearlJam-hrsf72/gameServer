@@ -4,7 +4,7 @@ module.exports = function(io) {
 
   io.on('connection', function(socket) {
     console.log('connected');
-    
+
     socket.on('addNewPlayer', function() {
       socket.player.x = Math.random() * 200;
       socket.player.y = Math.random() * 200;
@@ -14,6 +14,7 @@ module.exports = function(io) {
     });
 
     socket.on('heartBeat', function(data) {
+      socket.player = socket.player || {};
       socket.player.x = data.x;
       socket.player.y = data.y;
       socket.emit('updatePlayer', socket.player);
