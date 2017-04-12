@@ -6,6 +6,7 @@ spectateState.holes = [];
 
 spectateState.init = function() {
   spectateState.state.disableVisibilityChange = true;
+  setGameEventHandlers();
 };
 
 spectateState.create = function() {
