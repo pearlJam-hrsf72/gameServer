@@ -4,33 +4,37 @@ module.exports = function(io) {
 
   io.on('connection', function(socket) {
     console.log('connected');
+
     socket.on('addNewPlayer', function() {
-      socket.player = {
-        id: lastPlayerId++,
-        x: Math.random() * 200,
-        y: Math.random() * 200
-      };
+      socket.player.x = Math.random() * 200;
+      socket.player.y = Math.random() * 200;
       socket.emit('allPlayers', getAllPlayers());
       socket.broadcast.emit('newPlayer', socket.player);
 
-      socket.on('heartBeat', function(data) {
-        socket.player.x = data.x;
-        socket.player.y = data.y;
-        socket.emit('updatePlayer', socket.player);
-        socket.broadcast.emit('updatePlayer', socket.player);
-      });
+    });
+
+    socket.on('heartBeat', function(data) {
+      socket.player = socket.player || {};
+      socket.player.x = data.x;
+      socket.player.y = data.y;
+      socket.emit('updatePlayer', socket.player);
+      socket.broadcast.emit('updatePlayer', socket.player);
+    });
+
+    socket.on('newSpectator', function() {
+      socket.emit('allPlayers', getAllPlayers());
     });
     
     socket.on('joinLobby', function(username) {
       // TODO: Grab username from client
       // emit default username for now
       socket.emit('allPlayersInLobby', getAllPlayers());
-      socket.player = {username: lastPlayerId++};
-      io.emit('playerJoined', socket.player.username);
+      socket.player = {id: lastPlayerId++};
+      io.emit('playerJoined', socket.player.id);
     });
 
     socket.on('playerReady', function() {
-      io.emit('playerReady', socket.player.username);
+      io.emit('playerReady', socket.player.id);
     });
 
     socket.on('disconnect', function() {
@@ -38,7 +42,6 @@ module.exports = function(io) {
         io.emit('remove', socket.player.id);
       }
     });
-
   });
 
   function getAllPlayers() {

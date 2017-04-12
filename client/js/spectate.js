@@ -6,6 +6,7 @@ spectateState.holes = [];
 
 spectateState.init = function() {
   spectateState.state.disableVisibilityChange = true;
+  setGameEventHandlers();
 };
 
 spectateState.create = function() {
@@ -13,7 +14,6 @@ spectateState.create = function() {
   spectateState.Player = game.add.group();
   spectateState.bound = game.add.group();
   spectateState.hole = game.add.group();
-
   spectateState.boundaries.push(spectateState.bound.create(0, 0, 'horiontal'));
   spectateState.boundaries.push(spectateState.bound.create(0, spectateState.world.height - 10, 'horiontal'));
   spectateState.boundaries.push(spectateState.bound.create(0, 0, 'vertical'));
@@ -31,6 +31,8 @@ spectateState.create = function() {
     hole.anchor.y = 0.5;
     hole.anchor.x = 0.5;
   });
+  
+  Client.askNewSpectator();
 };
 
 spectateState.update = function() {

@@ -3,10 +3,12 @@ var lobbyState = {
   playerNameHeight: 0,
 
   preload: function() {
-    setLobbyEventHandlers();
   },
 
   create: function() {
+    setLobbyEventHandlers();
+    lobbyState.players = {};
+
     Client.joinLobby();
     var startLabel = game.add.text(80, game.world.height - 80,
       "press the 'R' key when you're ready", 
@@ -36,13 +38,16 @@ var lobbyState = {
     var allReady = true;
     console.log(lobbyState.players);
     for (player in lobbyState.players) {
-      console.log('playerReady: ', player);
-      if (!lobbyState.players[player].ready) {
-        allReady = false;
+      if (player) {
+        console.log('playerReady: ', player);
+        if (!lobbyState.players[player].ready) {
+          allReady = false;
+        }
       }
     }
     if (allReady) {
       removeAllSocketListeners();
+      lobbyState.players = {};
       game.state.start('Game');
     }
     console.log('allReady: ', allReady);
