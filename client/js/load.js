@@ -13,7 +13,7 @@ var loadState = {
   },
 
   create: function() {
-    game.state.start('Menu');
+    game.state.start('Game');
   }
 
 }

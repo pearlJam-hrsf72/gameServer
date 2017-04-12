@@ -5,7 +5,10 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 
-var socketManager = require('./socket.js')(io);
+var velocity = require('./server/velocity.js');
+var interactions = require('./server/interactions.js');
+
+var socketManager = require('./server/socket.js')(io);
 
 app.use('/sockets', express.static(__dirname + '/client/sockets'));
 app.use('/js', express.static(__dirname + '/client/js'));
