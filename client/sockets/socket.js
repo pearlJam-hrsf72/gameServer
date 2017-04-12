@@ -34,7 +34,7 @@ var setLobbyEventHandlers = function() {
 
   Client.socket.on('allPlayersInLobby', function(allPlayers) {
     allPlayers.forEach(function(player) {
-      lobbyState.onPlayerJoin(player.username);
+      lobbyState.onPlayerJoin(player.id);
     });
   });
 };
