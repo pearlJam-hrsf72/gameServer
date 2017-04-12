@@ -38,9 +38,11 @@ var lobbyState = {
     var allReady = true;
     console.log(lobbyState.players);
     for (player in lobbyState.players) {
-      console.log('playerReady: ', player);
-      if (!lobbyState.players[player].ready) {
-        allReady = false;
+      if (player) {
+        console.log('playerReady: ', player);
+        if (!lobbyState.players[player].ready) {
+          allReady = false;
+        }
       }
     }
     if (allReady) {
