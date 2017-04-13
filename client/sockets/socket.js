@@ -29,20 +29,11 @@ var setGameEventHandlers = function() {
 };
 
 var setLobbyEventHandlers = function() {
-  Client.socket.on('playerJoined', function(username) {
-    lobbyState.onPlayerJoin(username);
-  });
 
   Client.socket.on('playerReady', function(username) {
     lobbyState.playerReady(username);
   });
 
-  Client.socket.on('allPlayersInLobby', function(allPlayers) {
-    console.log('all Players', allPlayers);
-    allPlayers.forEach(function(player) {
-      lobbyState.onPlayerJoin(player.id);
-    });
-  });
   /* Add other code */
   Client.socket.on('renderInfo', function(allPlayers) {
     console.log('all palyers in renderInfo', allPlayers);

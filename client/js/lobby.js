@@ -13,11 +13,9 @@ var lobbyState = {
     //Client.joinLobby(client.username);
     Client.joinLobby();
 
-
   
     var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
     rkey.onDown.addOnce(this.ready, this);
-     game.stage.backgroundColor = "#4488AA";
 
   },
 
@@ -41,7 +39,6 @@ var lobbyState = {
 
     console.log('all players ready?', this.allReady(players))
     if (this.allReady(players)) {
-      removeAllSocketListeners();
       game.state.start('Game');
     }
 

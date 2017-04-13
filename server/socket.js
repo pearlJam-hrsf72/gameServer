@@ -4,15 +4,15 @@ var interactions = require('./interactions.js');
 module.exports = function(io) {
   
   var lastPlayerId = 0;
+  const defaultLives = 3;
 
   io.on('connection', function(socket) {
     console.log('connected');
 
     socket.on('addNewPlayer', function() {
+      console.log('added new player');
       socket.player = socket.player || {};
-      socket.player.id = lastPlayerId ++;
-      socket.player.lives = 3;
-      socket.player.username = socket.player.id; //temporary username, till we implement real usernames
+      socket.player.lives = defaultLives;
       interactions.spawn(socket.player);
       socket.emit('allPlayers', getAllPlayers());
       socket.broadcast.emit('newPlayer', socket.player);
@@ -29,7 +29,9 @@ module.exports = function(io) {
     // });
     
     socket.on('joinLobby', function(username) {
-      socket.player = {id: lastPlayerId++, ready: false};
+      console.log('username joined lobby', username);
+      socket.player = {id: lastPlayerId++, ready: false, lives: defaultLives};
+      console.log('all players', getAllPlayers());
       io.emit('renderInfo', getAllPlayers());
     });
 
@@ -38,7 +40,7 @@ module.exports = function(io) {
       socket.player.ready = true;
       var allPlayers = getAllPlayers();
       io.emit('renderInfo', allPlayers);
-      // io.emit('playerReady', socket.player.id);
+
     });
 
     socket.on('disconnect', function() {
