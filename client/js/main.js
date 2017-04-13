@@ -12,5 +12,5 @@ game.state.add('Game', Game);
 game.state.add('Spectate', spectateState);
 game.state.add('Win', winState);
 game.state.add('Lose', loseState);
-
+game.state.add('Results', gameResult);
 game.state.start('Load');

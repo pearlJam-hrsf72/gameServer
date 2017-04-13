@@ -15,7 +15,7 @@ var loadState = {
     game.load.image('playerReady', 'assets/playerReady.png');
   },
   create: function() {
-    game.state.start('Menu');
+    game.state.start('Results');
   }
 
 }

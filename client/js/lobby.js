@@ -17,6 +17,7 @@ var lobbyState = {
   
     var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
     rkey.onDown.addOnce(this.ready, this);
+     game.stage.backgroundColor = "#4488AA";
 
   },
 
