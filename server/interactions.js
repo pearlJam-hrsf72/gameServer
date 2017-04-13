@@ -11,10 +11,12 @@ module.exports = {
         player.collided = true;
         players[i].collided = true;
         setTimeout(function() {
-          this.collided = false;
+          if (this.collided === true)
+            this.collided = undefined;
         }.bind(player), 500);
         setTimeout(function() {
-          this.collided = false;
+          if (this.collided === true)
+            this.collided = undefined;
         }.bind(players[i]), 500);
         return players[i];
       }
@@ -32,46 +34,76 @@ module.exports = {
 
   checkWallCollision: function(player) {
       if (player.y < 15) {
-        player.wall = 'top';
+        player.collided = 'top';
         if (player.yTo < 0) {
           player.yTo = - player.yTo;
         }
         setTimeout(function() {
-          player.wall = undefined;
-        }, 2000);
+          if (this.collided === 'top')
+            this.collided = undefined;
+        }.bind(player), 2000);
       } else if (player.y > 735) {
-        player.wall = 'bottom';
+        player.collided = 'bottom';
         if (player.yTo > 0) {
           player.yTo = - player.yTo;
         }
         setTimeout(function() {
-          player.wall = undefined;
-        }, 2000);
+          if (this.collided === 'bottom')
+            this.collided = undefined;
+        }.bind(player), 2000);
       } else if (player.x < 15) {
-        player.wall = 'right';
+        player.collided = 'right';
         if (player.xTo < 0) {
           player.xTo = - player.xTo;
         }
         setTimeout(function() {
-          player.wall = undefined;
-        }, 2000);
+          if (this.collided === 'right')
+            this.collided = undefined;
+        }.bind(player), 2000);
       } else if (player.x > 735) {
-        player.wall = 'left';
+        player.collided = 'left';
         if (player.xTo > 0) {
           player.xTo = - player.xTo;
         }
         setTimeout(function() {
-          player.wall = undefined;
-        }, 2000);
+          if (this.collided === 'left')
+            this.collided = undefined;
+        }.bind(player), 2000);
     } 
   },
 
   checkHoleDeath: function(player) {
+    //need to remove player from the array on the server, if window gets refreshed 
+    //'ghost ball' appears where dead player's cursor is
     var distance = velocity.distanceBetween(player, holeCenter);
     if (distance.distance < 40) {
-      return true;
+      player.lives --;
+      if (player.lives === 0) {
+        return true;
+      } else {
+        module.exports.spawn(player);
+      }
     }
     return false;
+  },
+
+  spawn: function(player) {
+    player.x = Math.random() * 750;
+    player.y = Math.random() * 750;
+    distance = velocity.distanceBetween(player, holeCenter);
+    module.exports.checkWallCollision(player);
+    if (distance.distance < 150 || player.collided) {
+      player.collided = undefined;
+      module.exports.spawn(player);
+    }
   }
 
 };
+
+
+
+
+
+
+
+

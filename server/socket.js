@@ -11,8 +11,8 @@ module.exports = function(io) {
     socket.on('addNewPlayer', function() {
       socket.player = socket.player || {};
       socket.player.id = lastPlayerId ++;
-      socket.player.x = Math.random() * 700;
-      socket.player.y = Math.random() * 700;
+      socket.player.lives = 3;
+      interactions.spawn(socket.player);
       socket.emit('allPlayers', getAllPlayers());
       socket.broadcast.emit('newPlayer', socket.player);
     });
@@ -50,7 +50,7 @@ module.exports = function(io) {
     var players = [];
     Object.keys(io.sockets.connected).forEach(function(socketID) {
       var player = io.sockets.connected[socketID].player;
-      if (player) {
+      if (player && player.lives > 0) {
         players.push(player);
       }
     });

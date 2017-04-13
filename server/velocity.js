@@ -16,13 +16,15 @@ module.exports = {
         var velocity = 10; //distance traveled every 10 ms;
         var distance = module.exports.distanceBetween(player, mouse);
         if (player.collided) {
-          velocity = - 3;
-          player.x += player.xTo * velocity;
-          player.y += player.yTo * velocity;
-        } else if (player.wall) {
-          velocity = 2;
-          player.x += player.xTo * velocity;
-          player.y += player.yTo * velocity;
+          if (player.collided === true) {
+            velocity = - 6;
+            player.x += player.xTo * velocity;
+            player.y += player.yTo * velocity;
+          } else {
+            velocity = 2;
+            player.x += player.xTo * velocity;
+            player.y += player.yTo * velocity;
+          }
         } else if (distance.distance > 10) {
           player.xTo = distance.x / distance.distance;
           player.yTo = distance.y / distance.distance;
