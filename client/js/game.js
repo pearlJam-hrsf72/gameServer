@@ -71,8 +71,8 @@ Game.addNewPlayer = function(id, x, y) {
 };
 
 Game.remove = function(id) {
-  Game.playerMap[id].destroy();
-  delete Game.playerMap[id];
+  Game.Players[id].destroy();
+  delete Game.Players[id];
 };
 
 
