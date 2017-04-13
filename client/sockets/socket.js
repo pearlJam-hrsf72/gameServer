@@ -3,12 +3,12 @@ Client.socket = io.connect();
 
 var setGameEventHandlers = function() {
   Client.socket.on('newPlayer', function(player) {
-    Game.addNewPlayer(player.id, player.x, player.y);
+    Game.addNewPlayer(player);
   });
 
   Client.socket.on('allPlayers', function(players) {
     players.forEach((player) => {
-      Game.addNewPlayer(player.id, player.x, player.y);
+      Game.addNewPlayer(player);
     });
   });
 
@@ -26,9 +26,9 @@ var setGameEventHandlers = function() {
     Game.remove(playerId);
   });
 
-  Client.socket.on('updatePlayer', function(player) {
-    Game.updatePlayer(player.id, player.x, player.y);
-  });
+  // Client.socket.on('updatePlayer', function(player) {
+  //   Game.updatePlayer(player.id, player.x, player.y);
+  // });
 };
 
 var setLobbyEventHandlers = function() {
