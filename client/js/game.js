@@ -20,10 +20,12 @@ Game.create = function() {
   Game.heartBeat();
   setInterval(Game.heartBeat(), 10);
 
-  Game.holes.push(Game.hole.create(game.world.width / 2, game.world.height / 2, 'theHOLE'));
+  Game.holes.push(Game.hole.create(game.world.width / 2, game.world.height / 2, 'hole'));
   Game.holes.forEach( (hole) => {
+  	hole.animations.add('explode');
     hole.anchor.y = 0.5;
     hole.anchor.x = 0.5;
+    hole.animations.play('explode', 50, true)
   });
 };
 
