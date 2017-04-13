@@ -1,5 +1,7 @@
 var velocity = require('./velocity.js');
 
+var holeCenter = {x: 375, y: 375} //current center of the board 
+
 module.exports = {
   checkPlayerCollision: function(player, players) {
     for (var i = 0; i < players.length; i ++ ) {
@@ -10,10 +12,10 @@ module.exports = {
         players[i].collided = true;
         setTimeout(function() {
           this.collided = false;
-        }.bind(player), 250);
+        }.bind(player), 500);
         setTimeout(function() {
           this.collided = false;
-        }.bind(players[i]), 250);
+        }.bind(players[i]), 500);
         return players[i];
       }
     }
@@ -29,33 +31,47 @@ module.exports = {
   },
 
   checkWallCollision: function(player) {
-      if (player.y < 15 && player.wall !== 'top') {
+      if (player.y < 15) {
         player.wall = 'top';
-        player.yTo = - player.yTo;
+        if (player.yTo < 0) {
+          player.yTo = - player.yTo;
+        }
         setTimeout(function() {
           player.wall = undefined;
-        }, 1000);
-      } else if (player.y > 735 && player.wall !== 'bottom') {
+        }, 2000);
+      } else if (player.y > 735) {
         player.wall = 'bottom';
-        player.yTo = - player.yTo;
+        if (player.yTo > 0) {
+          player.yTo = - player.yTo;
+        }
         setTimeout(function() {
           player.wall = undefined;
-        }, 1000);
-      } else if (player.x < 15 && player.wall !== 'right') {
+        }, 2000);
+      } else if (player.x < 15) {
         player.wall = 'right';
-        player.xTo = - player.xTo;
+        if (player.xTo < 0) {
+          player.xTo = - player.xTo;
+        }
         setTimeout(function() {
           player.wall = undefined;
-        }, 1000);
-      } else if (player.x > 735 && player.wall !== 'left') {
+        }, 2000);
+      } else if (player.x > 735) {
         player.wall = 'left';
-        player.xTo = - player.xTo;
+        if (player.xTo > 0) {
+          player.xTo = - player.xTo;
+        }
         setTimeout(function() {
           player.wall = undefined;
-        }, 1000);
+        }, 2000);
     } 
+  },
+
+  checkHoleDeath: function(player) {
+    var distance = velocity.distanceBetween(player, holeCenter);
+    if (distance.distance < 40) {
+      return true;
+    }
+    return false;
   }
-
-
 
 };

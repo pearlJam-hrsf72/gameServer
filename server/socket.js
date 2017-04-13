@@ -66,6 +66,10 @@ module.exports = function(io) {
       }
       interactions.checkWallCollision(player);
       velocity.updatePosition(player, player.mouse);
+      var dead = interactions.checkHoleDeath(player);
+      if (dead) {
+        io.emit('death', player);
+      }
     });
     io.emit('pulse', players);
   }

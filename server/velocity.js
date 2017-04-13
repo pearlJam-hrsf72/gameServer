@@ -16,7 +16,7 @@ module.exports = {
         var velocity = 10; //distance traveled every 10 ms;
         var distance = module.exports.distanceBetween(player, mouse);
         if (player.collided) {
-          velocity = -2
+          velocity = - 3;
           player.x += player.xTo * velocity;
           player.y += player.yTo * velocity;
         } else if (player.wall) {

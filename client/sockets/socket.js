@@ -18,6 +18,10 @@ var setGameEventHandlers = function() {
   	})
   })
 
+  Client.socket.on('death', function(player) {
+  	Game.death(player);
+  })
+
   Client.socket.on('remove', function(playerId) {
     Game.remove(playerId);
   });
