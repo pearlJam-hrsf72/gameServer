@@ -50,10 +50,9 @@ Game.updatePlayerPosition = function(player) {
 
 Game.addNewPlayer = function(player) {
   Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
-  Game.Players[id].anchor.x = 0.5;
-  Game.Players[id].anchor.y = 0.5;
-  game.physics.enable(Game.Players[id]);
-  Game.Players[id].body.collideWorldBounds = true;
+  var player = Game.Players[player.id];
+  player.anchor.x = 0.5;
+  player.anchor.y = 0.5;
 };
 
 Game.remove = function(id) {
