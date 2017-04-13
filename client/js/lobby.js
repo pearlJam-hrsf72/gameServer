@@ -7,7 +7,7 @@ var lobbyState = {
 
   create: function() {
     setLobbyEventHandlers();
-    lobbyState.players = {};
+    // lobbyState.players = {};
 
     Client.joinLobby();
 
@@ -20,7 +20,6 @@ var lobbyState = {
       "press the 'R' key when you're ready", 
       {font: '35px Arial', fill: '#000000' });
     startLabel.anchor.set(0.5);
-    
       
     var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
     rkey.onDown.addOnce(this.ready, this);
@@ -28,13 +27,15 @@ var lobbyState = {
   },
 
   ready: function() {
+    // var playerNotReady = Client.playerReadyGroup.children.pop();
 
-
+    // //add a playerReady button to playerNotReady.y
+    // playerReady = game.add.button(120, playerNotReady.y - 20, 'playerReady');
+    // Client.playerReadyGroup.add(playerReady);
     Client.ready();
   },
 
   onPlayerJoin: function(username) {
-    console.log('onPlayerJoin');
     var textStyle = {
       font: 'bold 30pt italic'
     }
@@ -46,33 +47,32 @@ var lobbyState = {
     playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true);
     playerNotReady.play('toggle');
 
-
+    
     playerReadyGroup.add(playerName);
     playerReadyGroup.add(playerNotReady);
 
+
+    Client.playerReadyGroup = playerReadyGroup;
     console.log('playerReadyGroup', playerReadyGroup);
 
 
-    console.log('removing', playerReadyGroup.remove(playerNotReady));
-
-
-    playerReady = game.add.button(120, lobbyState.playerNameHeight, 'playerReady');
     lobbyState.playerNameHeight += 150;
     
     
 
-    var playerObj = {ready: false};
+    var playerObj = {ready: false, playerReadyGroup: playerReadyGroup};
     lobbyState.players[username] = playerObj;
 
   },
 
   playerReady: function(username) {
+    console.log('lobbyState')
     lobbyState.players[username].ready = true;
     var allReady = true;
-    console.log(lobbyState.players);
+  
     for (player in lobbyState.players) {
       if (player) {
-        console.log('playerReady: ', player);
+        console.log(`player ${player} ready: `, lobbyState.players[player].ready);
         if (!lobbyState.players[player].ready) {
           allReady = false;
         }
@@ -84,5 +84,22 @@ var lobbyState = {
       game.state.start('Game');
     }
     console.log('allReady: ', allReady);
+  },
+
+  update() {
+    // console.log('running update for players', lobbyState.players);
+    for (playerIndex in lobbyState.players) {
+      if (playerIndex) {
+        const player = lobbyState.players[playerIndex]
+        const playerReadyGroup = player.playerReadyGroup
+        if (player.ready && playerReadyGroup.children[1].key === 'playerNotReady') { //update the playerReady group
+          console.log('setting into playerReady');
+          var playerNotReady = playerReadyGroup.children[1];
+          //add a playerReady button to playerNotReady.y
+          playerReady = game.add.button(120, playerNotReady.y - 20, 'playerReady');
+          playerReadyGroup.children[1] = playerReady;
+        }
+      }
+    }
   }
 };
