@@ -1,6 +1,6 @@
 var lobbyState = {
   players: {},
-  playerNameHeight: 0,
+  playerNameHeight: 30,
 
   preload: function() {
   },
@@ -10,24 +10,47 @@ var lobbyState = {
     lobbyState.players = {};
 
     Client.joinLobby();
-    var startLabel = game.add.text(80, game.world.height - 80,
+
+    var welcomeLabel = game.add.text(game.world.width /2, 30, 
+    "Welcome to Game Server 1", 
+      {font: '35px Arial', fill: '#000000' });
+    welcomeLabel.anchor.set(0.5);
+
+    var startLabel = game.add.text(game.world.width/2, game.world.height - 20,
       "press the 'R' key when you're ready", 
-      {font: '25px Arial', fill: '#000000' });
-
-
+      {font: '35px Arial', fill: '#000000' });
+    startLabel.anchor.set(0.5);
+    
+      
     var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
     rkey.onDown.addOnce(this.ready, this);
 
   },
 
   ready: function() {
+
+
     Client.ready();
   },
 
   onPlayerJoin: function(username) {
     console.log('onPlayerJoin');
-    var playerName = game.add.text(80, lobbyState.playerNameHeight, username);
-    lobbyState.playerNameHeight += 100;
+    var textStyle = {
+      font: 'bold 30pt italic'
+    }
+
+    var playerReadyGroup = game.add.group();
+    var playerName = game.add.text(80, lobbyState.playerNameHeight, username, textStyle);
+    var playerNotReady = game.add.sprite(120, lobbyState.playerNameHeight, 'playerNotReady');
+    playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true);
+    playerNotReady.play('toggle');
+    
+
+    console.log('playername', playerName);
+    lobbyState.playerNameHeight += 150;
+    
+    
+
     var playerObj = {ready: false};
     lobbyState.players[username] = playerObj;
 

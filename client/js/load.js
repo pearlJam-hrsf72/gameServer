@@ -11,8 +11,9 @@ var loadState = {
     game.load.image('joinAsPlayerButton', 'assets/playButton.jpg');
     game.load.image('joinAsSpectatorButton', 'assets/spectateButton.png');
     game.load.spritesheet('hole', 'assets/spritmap.png', 128, 128, 38);
-  },
+    game.load.spritesheet('playerNotReady','assets/playerNotReady.png', 138, 138, 4);
 
+  },
   create: function() {
     game.state.start('Game');
   }
