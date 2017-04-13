@@ -11,18 +11,26 @@ module.exports = {
   },
 
   updatePosition: function(player, mouse) {
-    if (mouse === undefined) {
-      mouse = {x: 0, y: 0};
+    if (mouse) {
+      if (mouse.x > 0 && mouse.y > 0) {
+        var velocity = 10; //distance traveled every 10 ms;
+        var distance = module.exports.distanceBetween(player, mouse);
+        if (player.collided) {
+          velocity = -2
+          player.x += player.xTo * velocity;
+          player.y += player.yTo * velocity;
+        } else if (player.wall) {
+          velocity = 2;
+          player.x += player.xTo * velocity;
+          player.y += player.yTo * velocity;
+        } else if (distance.distance > 10) {
+          player.xTo = distance.x / distance.distance;
+          player.yTo = distance.y / distance.distance;
+          player.x += player.xTo * velocity;
+          player.y += player.yTo * velocity;
+        } 
+      }
     }
-    var velocity = 10; //distance traveled every 10 ms;
-    var distance = module.exports.distanceBetween(player, mouse);
-    if (distance.distance < 10) {
-      velocity = 0;
-    }
-    var xPercent = distance.x / distance.distance;
-    var yPercent = distance.y / distance.distance;
-    player.x += xPercent * velocity;
-    player.y += yPercent * velocity;
   }
 
 };

@@ -60,6 +60,11 @@ module.exports = function(io) {
   function pulse() {
     var players = getAllPlayers();
     players.forEach( (player) => {
+      var checkCollision = interactions.checkPlayerCollision(player, players);
+      if (checkCollision) {
+        interactions.collision(player, checkCollision);
+      }
+      interactions.checkWallCollision(player);
       velocity.updatePosition(player, player.mouse);
     });
     io.emit('pulse', players);
