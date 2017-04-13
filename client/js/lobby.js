@@ -42,11 +42,21 @@ var lobbyState = {
     var playerReadyGroup = game.add.group();
     var playerName = game.add.text(80, lobbyState.playerNameHeight, username, textStyle);
     var playerNotReady = game.add.sprite(120, lobbyState.playerNameHeight, 'playerNotReady');
+    playerNotReady.scale.set(0.5);
     playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true);
     playerNotReady.play('toggle');
-    
 
-    console.log('playername', playerName);
+
+    playerReadyGroup.add(playerName);
+    playerReadyGroup.add(playerNotReady);
+
+    console.log('playerReadyGroup', playerReadyGroup);
+
+
+    console.log('removing', playerReadyGroup.remove(playerNotReady));
+
+
+    playerReady = game.add.button(120, lobbyState.playerNameHeight, 'playerReady');
     lobbyState.playerNameHeight += 150;
     
     
