@@ -54,9 +54,11 @@ Game.heartBeat = function() {
 
 Game.updatePlayerPosition = function(player) {
   var pastPlayer = Game.Players[player.id];
-  var tween = Game.add.tween(pastPlayer);
-  tween.to({x: player.x, y: player.y}, 10);
-  tween.start();
+  if (pastPlayer) {
+    var tween = Game.add.tween(pastPlayer);
+    tween.to({x: player.x, y: player.y}, 10);
+    tween.start();
+  }
 }
 
 
@@ -66,10 +68,12 @@ Game.addNewPlayer = function(id, x, y) {
   Game.Players[id].anchor.y = 0.5;
   game.physics.enable(Game.Players[id]);
   Game.Players[id].body.collideWorldBounds = true;
-  //Game.Players[id].body.onCollide = new Phaser.Signal();
-  //Game.Players[id].body.onCollide.add(Game.colission, this);  
 };
 
+Game.remove = function(id) {
+  Game.playerMap[id].destroy();
+  delete Game.playerMap[id];
+};
 
 
 
@@ -122,10 +126,6 @@ Game.addNewPlayer = function(id, x, y) {
 //   }
 // };
 
-// Game.remove = function(id) {
-//   Game.playerMap[id].destroy();
-//   delete Game.playerMap[id];
-// };
 
 // Game.updatePlayer = function(id, x, y) {
 //   var player = Game.Players[id];
