@@ -3,18 +3,20 @@ Client.socket = io.connect();
 
 var setGameEventHandlers = function() {
   Client.socket.on('newPlayer', function(player) {
-    //data is one player
     Game.addNewPlayer(player.id, player.x, player.y);
-    Spectate.addNewPlayer(player.id, player.x, player.y);
   });
 
   Client.socket.on('allPlayers', function(players) {
-    //data is series of players
     players.forEach((player) => {
       Game.addNewPlayer(player.id, player.x, player.y);
-      // spectateState.addNewPlayer(player.id, player.x, player.y);
     });
   });
+
+  Client.socket.on('pulse', function(players) {
+  	players.forEach( (player) => {
+  		Game.updatePlayerPosition(player);
+  	})
+  })
 
   Client.socket.on('remove', function(playerId) {
     Game.remove(playerId);

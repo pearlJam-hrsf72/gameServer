@@ -17,25 +17,28 @@ Game.create = function() {
   Game.bound = game.add.group();
   Game.hole = game.add.group();
 
-  Game.boundaries.push(Game.bound.create(0, 0, 'horiontal'));
-  Game.boundaries.push(Game.bound.create(0, game.world.height - 10, 'horiontal'));
-  Game.boundaries.push(Game.bound.create(0, 0, 'vertical'));
-  Game.boundaries.push(Game.bound.create(game.world.width - 10, 0, 'vertical'));
-  game.physics.enable(Game.boundaries);
-  Game.boundaries.forEach( (bound) => {
-    bound.body.immovable = true;
-  });
+  Game.heartBeat();
+  setInterval(Game.heartBeat(), 10);
 
-  Game.holes.push(Game.hole.create(game.world.width / 2, game.world.height / 2, 'theHOLE'));
-  // Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height / 3, 'theHOLE'));
-  // Game.holes.push(Game.hole.create(game.world.width / 3, game.world.height * 2 / 3, 'theHOLE'));
-  // Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height  * 2 / 3, 'theHOLE'));
-  Game.physics.enable(Game.holes);
-  Game.holes.forEach( (hole) => {
-    hole.padding = 0;
-    hole.anchor.y = 0.5;
-    hole.anchor.x = 0.5;
-  });
+  // Game.boundaries.push(Game.bound.create(0, 0, 'horiontal'));
+  // Game.boundaries.push(Game.bound.create(0, game.world.height - 10, 'horiontal'));
+  // Game.boundaries.push(Game.bound.create(0, 0, 'vertical'));
+  // Game.boundaries.push(Game.bound.create(game.world.width - 10, 0, 'vertical'));
+  // game.physics.enable(Game.boundaries);
+  // Game.boundaries.forEach( (bound) => {
+  //   bound.body.immovable = true;
+  // });
+
+  // Game.holes.push(Game.hole.create(game.world.width / 2, game.world.height / 2, 'theHOLE'));
+  // // Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height / 3, 'theHOLE'));
+  // // Game.holes.push(Game.hole.create(game.world.width / 3, game.world.height * 2 / 3, 'theHOLE'));
+  // // Game.holes.push(Game.hole.create(game.world.width * 2 / 3, game.world.height  * 2 / 3, 'theHOLE'));
+  // Game.physics.enable(Game.holes);
+  // Game.holes.forEach( (hole) => {
+  //   hole.padding = 0;
+  //   hole.anchor.y = 0.5;
+  //   hole.anchor.x = 0.5;
+  // });
 };
 
 Game.update = function() {
@@ -49,48 +52,15 @@ Game.heartBeat = function() {
   Client.heartBeat(Game.cursor);
 };
 
-Game.fallInTheHole = function(player, hole) {
-  console.log(player, '<-- haha you died');
-  console.log(hole, '<-- wins agian');
-  player.kill();
-
-  // FIX: Do this on game end.
-  // It currently goes to lose screen whenever ANYONE falls in the hole
-  removeAllSocketListeners();
-  game.state.start('Lose');
-};
-
-Game.colission = function(player1, object2) {
-  if (object2.x === 0 || object2.y === 0) {
-    var bounce = 1000;
-    if (object2 === Game.boundaries[1]) {
-      player1.body.velocity.y = -1 * bounce;
-    } else if (object2 === Game.boundaries[0]) {
-      player1.body.velocity.y = bounce;
-    } else if (object2 === Game.boundaries[3]) {
-      player1.body.velocity.x = -1 * bounce;
-    } else {
-      player1.body.velocity.x = bounce;
-    }
-    player1.body.hasCollided = true;
-    setTimeout(function(player1) {
-      this.body.hasCollided = false;
-    }.bind(player1), 500);
-  } else {
-    var velocity = 500;
-    xDistance = player1.x - object2.x;
-    yDistance = player1.y - object2.y;
-    var distance = Game.distance(player1.x, player1.y, object2.x, object2.y);
-    var yVelocity = yDistance / distance;
-    var xVelocity = xDistance / distance;
-    player1.body.velocity.x = xVelocity * velocity;
-    player1.body.velocity.y = yVelocity * velocity;
-    player1.body.hasCollided = true;
-    setTimeout(function(player1) {
-      this.body.hasCollided = false;
-    }.bind(player1), 1000);
+Game.updatePlayerPosition = function(player) {
+  var pastPlayer = Game.Players[player.id];
+  if (pastPlayer) {
+    var tween = Game.add.tween(pastPlayer);
+    tween.to({x: player.x, y: player.y}, 10);
+    tween.start();
   }
-};
+}
+
 
 Game.addNewPlayer = function(id, x, y) {
   Game.Players[id] = Game.Player.create(x, y, 'character');
@@ -98,42 +68,92 @@ Game.addNewPlayer = function(id, x, y) {
   Game.Players[id].anchor.y = 0.5;
   game.physics.enable(Game.Players[id]);
   Game.Players[id].body.collideWorldBounds = true;
-  Game.Players[id].body.onCollide = new Phaser.Signal();
-  Game.Players[id].body.onCollide.add(Game.colission, this);  
 };
 
 Game.remove = function(id) {
-  Game.playerMap[id].destroy();
-  delete Game.playerMap[id];
+  Game.Players[id].destroy();
+  delete Game.Players[id];
 };
 
-Game.updatePlayer = function(id, x, y) {
-  var player = Game.Players[id];
-  if (player && !player.body.hasCollided) {
-    var velocity = 1000;
-    var xDistance = x - player.x;
-    var yDistance = y - player.y;
-    var distance = Game.distance(player.x, player.y, x, y);
-    var yVelocity = yDistance / distance;
-    var xVelocity = xDistance / distance;
-    if (Math.abs(yDistance) < 10 && Math.abs(xDistance) < 10) {
-      player.body.velocity.x = 0;
-      player.body.velocity.y = 0;
-    } else {
-      player.body.velocity.y = yVelocity * velocity;
-      player.body.velocity.x = xVelocity * velocity;
-    }
 
-    // var tween = Game.add.tween(player);
-    // var travel = Game.distance(player.x, player.y, x, y);
-    // var time = travel * 3;
-    // tween.to({x: x, y: y}, time);
-    // tween.start();
-  }
-};
 
-Game.distance = function(x, y, xTo, yTo) {
-  var xDistance = Math.pow(x - xTo, 2);
-  var yDistance = Math.pow(y - yTo, 2);
-  return Math.sqrt(xDistance + yDistance);
-};
+
+
+
+
+
+
+// Game.fallInTheHole = function(player, hole) {
+//   console.log(player, '<-- haha you died');
+//   console.log(hole, '<-- wins agian');
+//   player.kill();
+
+//   // FIX: Do this on game end.
+//   // It currently goes to lose screen whenever ANYONE falls in the hole
+//   removeAllSocketListeners();
+//   game.state.start('Lose');
+// };
+
+// Game.colission = function(player1, object2) {
+//   if (object2.x === 0 || object2.y === 0) {
+//     var bounce = 1000;
+//     if (object2 === Game.boundaries[1]) {
+//       player1.body.velocity.y = -1 * bounce;
+//     } else if (object2 === Game.boundaries[0]) {
+//       player1.body.velocity.y = bounce;
+//     } else if (object2 === Game.boundaries[3]) {
+//       player1.body.velocity.x = -1 * bounce;
+//     } else {
+//       player1.body.velocity.x = bounce;
+//     }
+//     player1.body.hasCollided = true;
+//     setTimeout(function(player1) {
+//       this.body.hasCollided = false;
+//     }.bind(player1), 500);
+//   } else {
+//     var velocity = 500;
+//     xDistance = player1.x - object2.x;
+//     yDistance = player1.y - object2.y;
+//     var distance = Game.distance(player1.x, player1.y, object2.x, object2.y);
+//     var yVelocity = yDistance / distance;
+//     var xVelocity = xDistance / distance;
+//     player1.body.velocity.x = xVelocity * velocity;
+//     player1.body.velocity.y = yVelocity * velocity;
+//     player1.body.hasCollided = true;
+//     setTimeout(function(player1) {
+//       this.body.hasCollided = false;
+//     }.bind(player1), 1000);
+//   }
+// };
+
+
+// Game.updatePlayer = function(id, x, y) {
+//   var player = Game.Players[id];
+//   if (player && !player.body.hasCollided) {
+//     var velocity = 1000;
+//     var xDistance = x - player.x;
+//     var yDistance = y - player.y;
+//     var distance = Game.distance(player.x, player.y, x, y);
+//     var yVelocity = yDistance / distance;
+//     var xVelocity = xDistance / distance;
+//     if (Math.abs(yDistance) < 10 && Math.abs(xDistance) < 10) {
+//       player.body.velocity.x = 0;
+//       player.body.velocity.y = 0;
+//     } else {
+//       player.body.velocity.y = yVelocity * velocity;
+//       player.body.velocity.x = xVelocity * velocity;
+//     }
+
+//     // var tween = Game.add.tween(player);
+//     // var travel = Game.distance(player.x, player.y, x, y);
+//     // var time = travel * 3;
+//     // tween.to({x: x, y: y}, time);
+//     // tween.start();
+//   }
+// };
+
+// Game.distance = function(x, y, xTo, yTo) {
+//   var xDistance = Math.pow(x - xTo, 2);
+//   var yDistance = Math.pow(y - yTo, 2);
+//   return Math.sqrt(xDistance + yDistance);
+// };
