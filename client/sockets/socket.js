@@ -38,10 +38,16 @@ var setLobbyEventHandlers = function() {
   });
 
   Client.socket.on('allPlayersInLobby', function(allPlayers) {
+    console.log('all Players', allPlayers);
     allPlayers.forEach(function(player) {
       lobbyState.onPlayerJoin(player.id);
     });
   });
+  /* Add other code */
+  Client.socket.on('renderInfo', function(allPlayers) {
+    console.log('all palyers in renderInfo', allPlayers);
+    lobbyState.renderServerInfo(allPlayers);
+  })
 };
 
 var removeAllSocketListeners = function() {
@@ -64,6 +70,7 @@ Client.heartBeat = function(coordinates) {
 
 Client.joinLobby = function() {
   Client.socket.emit('joinLobby');
+  //Maybe do Clietn.socket.emit('joinLobby', username);
 };
 
 Client.ready = function() {

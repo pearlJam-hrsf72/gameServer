@@ -1,5 +1,4 @@
 var lobbyState = {
-  players: {},
   playerNameHeight: 30,
 
   preload: function() {
@@ -9,8 +8,23 @@ var lobbyState = {
     setLobbyEventHandlers();
     // lobbyState.players = {};
 
+
+    //Maybe you have to add a username like
+    //Client.joinLobby(client.username);
     Client.joinLobby();
 
+
+  
+    var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
+    rkey.onDown.addOnce(this.ready, this);
+
+  },
+
+  ready: function() {
+    Client.ready();
+  },
+
+  addStartLabels: function() {
     var welcomeLabel = game.add.text(game.world.width /2, 30, 
     "Welcome to Game Server 1", 
       {font: '35px Arial', fill: '#000000' });
@@ -19,87 +33,51 @@ var lobbyState = {
     var startLabel = game.add.text(game.world.width/2, game.world.height - 20,
       "press the 'R' key when you're ready", 
       {font: '35px Arial', fill: '#000000' });
-    startLabel.anchor.set(0.5);
-      
-    var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
-    rkey.onDown.addOnce(this.ready, this);
-
+    startLabel.anchor.set(0.5)
   },
 
-  ready: function() {
-    // var playerNotReady = Client.playerReadyGroup.children.pop();
+  renderServerInfo: function(players) {
 
-    // //add a playerReady button to playerNotReady.y
-    // playerReady = game.add.button(120, playerNotReady.y - 20, 'playerReady');
-    // Client.playerReadyGroup.add(playerReady);
-    Client.ready();
-  },
-
-  onPlayerJoin: function(username) {
-    var textStyle = {
-      font: 'bold 30pt italic'
-    }
-
-    var playerReadyGroup = game.add.group();
-    var playerName = game.add.text(80, lobbyState.playerNameHeight, username, textStyle);
-    var playerNotReady = game.add.sprite(120, lobbyState.playerNameHeight, 'playerNotReady');
-    playerNotReady.scale.set(0.5);
-    playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true);
-    playerNotReady.play('toggle');
-
-    
-    playerReadyGroup.add(playerName);
-    playerReadyGroup.add(playerNotReady);
-
-
-    Client.playerReadyGroup = playerReadyGroup;
-    console.log('playerReadyGroup', playerReadyGroup);
-
-
-    lobbyState.playerNameHeight += 150;
-    
-    
-
-    var playerObj = {ready: false, playerReadyGroup: playerReadyGroup};
-    lobbyState.players[username] = playerObj;
-
-  },
-
-  playerReady: function(username) {
-    console.log('lobbyState')
-    lobbyState.players[username].ready = true;
-    var allReady = true;
-  
-    for (player in lobbyState.players) {
-      if (player) {
-        console.log(`player ${player} ready: `, lobbyState.players[player].ready);
-        if (!lobbyState.players[player].ready) {
-          allReady = false;
-        }
-      }
-    }
-    if (allReady) {
+    console.log('all players ready?', this.allReady(players))
+    if (this.allReady(players)) {
       removeAllSocketListeners();
-      lobbyState.players = {};
       game.state.start('Game');
     }
-    console.log('allReady: ', allReady);
+
+    //remove all the elements
+    console.log('removing elements', game.world.children = []);
+
+    //Add the starting labels
+    this.addStartLabels();
+
+    //Draw the players
+    playerNameHeight = 30;
+    _.forEach(players, (player) => {
+        console.log('player', player);
+        var textStyle = {
+          font: 'bold 30pt italic'
+        }
+        var playerName = game.add.text(80, playerNameHeight, player.id, textStyle);
+        if (player.ready) { //add the ready symbol
+          var playerReady = game.add.button(120, playerNameHeight, 'playerReady');
+        } else { //add the not ready symbol
+          var playerNotReady = game.add.sprite(120, playerNameHeight, 'playerNotReady');
+
+          playerNotReady.scale.set(0.5);
+          playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true);
+          playerNotReady.play('toggle');
+
+        }
+        playerNameHeight += 150;
+    })
   },
 
-  update() {
-    // console.log('running update for players', lobbyState.players);
-    for (playerIndex in lobbyState.players) {
-      if (playerIndex) {
-        const player = lobbyState.players[playerIndex]
-        const playerReadyGroup = player.playerReadyGroup
-        if (player.ready && playerReadyGroup.children[1].key === 'playerNotReady') { //update the playerReady group
-          console.log('setting into playerReady');
-          var playerNotReady = playerReadyGroup.children[1];
-          //add a playerReady button to playerNotReady.y
-          playerReady = game.add.button(120, playerNotReady.y - 20, 'playerReady');
-          playerReadyGroup.children[1] = playerReady;
-        }
-      }
-    }
+  allReady: function(players) {
+    return players.reduce((acc, curr) => {
+     return acc && curr.ready
+    }, true)
   }
+
+
+
 };
