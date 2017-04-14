@@ -29,19 +29,16 @@ var setGameEventHandlers = function() {
 };
 
 var setLobbyEventHandlers = function() {
-  Client.socket.on('playerJoined', function(username) {
-    lobbyState.onPlayerJoin(username);
-  });
 
   Client.socket.on('playerReady', function(username) {
     lobbyState.playerReady(username);
   });
 
-  Client.socket.on('allPlayersInLobby', function(allPlayers) {
-    allPlayers.forEach(function(player) {
-      lobbyState.onPlayerJoin(player.id);
-    });
-  });
+  /* Add other code */
+  Client.socket.on('renderInfo', function(allPlayers) {
+    console.log('all palyers in renderInfo', allPlayers);
+    lobbyState.renderServerInfo(allPlayers);
+  })
 };
 
 var removeAllSocketListeners = function() {
@@ -63,7 +60,8 @@ Client.heartBeat = function(coordinates) {
 };
 
 Client.joinLobby = function() {
-  Client.socket.emit('joinLobby');
+  Client.socket.emit('joinLobby', window.username);
+  //Maybe do Clietn.socket.emit('joinLobby', username);
 };
 
 Client.ready = function() {

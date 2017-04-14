@@ -7,10 +7,10 @@ var game = new Phaser.Game(900, 750, Phaser.CANVAS, document.getElementById('gam
 
 game.state.add('Load', loadState);
 game.state.add('Menu', menuState);
-
+game.state.add('Lobby', lobbyState);
 game.state.add('Game', Game);
 game.state.add('Spectate', spectateState);
 game.state.add('Win', winState);
 game.state.add('Lose', loseState);
-
+game.state.add('Results', gameResult);
 game.state.start('Load');
