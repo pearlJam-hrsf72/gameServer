@@ -2,6 +2,7 @@ var Game = {};
 Game.Players = {};
 Game.boundaries = [];
 Game.holes = [];
+Game.text = {};
 
 Game.init = function() {
   game.state.disableVisibilityChange = true;
@@ -12,28 +13,26 @@ Game.create = function() {
   Game.add.sprite(0, 0, 'background');
   Client.askNewPlayer();
   Game.cursor = {x: 450, y: 300};
-  Game.pulse = setInterval(Game.heartBeat, 16);
   Game.Player = game.add.group();
   Game.bound = game.add.group();
   Game.hole = game.add.group();
 
   Game.heartBeat();
-  setInterval(Game.heartBeat(), 10);
+  Game.pulse = setInterval(Game.heartBeat, 10);
 
-  Game.holes.push(Game.hole.create(game.world.width / 2, game.world.height / 2, 'hole'));
+  Game.holes.push(Game.hole.create(375, 375, 'hole'));
   Game.holes.forEach( (hole) => {
   	hole.animations.add('explode');
     hole.anchor.y = 0.5;
     hole.anchor.x = 0.5;
     hole.animations.play('explode', 50, true)
   });
+
+  Game.bound.create(750, 0, 'vertical');
 };
 
 Game.update = function() {
   Game.cursor = {x: game.input.mousePointer.x, y: game.input.mousePointer.y};
-  var playerCollide = game.physics.arcade.collide(Game.Player, Game.bound);
-  game.physics.arcade.collide(Game.Player);
-  var overlap = game.physics.arcade.overlap(Game.Player, Game.hole, Game.fallInTheHole);
 };
 
 Game.heartBeat = function() {
@@ -47,6 +46,7 @@ Game.updatePlayerPosition = function(player) {
     tween.to({x: player.x, y: player.y}, 10);
     tween.start();
   }
+  Game.displayPlayer(player);
 }
 
 
@@ -67,3 +67,19 @@ Game.death = function(player) {
   player = Game.Players[player.id];
   player.kill();
 };
+
+Game.displayPlayer = function(player) {
+  var username = '0' + player.username; //temp
+  console.log(username);
+  if (Game.text[username]) {
+  	Game.text[username].destroy();
+  }
+  Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
+	var displayText = player.username + ': ' + player.lives + ' lives';
+	var textHeight = 30 + 30 * player.id;
+	var id = player.id;
+	if (Game.text[id]) {
+		Game.text[id].destroy();
+	}
+	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
+}

@@ -26,9 +26,6 @@ var setGameEventHandlers = function() {
     Game.remove(playerId);
   });
 
-  // Client.socket.on('updatePlayer', function(player) {
-  //   Game.updatePlayer(player.id, player.x, player.y);
-  // });
 };
 
 var setLobbyEventHandlers = function() {
