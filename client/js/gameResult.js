@@ -15,15 +15,7 @@ var gameResult = {
       'Press the "m" key to return to the main menu', 
       {font: '25px Arial', fill: '#000000' });
     startLabel.anchor.set(0.5);
-    
-
-   
-
-
-
-
-
-
+  
     //add main menu listen input
     var mkey = game.input.keyboard.addKey(Phaser.Keyboard.M);
     mkey.onDown.addOnce(this.toMainMenu, this);

@@ -12,6 +12,7 @@ module.exports = function(io) {
     socket.on('addNewPlayer', function() {
       console.log('added new player');
       socket.player = socket.player || {};
+      socket.player.username = socket.player.id
       socket.player.lives = defaultLives;
       interactions.spawn(socket.player);
       socket.emit('allPlayers', getAllPlayers());
