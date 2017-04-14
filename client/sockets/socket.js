@@ -60,7 +60,7 @@ Client.heartBeat = function(coordinates) {
 };
 
 Client.joinLobby = function() {
-  Client.socket.emit('joinLobby');
+  Client.socket.emit('joinLobby', window.username);
   //Maybe do Clietn.socket.emit('joinLobby', username);
 };
 

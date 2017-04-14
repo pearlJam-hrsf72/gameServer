@@ -24,4 +24,13 @@
 <script src="js/lose.js" type="text/javascript"></script>
 <script src="js/main.js" type="text/javascript"></script>
 <script src="sockets/socket.js" type="text/javascript"></script>
+<script>
+    console.log('other log');
+    window.addEventListener("message", function(event) {
+        window.username = event.data;
+        console.log('username is', window.username);
+    }, true);
+
+
+</script>
 </html>

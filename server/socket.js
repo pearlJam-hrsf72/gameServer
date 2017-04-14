@@ -30,7 +30,7 @@ module.exports = function(io) {
     
     socket.on('joinLobby', function(username) {
       console.log('username joined lobby', username);
-      socket.player = {id: lastPlayerId++, ready: false, lives: defaultLives};
+      socket.player = {id: username || lastPlayerId++, ready: false, lives: defaultLives};
       console.log('all players', getAllPlayers());
       io.emit('renderInfo', getAllPlayers());
     });

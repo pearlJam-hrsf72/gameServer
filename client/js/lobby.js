@@ -56,10 +56,11 @@ var lobbyState = {
           font: 'bold 30pt italic'
         }
         var playerName = game.add.text(80, playerNameHeight, player.id, textStyle);
+        console.log('playerName', playerName);
         if (player.ready) { //add the ready symbol
-          var playerReady = game.add.button(120, playerNameHeight, 'playerReady');
+          var playerReady = game.add.button(playerName.x + playerName.width, playerNameHeight, 'playerReady');
         } else { //add the not ready symbol
-          var playerNotReady = game.add.sprite(120, playerNameHeight, 'playerNotReady');
+          var playerNotReady = game.add.sprite(playerName.x + playerName.width, playerNameHeight, 'playerNotReady');
 
           playerNotReady.scale.set(0.5);
           playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true);
