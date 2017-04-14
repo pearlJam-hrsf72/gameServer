@@ -4,18 +4,17 @@ var velocity = require('./velocity.js');
 var interactions = require('./interactions.js');
 
 module.exports = function(io) {
-  
+
   var lastPlayerId = 0;
-  const defaultLives = 3;
 
   io.on('connection', function(socket) {
     console.log('connected');
 
     socket.on('addNewPlayer', function() {
-      console.log('added new player');
       socket.player = socket.player || {};
-      socket.player.username = socket.player.id
-      socket.player.lives = defaultLives;
+      socket.player.id = lastPlayerId ++;
+      socket.player.lives = 3;
+      socket.player.username = socket.player.id; //temporary username, till we implement real usernames
       interactions.spawn(socket.player);
       socket.emit('allPlayers', getAllPlayers());
       socket.broadcast.emit('newPlayer', socket.player);
@@ -27,40 +26,22 @@ module.exports = function(io) {
       }
     });
 
-    // socket.on('newSpectator', function() {
-    //   socket.emit('allPlayers', getAllPlayers());
-    // });
-    
-    socket.on('joinLobby', function(username) {
-      console.log('username joined lobby', username);
-      socket.player = {id: username || lastPlayerId++, ready: false, lives: defaultLives};
-      console.log('all players', getAllPlayers());
-      io.emit('renderInfo', getAllPlayers());
-    });
-
-    socket.on('playerReady', function() {
-  
-      socket.player.ready = true;
-      var allPlayers = getAllPlayers();
-      io.emit('renderInfo', allPlayers);
-
-    });
 
     socket.on('disconnect', function() {
-      io.emit('renderInfo', getAllPlayers());
+      if (socket.player) {
+        io.emit('remove', socket.player.id);
+      }
     });
   });
 
   function getAllPlayers() {
     var players = [];
-    // console.log('sockets in server', io.sockets.connected);
     Object.keys(io.sockets.connected).forEach(function(socketID) {
       var player = io.sockets.connected[socketID].player;
       if (player && player.lives > 0) {
         players.push(player);
       }
     });
-    
     return players;
   }
 
@@ -116,4 +97,19 @@ module.exports = function(io) {
 
   setInterval(pulse, 10);
 
+    // socket.on('newSpectator', function() {
+    //   socket.emit('allPlayers', getAllPlayers());
+    // });
+    
+    // socket.on('joinLobby', function(username) {
+    //   // TODO: Grab username from client
+    //   // emit default username for now
+    //   socket.emit('allPlayersInLobby', getAllPlayers());
+    //   socket.player = {id: lastPlayerId++};
+    //   io.emit('playerJoined', socket.player.id);
+    // });
+
+    // socket.on('playerReady', function() {
+    //   io.emit('playerReady', socket.player.id);
+    // });
 };
