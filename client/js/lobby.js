@@ -6,9 +6,6 @@ var lobbyState = {
 
   create: function() {
     setLobbyEventHandlers();
-    // lobbyState.players = {};
-
-
     //Maybe you have to add a username like
     //Client.joinLobby(client.username);
     Client.joinLobby();
@@ -37,13 +34,12 @@ var lobbyState = {
 
   renderServerInfo: function(players) {
 
-    console.log('all players ready?', this.allReady(players))
     if (this.allReady(players)) {
       game.state.start('Game');
     }
 
     //remove all the elements
-    console.log('removing elements', game.world.children = []);
+    game.world.children = [];
 
     //Add the starting labels
     this.addStartLabels();
@@ -51,12 +47,10 @@ var lobbyState = {
     //Draw the players
     playerNameHeight = 30;
     _.forEach(players, (player) => {
-        console.log('player', player);
         var textStyle = {
           font: 'bold 30pt italic'
         }
         var playerName = game.add.text(80, playerNameHeight, player.id, textStyle);
-        console.log('playerName', playerName);
         if (player.ready) { //add the ready symbol
           var playerReady = game.add.button(playerName.x + playerName.width, playerNameHeight, 'playerReady');
         } else { //add the not ready symbol

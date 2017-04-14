@@ -26,6 +26,10 @@ var setGameEventHandlers = function() {
     Game.remove(playerId);
   });
 
+  Client.socket.on('gameOver', function(players) {
+    Game.over(players);
+  });
+
 };
 
 var setLobbyEventHandlers = function() {
@@ -36,7 +40,6 @@ var setLobbyEventHandlers = function() {
 
   /* Add other code */
   Client.socket.on('renderInfo', function(allPlayers) {
-    console.log('all palyers in renderInfo', allPlayers);
     lobbyState.renderServerInfo(allPlayers);
   })
 };
@@ -50,6 +53,18 @@ var removeAllSocketListeners = function() {
   Client.socket.removeAllListeners('remove');
   Client.socket.removeAllListeners('updatePlayer');
 };
+
+var removeAllSocketListenersGame = function() {
+  Client.socket.removeAllListeners('newPlayer');
+  Client.socket.removeAllListeners('allPlayers');
+  Client.socket.removeAllListeners('pulse');
+  Client.socket.removeAllListeners('death');
+  Client.socket.removeAllListeners('remove');
+  Client.socket.removeAllListeners('gameOver');
+}
+
+
+
 
 Client.askNewPlayer = function() {
   Client.socket.emit('addNewPlayer');
