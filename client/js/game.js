@@ -46,7 +46,7 @@ Game.updatePlayerPosition = function(player) {
     tween.to({x: player.x, y: player.y}, 10);
     tween.start();
   }
-  Game.displayPlayer(player);
+  Game.displayPlayerInfo(player);
 }
 
 Game.addNewPlayer = function(player) {
@@ -68,7 +68,7 @@ Game.death = function(player) {
   player.kill();
 };
 
-Game.displayPlayer = function(player) {
+Game.displayPlayerInfo = function(player) {
   var username = '0' + player.username; //temp
   
   if (Game.text[username]) {
