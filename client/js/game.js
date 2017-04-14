@@ -92,6 +92,6 @@ Game.drawGame = function(players) {
 
 Game.over = function(players) {
   //pass the players object to results to display
-  game.state.start('Results', true, true, players);
+  game.state.start('Results', true, false, players);
   removeAllSocketListenersGame();
 }

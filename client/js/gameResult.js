@@ -38,6 +38,7 @@ var gameResult = {
 
     //add main menu listen input
     var mkey = game.input.keyboard.addKey(Phaser.Keyboard.M)
+    mkey.onDown.addOnce(this.toMainMenu, this);
   },
   
   drawLosers: function(losers) {
@@ -55,6 +56,10 @@ var gameResult = {
   preload: function() {
     game.stage.backgroundColor = 0xbada55; 
   },
+  
+  toMainMenu: function() {
+    game.state.start('Menu');
+  }
   
 
 };
