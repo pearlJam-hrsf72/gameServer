@@ -49,7 +49,6 @@ Game.updatePlayerPosition = function(player) {
   Game.displayPlayer(player);
 }
 
-
 Game.addNewPlayer = function(player) {
   Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
   var player = Game.Players[player.id];
@@ -65,12 +64,13 @@ Game.remove = function(id) {
 
 Game.death = function(player) {
   player = Game.Players[player.id];
+  console.log('player about to be killed', player);
   player.kill();
 };
 
 Game.displayPlayer = function(player) {
   var username = '0' + player.username; //temp
-  console.log(username);
+  
   if (Game.text[username]) {
   	Game.text[username].destroy();
   }
@@ -82,4 +82,16 @@ Game.displayPlayer = function(player) {
 		Game.text[id].destroy();
 	}
 	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
+}
+
+
+Game.drawGame = function(players) {
+
+}
+
+
+Game.over = function(players) {
+  //pass the players object to results to display
+  game.state.start('Results', true, true, players);
+  removeAllSocketListenersGame();
 }

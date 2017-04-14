@@ -1,3 +1,5 @@
+var  _ = require('lodash');
+
 var velocity = require('./velocity.js');
 var interactions = require('./interactions.js');
 
@@ -62,8 +64,28 @@ module.exports = function(io) {
     return players;
   }
 
+  function getAllPlayersAliveOrDead() {
+     var players = [];
+    // console.log('sockets in server', io.sockets.connected);
+    Object.keys(io.sockets.connected).forEach(function(socketID) {
+      var player = io.sockets.connected[socketID].player;
+      if (player) {
+        players.push(player);
+      }
+    });
+    
+    return players; 
+  }
+
+
   function pulse() {
     var players = getAllPlayers();
+    // console.log('players', players);
+    if (gameOver(players)) { //if the game is ovve
+      io.emit('gameOver', getAllPlayersAliveOrDead());
+    } 
+
+
     players.forEach( (player) => {
       var checkCollision = interactions.checkPlayerCollision(player, players);
       if (checkCollision) {
@@ -77,6 +99,19 @@ module.exports = function(io) {
       }
     });
     io.emit('pulse', players);
+  }
+  //returns whether the game is over
+  //This is true when there is only one player left with more than 1 lives
+  function gameOver(players) {
+    var numPlayersAlive = _.reduce(players, (acc, player) => {
+      return player.lives > 0 ? acc + 1 : acc;
+    }, 0)
+
+    if (numPlayersAlive > 1) { //more than one playera alive
+      return false;
+    } else {
+      return true;
+    }
   }
 
   setInterval(pulse, 10);
