@@ -12,6 +12,7 @@ module.exports = function(io) {
       socket.player = socket.player || {};
       socket.player.id = lastPlayerId ++;
       socket.player.lives = 3;
+      socket.player.username = socket.player.id; //temporary username, till we implement real usernames
       interactions.spawn(socket.player);
       socket.emit('allPlayers', getAllPlayers());
       socket.broadcast.emit('newPlayer', socket.player);
