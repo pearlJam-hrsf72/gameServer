@@ -16,6 +16,7 @@ var setGameEventHandlers = function() {
   });
 
   Client.socket.on('pulse', function(players) {
+    Game.height = 0;
   	players.forEach( (player) => {
   		Game.updatePlayerPosition(player);
   	})
