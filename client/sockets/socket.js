@@ -1,5 +1,8 @@
 var Client = {};
-Client.socket = io.connect();
+
+Client.socketConnect = function() {
+  Client.socket = io.connect();
+}
 
 var setGameEventHandlers = function() {
   Client.socket.on('newPlayer', function(player) {
@@ -13,6 +16,7 @@ var setGameEventHandlers = function() {
   });
 
   Client.socket.on('pulse', function(players) {
+    Game.height = 0;
   	players.forEach( (player) => {
   		Game.updatePlayerPosition(player);
   	})
@@ -32,9 +36,45 @@ var setGameEventHandlers = function() {
 
 };
 
+var setSpectateEventHandlers = function() {
+  Client.socket.on('allPlayers', function(players) {
+    players.forEach((player) => {
+      spectateState.addNewPlayer(player);
+    })
+  })
+
+  Client.socket.on('pulse', function(players) {
+    players.forEach((player) => {
+      spectateState.updatePlayerPosition(player);
+    })
+  })
+
+  Client.socket.on('death', function(player) {
+    spectateState.death(player);
+  })
+
+  Client.socket.on('remove', function(playerId) {
+    spectateState.remove(playerId);
+  })
+
+  Client.socket.on('gameOver', function(players) {
+    Game.over(players);
+  })
+
+}
+
+var removeAllSocketListenersSpectate = function() {
+  Client.socket.removeAllListeners('allPlayers');
+  Client.socket.removeAllListeners('pulse');
+  Client.socket.removeAllListeners('death');
+  Client.socket.removeAllListeners('remove');
+  Client.socket.removeAllListeners('gameOver');
+}
+
 var setLobbyEventHandlers = function() {
 
   Client.socket.on('playerReady', function(username) {
+    console.log('recieved player ready from server');
     lobbyState.playerReady(username);
   });
 
@@ -64,7 +104,9 @@ var removeAllSocketListenersGame = function() {
 }
 
 
-
+Client.disconnect = function() {
+  Client.socket.disconnect();
+}
 
 Client.askNewPlayer = function() {
   Client.socket.emit('addNewPlayer');
@@ -80,6 +122,7 @@ Client.joinLobby = function() {
 };
 
 Client.ready = function() {
+  console.log('player pressed r');
   Client.socket.emit('playerReady');
 };
 

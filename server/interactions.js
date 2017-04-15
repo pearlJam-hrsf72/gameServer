@@ -7,16 +7,15 @@ module.exports = {
     for (var i = 0; i < players.length; i ++ ) {
       var distance = velocity.distanceBetween(player, players[i]).distance 
       if (distance < 35 && distance > 1) {
-        console.log('collision');
         player.collided = true;
         players[i].collided = true;
         setTimeout(function() {
           if (this.collided === true)
-            this.collided = undefined;
+            this.collided = null;
         }.bind(player), 500);
         setTimeout(function() {
           if (this.collided === true)
-            this.collided = undefined;
+            this.collided = null;
         }.bind(players[i]), 500);
         return players[i];
       }
@@ -40,7 +39,7 @@ module.exports = {
         }
         setTimeout(function() {
           if (this.collided === 'top')
-            this.collided = undefined;
+            this.collided = null;
         }.bind(player), 2000);
       } else if (player.y > 735) {
         player.collided = 'bottom';
@@ -49,7 +48,7 @@ module.exports = {
         }
         setTimeout(function() {
           if (this.collided === 'bottom')
-            this.collided = undefined;
+            this.collided = null;
         }.bind(player), 2000);
       } else if (player.x < 15) {
         player.collided = 'right';
@@ -58,7 +57,7 @@ module.exports = {
         }
         setTimeout(function() {
           if (this.collided === 'right')
-            this.collided = undefined;
+            this.collided = null;
         }.bind(player), 2000);
       } else if (player.x > 735) {
         player.collided = 'left';
@@ -67,7 +66,7 @@ module.exports = {
         }
         setTimeout(function() {
           if (this.collided === 'left')
-            this.collided = undefined;
+            this.collided = null;
         }.bind(player), 2000);
     } 
   },

@@ -3,6 +3,7 @@ Game.Players = {};
 Game.boundaries = [];
 Game.holes = [];
 Game.text = {};
+Game.height = 0;
 
 Game.init = function() {
   game.state.disableVisibilityChange = true;
@@ -46,10 +47,13 @@ Game.updatePlayerPosition = function(player) {
     tween.to({x: player.x, y: player.y}, 10);
     tween.start();
   }
-  Game.displayPlayer(player);
+  Game.displayPlayerInfo(player);
 }
 
 Game.addNewPlayer = function(player) {
+  if (Game.Players[player.id]) {
+    Game.Players[player.id].destroy();
+  }
   Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
@@ -64,34 +68,33 @@ Game.remove = function(id) {
 
 Game.death = function(player) {
   player = Game.Players[player.id];
-  console.log('player about to be killed', player);
   player.kill();
 };
 
-Game.displayPlayer = function(player) {
-  var username = '0' + player.username; //temp
-  
-  if (Game.text[username]) {
-  	Game.text[username].destroy();
+Game.displayPlayerInfo = function(player) {
+  if (player.username) {
+    var username = player.username + '.'; //temp
+    if (Game.text[username]) {
+    	Game.text[username].destroy();
+    }
+    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
+  	var displayText = player.username + ': ' + player.lives + ' lives';
+  	var textHeight = 30 + 30 * Game.height;
+    Game.height++;
+  	var id = player.id;
+  	if (Game.text[id]) {
+  		Game.text[id].destroy();
+  	}
+  	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
   }
-  Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
-	var displayText = player.username + ': ' + player.lives + ' lives';
-	var textHeight = 30 + 30 * player.id;
-	var id = player.id;
-	if (Game.text[id]) {
-		Game.text[id].destroy();
-	}
-	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
 }
-
-
-Game.drawGame = function(players) {
-
-}
-
 
 Game.over = function(players) {
   //pass the players object to results to display
   game.state.start('Results', true, false, players);
-  removeAllSocketListenersGame();
+  Client.disconnect();
+  Game.Players = {};
+  Game.boundaries = [];
+  Game.holes = [];
+  Game.text = {};
 }
