@@ -47,7 +47,7 @@ module.exports = function(io) {
       if (allReady(allPlayers)) {
         console.log('game is starting');
         allPlayers.forEach((player) => {
-          id = player.id;
+          id = 'jeff2';
           var usersref = dataBase.ref('users/');
           usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
             dbPlayers.push(data.val());
@@ -104,10 +104,9 @@ module.exports = function(io) {
     var players = getAllPlayers();
     // console.log('players', players);
     if (gameOver(players)) { //if the game is ovve
-      console.log(gameId.key)
       var gamesref = dataBase.ref(`games/` + gameId.key);
       var winner = getAllPlayers();
-      gamesref.update({winner, status: "finished"});
+      gamesref.update({winner: winner[0].id, status: "finished"});
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
     } 
