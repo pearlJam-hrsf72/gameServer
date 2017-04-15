@@ -50,7 +50,9 @@ Game.updatePlayerPosition = function(player) {
 }
 
 Game.addNewPlayer = function(player) {
-  console.log(player);
+  if (Game.Players[player.id]) {
+    Game.Players[player.id].destroy();
+  }
   Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
