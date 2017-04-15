@@ -35,6 +35,7 @@ var lobbyState = {
   renderServerInfo: function(players) {
 
     if (this.allReady(players)) {
+      removeAllSocketListeners();
       game.state.start('Game');
     }
 

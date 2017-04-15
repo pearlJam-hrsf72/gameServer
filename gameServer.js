@@ -7,6 +7,8 @@ var io = require('socket.io').listen(server);
 
 var velocity = require('./server/velocity.js');
 var interactions = require('./server/interactions.js');
+var dataBase = require('./server/dataBase.js')
+
 
 var socketManager = require('./server/socket.js')(io);
 

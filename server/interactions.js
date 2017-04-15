@@ -7,7 +7,6 @@ module.exports = {
     for (var i = 0; i < players.length; i ++ ) {
       var distance = velocity.distanceBetween(player, players[i]).distance 
       if (distance < 35 && distance > 1) {
-        console.log('collision');
         player.collided = true;
         players[i].collided = true;
         setTimeout(function() {

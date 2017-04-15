@@ -2,6 +2,7 @@ var  _ = require('lodash');
 
 var velocity = require('./velocity.js');
 var interactions = require('./interactions.js');
+var dataBase = require('./dataBase.js')
 
 module.exports = function(io) {
   
@@ -12,7 +13,6 @@ module.exports = function(io) {
     console.log('connected');
 
     socket.on('addNewPlayer', function() {
-      console.log('added new player');
       socket.player = socket.player || {};
       socket.player.username = socket.player.id
       socket.player.lives = defaultLives;
@@ -32,9 +32,7 @@ module.exports = function(io) {
     });
     
     socket.on('joinLobby', function(username) {
-      console.log('username joined lobby', username);
       socket.player = {id: username || lastPlayerId++, ready: false, lives: defaultLives};
-      console.log('all players', getAllPlayers());
       io.emit('renderInfo', getAllPlayers());
     });
 
@@ -42,9 +40,29 @@ module.exports = function(io) {
   
       socket.player.ready = true;
       var allPlayers = getAllPlayers();
+      var dbPlayers = [];
+      if (allReady(allPlayers)) {
+        console.log('game is starting');
+        allPlayers.forEach((player) => {
+          id = player.id;
+          var usersref = dataBase.ref('users/');
+          usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
+            dbPlayers.push(data.val());
+            if (dbPlayers.length === allPlayers.length) {
+              var gamesref = dataBase.ref('games/');
+              gamesref.push({/*gameID: 5, */status: "in-progress", winner: "TBD", players: dbPlayers});
+            }
+            
+          })
+        })
+
+
+      }
       io.emit('renderInfo', allPlayers);
 
     });
+
+
 
     socket.on('disconnect', function() {
       io.emit('renderInfo', getAllPlayers());
@@ -115,5 +133,15 @@ module.exports = function(io) {
   }
 
   setInterval(pulse, 10);
+
+  function allReady(players) {
+    var ready = true;
+    players.forEach((player) => {
+      if (!player.ready) {
+        ready = false;
+      }
+    });
+    return ready;
+  }
 
 };
