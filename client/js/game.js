@@ -90,5 +90,9 @@ Game.displayPlayerInfo = function(player) {
 Game.over = function(players) {
   //pass the players object to results to display
   game.state.start('Results', true, false, players);
-  removeAllSocketListenersGame();
+  Client.disconnect();
+  Game.Players = {};
+  Game.boundaries = [];
+  Game.holes = [];
+  Game.text = {};
 }

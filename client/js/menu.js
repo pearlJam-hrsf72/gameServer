@@ -1,5 +1,6 @@
 var menuState = {
   create: function() {
+    Client.socketConnect();
 
     var nameLabel = game.add.text(80, 80, 'Pearl Jam',
       {font: '50px Arial', fill: '#000000'});

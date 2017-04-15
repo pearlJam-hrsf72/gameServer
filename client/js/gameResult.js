@@ -16,7 +16,7 @@ var gameResult = {
      
 
     //Display the winner
-    var nameLabel = game.add.text(game.world.width/2, 40, `Winner: Player ${winner.id} `,
+    var nameLabel = game.add.text(game.world.width / 2, 40, `Winner: Player ${winner.id} `,
       {font: '50px Arial', fill: '#000000'});
     nameLabel.anchor.set(0.5); 
   //  console.log('backgroundColor', game.stage.backgroundColor(0xbada55));

@@ -1,5 +1,8 @@
 var Client = {};
-Client.socket = io.connect();
+
+Client.socketConnect = function() {
+  Client.socket = io.connect();
+}
 
 var setGameEventHandlers = function() {
   Client.socket.on('newPlayer', function(player) {
@@ -100,7 +103,9 @@ var removeAllSocketListenersGame = function() {
 }
 
 
-
+Client.disconnect = function() {
+  Client.socket.disconnect();
+}
 
 Client.askNewPlayer = function() {
   Client.socket.emit('addNewPlayer');

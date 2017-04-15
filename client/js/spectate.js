@@ -68,8 +68,12 @@ spectateState.displayPlayerInfo = function(player) {
 }
 
 spectateState.over = function(players) {
+  Client.disconnect();
   game.state.start('Results', true, false, players);
-  removeAllSocketListenersSpectate();
+  spectateState.Players = {};
+  spectateState.boundaries = [];
+  spectateState.holes = [];
+  spectateState.text = {};
 }
 
 spectateState.death = function(player) {
