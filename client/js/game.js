@@ -80,6 +80,7 @@ Game.displayPlayerInfo = function(player) {
     Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
   	var displayText = player.username + ': ' + player.lives + ' lives';
   	var textHeight = 30 + 30 * Game.height;
+    Game.height++;
   	var id = player.id;
   	if (Game.text[id]) {
   		Game.text[id].destroy();
