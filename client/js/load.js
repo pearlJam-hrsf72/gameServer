@@ -15,6 +15,7 @@ var loadState = {
     game.load.image('playerReady', 'assets/playerReady.png');
   },
   update: function() {
+    console.log(window.username);
     if (window.username) {
       console.log('your username is ' + window.username);
       game.state.start('Menu');
