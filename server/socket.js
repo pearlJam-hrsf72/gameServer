@@ -4,6 +4,9 @@ var velocity = require('./velocity.js');
 var interactions = require('./interactions.js');
 var dataBase = require('./dataBase.js')
 
+var gameId;
+var heartbeat;
+
 module.exports = function(io) {
   
   var lastPlayerId = 0;
@@ -50,7 +53,8 @@ module.exports = function(io) {
             dbPlayers.push(data.val());
             if (dbPlayers.length === allPlayers.length) {
               var gamesref = dataBase.ref('games/');
-              gamesref.push({/*gameID: 5, */status: "in-progress", winner: "TBD", players: dbPlayers});
+              gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers});
+              heartbeat = setInterval(pulse, 10);
             }
             
           })
@@ -100,7 +104,12 @@ module.exports = function(io) {
     var players = getAllPlayers();
     // console.log('players', players);
     if (gameOver(players)) { //if the game is ovve
+      console.log(gameId.key)
+      var gamesref = dataBase.ref(`games/` + gameId.key);
+      var winner = getAllPlayers();
+      gamesref.update({winner, status: "finished"});
       io.emit('gameOver', getAllPlayersAliveOrDead());
+      clearInterval(heartbeat);
     } 
 
 
@@ -132,7 +141,6 @@ module.exports = function(io) {
     }
   }
 
-  setInterval(pulse, 10);
 
   function allReady(players) {
     var ready = true;
