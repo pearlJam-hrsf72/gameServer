@@ -14,8 +14,11 @@ var loadState = {
     game.load.spritesheet('playerNotReady','assets/playerNotReady.png', 138, 138, 4);
     game.load.image('playerReady', 'assets/playerReady.png');
   },
-  create: function() {
-    game.state.start('Menu');
+  update: function() {
+    if (window.username) {
+      console.log('your username is ' + window.username);
+      game.state.start('Menu');
+    }
   }
 
 }
