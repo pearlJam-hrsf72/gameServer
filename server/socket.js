@@ -47,7 +47,7 @@ module.exports = function(io) {
       if (allReady(allPlayers)) {
         console.log('game is starting');
         allPlayers.forEach((player) => {
-          id = 'jeff2';
+          id = player.id;
           var usersref = dataBase.ref('users/');
           usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
             dbPlayers.push(data.val());
