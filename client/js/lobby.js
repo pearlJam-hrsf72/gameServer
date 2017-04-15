@@ -47,7 +47,6 @@ var lobbyState = {
     //Draw the players
     playerNameHeight = 30;
     _.forEach(players, (player) => {
-      console.log(player);
         var textStyle = {
           font: 'bold 30pt italic'
         }

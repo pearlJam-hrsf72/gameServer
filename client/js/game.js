@@ -50,6 +50,7 @@ Game.updatePlayerPosition = function(player) {
 }
 
 Game.addNewPlayer = function(player) {
+  console.log(player);
   Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
@@ -64,13 +65,11 @@ Game.remove = function(id) {
 
 Game.death = function(player) {
   player = Game.Players[player.id];
-  console.log('player about to be killed', player);
   player.kill();
 };
 
 Game.displayPlayerInfo = function(player) {
-  var username = player.username; //temp
-  
+  var username = player.username + '.'; //temp
   if (Game.text[username]) {
   	Game.text[username].destroy();
   }
