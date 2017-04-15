@@ -69,7 +69,7 @@ Game.death = function(player) {
 };
 
 Game.displayPlayerInfo = function(player) {
-  var username = '0' + player.username; //temp
+  var username = player.username; //temp
   
   if (Game.text[username]) {
   	Game.text[username].destroy();
@@ -83,12 +83,6 @@ Game.displayPlayerInfo = function(player) {
 	}
 	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
 }
-
-
-Game.drawGame = function(players) {
-
-}
-
 
 Game.over = function(players) {
   //pass the players object to results to display

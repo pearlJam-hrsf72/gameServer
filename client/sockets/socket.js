@@ -32,9 +32,45 @@ var setGameEventHandlers = function() {
 
 };
 
+var setSpectateEventHandlers = function() {
+  Client.socket.on('allPlayers', function(players) {
+    players.forEach((player) => {
+      spectateState.addNewPlayer(player);
+    })
+  })
+
+  Client.socket.on('pulse', function(players) {
+    players.forEach((player) => {
+      spectateState.updatePlayerPosition(player);
+    })
+  })
+
+  Client.socket.on('death', function(player) {
+    spectateState.death(player);
+  })
+
+  Client.socket.on('remove', function(playerId) {
+    spectateState.remove(playerId);
+  })
+
+  Client.socket.on('gameOver', function(players) {
+    Game.over(players);
+  })
+
+}
+
+var removeAllSocketListenersSpectate = function() {
+  Client.socket.removeAllListeners('allPlayers');
+  Client.socket.removeAllListeners('pulse');
+  Client.socket.removeAllListeners('death');
+  Client.socket.removeAllListeners('remove');
+  Client.socket.removeAllListeners('gameOver');
+}
+
 var setLobbyEventHandlers = function() {
 
   Client.socket.on('playerReady', function(username) {
+    console.log('recieved player ready from server');
     lobbyState.playerReady(username);
   });
 
@@ -80,6 +116,7 @@ Client.joinLobby = function() {
 };
 
 Client.ready = function() {
+  console.log('player pressed r');
   Client.socket.emit('playerReady');
 };
 
