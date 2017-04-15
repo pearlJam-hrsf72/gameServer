@@ -71,18 +71,20 @@ Game.death = function(player) {
 };
 
 Game.displayPlayerInfo = function(player) {
-  var username = player.username + '.'; //temp
-  if (Game.text[username]) {
-  	Game.text[username].destroy();
+  if (player.username) {
+    var username = player.username + '.'; //temp
+    if (Game.text[username]) {
+    	Game.text[username].destroy();
+    }
+    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
+  	var displayText = player.username + ': ' + player.lives + ' lives';
+  	var textHeight = 30 + 30 * player.id;
+  	var id = player.id;
+  	if (Game.text[id]) {
+  		Game.text[id].destroy();
+  	}
+  	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
   }
-  Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
-	var displayText = player.username + ': ' + player.lives + ' lives';
-	var textHeight = 30 + 30 * player.id;
-	var id = player.id;
-	if (Game.text[id]) {
-		Game.text[id].destroy();
-	}
-	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
 }
 
 Game.over = function(players) {
