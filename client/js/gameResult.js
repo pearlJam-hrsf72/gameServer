@@ -31,14 +31,14 @@ var gameResult = {
 
 
     var startLabel = game.add.text(game.world.width/2, game.world.height - 40,
-      'Press the "m" key to return to the main menu', 
+      'Press the "p" key to return to the main menu', 
       {font: '25px Arial', fill: '#000000' });
     startLabel.anchor.set(0.5);
 
 
     //add main menu listen input
-    var mkey = game.input.keyboard.addKey(Phaser.Keyboard.M)
-    mkey.onDown.addOnce(this.toMainMenu, this);
+    var pkey = game.input.keyboard.addKey(Phaser.Keyboard.P)
+    mkey.onDown.addOnce(this.Lobby, this);
   },
   
   drawLosers: function(losers) {
@@ -57,8 +57,8 @@ var gameResult = {
     game.stage.backgroundColor = 0xbada55; 
   },
   
-  toMainMenu: function() {
-    game.state.start('Menu');
+  toLobby: function() {
+    game.state.start('Lobby');
   }
   
 
