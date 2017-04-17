@@ -7,6 +7,9 @@ var dataBase = require('./dataBase.js')
 var gameId;
 var heartbeat;
 
+const PEARLS_ON_WIN = 80;
+const PEARLS_ON_LOSE = 20;
+
 module.exports = function(io) {
   
   var lastPlayerId = 0;
@@ -101,12 +104,46 @@ module.exports = function(io) {
 
 
   function pulse() {
-    var players = getAllPlayers();
-    // console.log('players', players);
-    if (gameOver(players)) { //if the game is ovve
-      var gamesref = dataBase.ref(`games/` + gameId.key);
-      var winner = getAllPlayers();
-      gamesref.update({winner: winner[0].id, status: "finished"});
+    var players = getAllPlayers();  // only returns alive players
+
+    if (gameOver(players)) { //if the game is over
+
+      // Update winner for this game 
+      var gamesRef = dataBase.ref(`games/` + gameId.key);
+      var winner = getAllPlayers()[0];
+      gamesRef.update({winner: winner.id, status: "finished"});
+
+      // Update all players stats: wins, losses, pearls
+      var winnerRef = database.ref(`users/${winner.id}`);
+      winnerRef.transaction((user) => {
+        if (user) {
+          user.wins++;
+          user.pearls += PEARLS_ON_WIN;
+        }
+        return user;
+      });
+
+      // Grab user refs for all losers and update their losses
+      var allPlayers = getAllPlayersAliveOrDead();
+      for (var i = 0; i < allPlayers.length; i++) {
+        // Update all losers in database
+        if (allPlayers[i].id !== winner.id) {
+          var playerRef = database.ref(`users/${allPlayers[i].id}`);
+          playerRef.transaction((user) => {
+            if (user) {
+              user.losses++;
+              user.pearls += PEARLS_ON_LOSE;
+            }
+            return user;
+          });
+        }
+      }
+
+      // If only 2 players in the game, update rating
+      if (getAllPlayersAliveOrDead().length === 2) {
+        console.log('only 2 players in the game');
+      }
+
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
     } 
