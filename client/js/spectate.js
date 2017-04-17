@@ -7,6 +7,7 @@ spectateState.text = {};
 
 
 spectateState.init = function() {
+  Client.socketConnect();
   spectateState.state.disableVisibilityChange = true;
   setSpectateEventHandlers();
 };
