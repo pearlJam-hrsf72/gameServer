@@ -38,7 +38,7 @@ var gameResult = {
 
     //add main menu listen input
     var pkey = game.input.keyboard.addKey(Phaser.Keyboard.P)
-    pkey.onDown.addOnce(this.Lobby, this);
+    pkey.onDown.addOnce(this.toLobby, this);
   },
   
   drawLosers: function(losers) {
