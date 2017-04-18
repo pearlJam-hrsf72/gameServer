@@ -126,8 +126,8 @@ module.exports = function(io) {
       query.once("value", function(snapshot) {
         var userKeys = Object.keys(snapshot.val());
         var userKey = userKeys[0];
-        var wins = users[userKey].wins;
-        var pearls = users[userKey].pearls
+        var wins = snapshot[userKey].wins;
+        var pearls = snapshot[userKey].pearls
 
         var winnerRef = dataBase.ref(`users/${userKey}`);
         winnerRef.update({wins, pearls});
