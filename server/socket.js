@@ -113,40 +113,48 @@ module.exports = function(io) {
       var winner = getAllPlayers()[0];
       gamesRef.update({winner: winner.id, status: "finished"});
 
-      // Update all players stats: wins, losses, pearls
-      var winnerRef = database.ref(`users/${winner.id}`);
-      winnerRef.transaction((user) => {
-        if (user) {
-          user.wins++;
-          user.pearls += PEARLS_ON_WIN;
-        }
-        return user;
-      });
-
-      // Grab user refs for all losers and update their losses
-      var allPlayers = getAllPlayersAliveOrDead();
-      for (var i = 0; i < allPlayers.length; i++) {
-        // Update all losers in database
-        if (allPlayers[i].id !== winner.id) {
-          var playerRef = database.ref(`users/${allPlayers[i].id}`);
-          playerRef.transaction((user) => {
-            if (user) {
-              user.losses++;
-              user.pearls += PEARLS_ON_LOSE;
-            }
-            return user;
-          });
-        }
-      }
-
-      // If only 2 players in the game, update rating
-      if (getAllPlayersAliveOrDead().length === 2) {
-        console.log('only 2 players in the game');
-      }
-
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
-    } 
+
+      // Update all players stats: wins, losses, pearls
+      var winnerRef = database.ref(`users/`);
+      winnerRef.orderByChild("displayName").equalTo(winner.id).once("value", function(user) {
+        var wins = user.wins + 1;
+        var pearls = user.pearls += PEARLS_ON_WIN;
+        winnerRef.update({wins, pearls});
+      }
+
+
+      // winnerRef.transaction((user) => {
+      //   if (user) {
+      //     user.wins++;
+      //     user.pearls += PEARLS_ON_WIN;
+      //   }
+      //   return user;
+      // });
+
+      // Grab user refs for all losers and update their losses
+      // var allPlayers = getAllPlayersAliveOrDead();
+      // for (var i = 0; i < allPlayers.length; i++) {
+      //   // Update all losers in database
+      //   if (allPlayers[i].id !== winner.id) {
+      //     var playerRef = database.ref(`users/${allPlayers[i].id}`);
+      //     playerRef.transaction((user) => {
+      //       if (user) {
+      //         user.losses++;
+      //         user.pearls += PEARLS_ON_LOSE;
+      //       }
+      //       return user;
+      //     });
+      //   }
+      // }
+
+      // // If only 2 players in the game, update rating
+      // if (getAllPlayersAliveOrDead().length === 2) {
+      //   console.log('only 2 players in the game');
+      // }
+
+    } // end gameOver
 
 
     players.forEach( (player) => {
