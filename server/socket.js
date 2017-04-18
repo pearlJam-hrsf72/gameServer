@@ -116,16 +116,6 @@ module.exports = function(io) {
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
 
-      var databaseRef = firebase.database().ref('users').child(user_uid).child('searches');
-
-      databaseRef.transaction(function(searches) {
-
-          if (searches) {
-              searches = searches + 1;
-          }
-          return searches;
-      });
-
 
       // Update all players stats: wins, losses, pearls
       var winnerRef = dataBase.ref(`users/`);
