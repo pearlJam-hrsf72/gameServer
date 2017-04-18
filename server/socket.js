@@ -2,7 +2,7 @@ var  _ = require('lodash');
 var velocity = require('./velocity.js');
 var interactions = require('./interactions.js');
 var dataBase = require('./dataBase.js');
-var eloCalc = require('../libraries/eloCalc.js');
+var eloCalc = require('../libraries/elo.js');
 
 var gameId;
 var heartbeat;
