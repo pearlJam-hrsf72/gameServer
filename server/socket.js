@@ -127,48 +127,36 @@ module.exports = function(io) {
         var users = snapshot.val();
         var userKeys = Object.keys(users);
         var winnerKey = userKeys[0];
-        var winner = users[userKeys[0]];
-
-        console.log('updating wins to: ', winner.wins + 1);
-        console.log('updating pearls to: ', winner.pearls + PEARLS_ON_WIN);
+        var winner = users[userKey];
 
         var winnerRef = dataBase.ref(`users/` + winnerKey);
         winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN});
-        // snapshot.ref.update({ wins, pearls });
       });
 
-      // usersRef.orderByChild("displayName").equalTo(winner.id).once("value", function(usersSnapshot) {
-      //   usersSnapshot.forEach((user) => {
-      //     var wins = user.wins + 1;
-      //     var pearls = user.pearls += PEARLS_ON_WIN;
-      //     user.ref().update({wins, pearls});
-      //   })
-      // });
+
+      // Grab user refs for all losers and update their losses and pearls
 
 
-      // winnerRef.transaction((user) => {
-      //   if (user) {
-      //     user.wins++;
-      //     user.pearls += PEARLS_ON_WIN;
-      //   }
-      //   return user;
-      // });
+      var allPlayers = getAllPlayersAliveOrDead();
+      for (var i = 0; i < allPlayers.length; i++) {
+        // Update all losers in database
+        if (allPlayers[i].id !== winner.id) {
+          var id = allPlayers[i].id;
+          
+          var query = usersRef.orderByChild("displayName").equalTo(id);
 
-      // Grab user refs for all losers and update their losses
-      // var allPlayers = getAllPlayersAliveOrDead();
-      // for (var i = 0; i < allPlayers.length; i++) {
-      //   // Update all losers in database
-      //   if (allPlayers[i].id !== winner.id) {
-      //     var playerRef = database.ref(`users/${allPlayers[i].id}`);
-      //     playerRef.transaction((user) => {
-      //       if (user) {
-      //         user.losses++;
-      //         user.pearls += PEARLS_ON_LOSE;
-      //       }
-      //       return user;
-      //     });
-      //   }
-      // }
+          // snapshot returns an object of keys
+          query.once("value", function(snapshot) {
+            var users = snapshot.val();
+            var userKeys = Object.keys(users);
+            var userKey = userKeys[0];
+            var user = users[userKey];
+
+            var loserRef = dataBase.ref(`users/` + userKey);
+            loserRef.update({losses: user.losses + 1, pearls: winner.pearls + PEARLS_ON_LOSE});
+          });
+        }
+      }
 
       // // If only 2 players in the game, update rating
       // if (getAllPlayersAliveOrDead().length === 2) {
