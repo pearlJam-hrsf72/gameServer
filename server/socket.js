@@ -17,7 +17,7 @@ module.exports = function(io) {
   const defaultLives = 3;
 
   io.on('connection', function(socket) {
-    console.log('connected');
+    console.log('Connected.');
 
     socket.on('addNewPlayer', function() {
       socket.player = socket.player || {};
@@ -49,8 +49,7 @@ module.exports = function(io) {
       var allPlayers = getAllPlayers();
     
       if (allReady(allPlayers)) {
-        console.log('game is starting');
-        // TODO: Save all players data
+        console.log('Game is starting.');
         allPlayers.forEach((player) => {
           id = player.id;
           var usersref = dataBase.ref('users/');
@@ -142,7 +141,6 @@ module.exports = function(io) {
     }
   }
 
-
   function allReady(players) {
     var ready = true;
     players.forEach((player) => {
@@ -155,15 +153,11 @@ module.exports = function(io) {
 
   function updatePlayerStatsInDatabase() {
     var allPlayers = getAllPlayersAliveOrDead();
+    
     // If it's a 1v1, we update the ratings of each player, else don't update ratings
     var updateRatings = allPlayers.length === 2;
     if (updateRatings) {
-      var winnerRef;
-      var loserRef;
-      var winnerRating;
-      var loserRating;
 
-      // Get winnerData
       var winner = getAllPlayers()[0];  // winner is the only one alive
       var winnerData = {};
       for (var i = 0; i < dbPlayers.length; i++) {
@@ -172,7 +166,6 @@ module.exports = function(io) {
         }
       }
 
-      // Get loserData
       var loserData = {};
       for (var i = 0; i < dbPlayers.length; i++) {
         if (dbPlayers[i].displayName !== winner.id) {
@@ -180,15 +173,11 @@ module.exports = function(io) {
         }
       }
 
-      // Calculate new ratings to update database with
       var winnerNewRating = eloCalc.getRatingIfWin(winnerData.rating, loserData.rating);
       var loserNewRating = eloCalc.getRatingIfLose(loserData.rating, winnerData.rating);
     }       
 
-    // Update winner for this game 
     var gamesRef = dataBase.ref(`games/` + gameId.key);
-
-    // Update all players stats: wins, losses, pearls
     var usersRef = dataBase.ref(`users/`);
 
     // Update winner's wins, pearls, rating
@@ -199,7 +188,7 @@ module.exports = function(io) {
       var winnerKey = userKeys[0];
       var winner = users[winnerKey];
 
-      winnerRef = dataBase.ref(`users/` + winnerKey);
+      var winnerRef = dataBase.ref(`users/` + winnerKey);
       if (updateRatings) {
         winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN, rating: winnerNewRating});
       } else {
@@ -222,9 +211,8 @@ module.exports = function(io) {
           var userKey = userKeys[0];
           var user = users[userKey];
 
-          loserRef = dataBase.ref(`users/` + userKey);
+          var loserRef = dataBase.ref(`users/` + userKey);
 
-          loserRating = user.rating
           if (updateRatings) {
             loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE, rating: loserNewRating});
           } else {
