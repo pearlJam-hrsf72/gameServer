@@ -7,6 +7,7 @@ var eloCalc = require('../libraries/elo.js');
 var gameId;
 var heartbeat;
 var dbPlayers = [];
+var gameServerUrl;
 
 const PEARLS_ON_WIN = 80;
 const PEARLS_ON_LOSE = 20;
@@ -38,7 +39,8 @@ module.exports = function(io) {
       socket.emit('allPlayers', getAllPlayers());
     });
     
-    socket.on('joinLobby', function(username) {
+    socket.on('joinLobby', function({username, serverUrl}) {
+      gameServerUrl = serverUrl;
       socket.player = {id: username || lastPlayerId++, ready: false, lives: defaultLives};
       io.emit('renderInfo', getAllPlayers());
     });
@@ -57,7 +59,7 @@ module.exports = function(io) {
             dbPlayers.push(data.val());
             if (dbPlayers.length === allPlayers.length) {
               var gamesref = dataBase.ref('games/');
-              gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers});
+              gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'});
               heartbeat = setInterval(pulse, 10);
             }
           })
