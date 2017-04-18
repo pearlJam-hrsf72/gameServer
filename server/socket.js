@@ -119,11 +119,11 @@ module.exports = function(io) {
 
       // Update all players stats: wins, losses, pearls
       var usersRef = dataBase.ref(`users/`);
-      usersRef.orderByChild("displayName").equalTo(winner.id).once("value", function(users) {
-        console.log('>>>> users im getting: ', users.key);
-        var wins = users.wins + 1;
-        var pearls = users.pearls += PEARLS_ON_WIN;
-        users.update({wins, pearls});
+      usersRef.orderByChild("displayName").equalTo(winner.id).once("value", function(user) {
+        console.log('>>>> users im getting: ', user);
+        var wins = user.wins + 1;
+        var pearls = user.pearls += PEARLS_ON_WIN;
+        user.update({wins, pearls});
       });
 
 
