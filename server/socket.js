@@ -127,13 +127,14 @@ module.exports = function(io) {
         var users = snapshot.val();
         var userKeys = Object.keys(users);
 
-        var userKey = userKeys[0];
-        var user = users[userKey];
-        var wins = user.wins;
-        var pearls = user.pearls;
+        var winnerKey = userKeys[0];
+        var winner = users[userKeys[0]];
 
-        var winnerRef = dataBase.ref(`users/${userKey}`);
-        winnerRef.update({wins, pearls});
+        console.log('updating wins to: ', user.wins + 1);
+        console.log('updating pearls to: ', user.pearls + PEARLS_ON_WIN);
+
+        var winnerRef = dataBase.ref(`users/` + winnerKey);
+        winnerRef.update({wins: user.wins + 1, pearls: user.pearls + PEARLS_ON_WIN});
         // snapshot.ref.update({ wins, pearls });
       });
 
