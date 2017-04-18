@@ -121,11 +121,17 @@ module.exports = function(io) {
       var usersRef = dataBase.ref(`users/`);
 
       var query = usersRef.orderByChild("displayName").equalTo(winner.id);
+
+      // snapshot returns an object of keys
       query.once("value", function(snapshot) {
-        console.log('snapshot.val(): ', snapshot.val());
-        console.log('snapshot.key: ', snapshot.key);
-        console.log('snapshot.child(): ', snapshot.child());
-        snapshot.ref.update({ wins: snapshot.val().wins, pearls: snapshot.val().pearls });
+        var userKeys = Object.keys(snapshot.val());
+        var userKey = userKeys[0];
+        var wins = users[userKey].wins;
+        var pearls = users[userKey].pearls
+
+        var winnerRef = dataBase.ref(`users/${userKey}`);
+        winnerRef.update({wins, pearls});
+        // snapshot.ref.update({ wins, pearls });
       });
 
       // usersRef.orderByChild("displayName").equalTo(winner.id).once("value", function(usersSnapshot) {
