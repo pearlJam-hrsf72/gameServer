@@ -116,9 +116,21 @@ module.exports = function(io) {
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
 
+      var databaseRef = firebase.database().ref('users').child(user_uid).child('searches');
+
+      databaseRef.transaction(function(searches) {
+
+          if (searches) {
+              searches = searches + 1;
+          }
+          return searches;
+      });
+
+
       // Update all players stats: wins, losses, pearls
       var winnerRef = dataBase.ref(`users/`);
-      winnerRef.orderByChild("displayName").equalTo(winner.id).once("value", function(user) {
+      winnerRef.orderByChild("displayName").equalTo(winner.id).once("value", function(users) {
+        console.log('>>>> users im getting: ', users);
         var wins = user.wins + 1;
         var pearls = user.pearls += PEARLS_ON_WIN;
         winnerRef.update({wins, pearls});
