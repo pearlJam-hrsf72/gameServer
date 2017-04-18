@@ -132,7 +132,7 @@ module.exports = function(io) {
         console.log('updating wins to: ', winner.wins + 1);
         console.log('updating pearls to: ', winner.pearls + PEARLS_ON_WIN);
 
-        var winnerRef = dataBase.ref(`winners/` + winnerKey);
+        var winnerRef = dataBase.ref(`users/` + winnerKey);
         winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN});
         // snapshot.ref.update({ wins, pearls });
       });
