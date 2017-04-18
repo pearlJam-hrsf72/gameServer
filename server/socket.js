@@ -122,7 +122,7 @@ module.exports = function(io) {
         var wins = user.wins + 1;
         var pearls = user.pearls += PEARLS_ON_WIN;
         winnerRef.update({wins, pearls});
-      }
+      });
 
 
       // winnerRef.transaction((user) => {
