@@ -153,7 +153,7 @@ module.exports = function(io) {
             var user = users[userKey];
 
             var loserRef = dataBase.ref(`users/` + userKey);
-            loserRef.update({losses: user.losses + 1, pearls: winner.pearls + PEARLS_ON_LOSE});
+            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE});
           });
         }
       }
