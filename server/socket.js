@@ -152,6 +152,11 @@ module.exports = function(io) {
   }
 
   function updatePlayerStatsInDatabase() {
+    // Update game status
+    var gamesref = dataBase.ref(`games/` + gameId.key);
+    var winner = getAllPlayers();
+    gamesref.update({winner: winner[0].id, status: "finished"});
+
     var allPlayers = getAllPlayersAliveOrDead();
     
     // If it's a 1v1, we update the ratings of each player, else don't update ratings
