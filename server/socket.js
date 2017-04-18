@@ -1,11 +1,15 @@
 var  _ = require('lodash');
-
 var velocity = require('./velocity.js');
 var interactions = require('./interactions.js');
-var dataBase = require('./dataBase.js')
+var dataBase = require('./dataBase.js');
+var eloCalc = require('../libraries/elo.js');
 
 var gameId;
 var heartbeat;
+var dbPlayers = [];
+
+const PEARLS_ON_WIN = 80;
+const PEARLS_ON_LOSE = 20;
 
 module.exports = function(io) {
   
@@ -13,7 +17,7 @@ module.exports = function(io) {
   const defaultLives = 3;
 
   io.on('connection', function(socket) {
-    console.log('connected');
+    console.log('Connected.');
 
     socket.on('addNewPlayer', function() {
       socket.player = socket.player || {};
@@ -43,9 +47,9 @@ module.exports = function(io) {
   
       socket.player.ready = true;
       var allPlayers = getAllPlayers();
-      var dbPlayers = [];
+    
       if (allReady(allPlayers)) {
-        console.log('game is starting');
+        console.log('Game is starting.');
         allPlayers.forEach((player) => {
           id = player.id;
           var usersref = dataBase.ref('users/');
@@ -56,11 +60,8 @@ module.exports = function(io) {
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers});
               heartbeat = setInterval(pulse, 10);
             }
-            
           })
         })
-
-
       }
       io.emit('renderInfo', allPlayers);
 
@@ -99,17 +100,17 @@ module.exports = function(io) {
     return players; 
   }
 
-
   function pulse() {
-    var players = getAllPlayers();
-    // console.log('players', players);
-    if (gameOver(players)) { //if the game is ovve
-      var gamesref = dataBase.ref(`games/` + gameId.key);
-      var winner = getAllPlayers();
-      gamesref.update({winner: winner[0].id, status: "finished"});
+    var players = getAllPlayers();  // only returns alive players
+
+    if (gameOver(players)) { //if the game is over
+
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
-    } 
+
+      updatePlayerStatsInDatabase();
+      
+    } // end gameOver
 
 
     players.forEach( (player) => {
@@ -140,7 +141,6 @@ module.exports = function(io) {
     }
   }
 
-
   function allReady(players) {
     var ready = true;
     players.forEach((player) => {
@@ -151,4 +151,80 @@ module.exports = function(io) {
     return ready;
   }
 
+  function updatePlayerStatsInDatabase() {
+    // Update game status
+    var gamesref = dataBase.ref(`games/` + gameId.key);
+    var winner = getAllPlayers();
+    gamesref.update({winner: winner[0].id, status: "finished"});
+
+    var allPlayers = getAllPlayersAliveOrDead();
+    
+    // If it's a 1v1, we update the ratings of each player, else don't update ratings
+    var updateRatings = allPlayers.length === 2;
+    if (updateRatings) {
+
+      var winner = getAllPlayers()[0];  // winner is the only one alive
+      var winnerData = {};
+      for (var i = 0; i < dbPlayers.length; i++) {
+        if (dbPlayers[i].displayName === winner.id) {
+          winnerData = dbPlayers[i];
+        }
+      }
+
+      var loserData = {};
+      for (var i = 0; i < dbPlayers.length; i++) {
+        if (dbPlayers[i].displayName !== winner.id) {
+          loserData = dbPlayers[i];
+        }
+      }
+
+      var winnerNewRating = eloCalc.getRatingIfWin(winnerData.rating, loserData.rating);
+      var loserNewRating = eloCalc.getRatingIfLose(loserData.rating, winnerData.rating);
+    }       
+
+    var gamesRef = dataBase.ref(`games/` + gameId.key);
+    var usersRef = dataBase.ref(`users/`);
+
+    // Update winner's wins, pearls, rating
+    var query = usersRef.orderByChild("displayName").equalTo(winner.id);
+    query.once("value", function(snapshot) {
+      var users = snapshot.val();
+      var userKeys = Object.keys(users);
+      var winnerKey = userKeys[0];
+      var winner = users[winnerKey];
+
+      var winnerRef = dataBase.ref(`users/` + winnerKey);
+      if (updateRatings) {
+        winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN, rating: winnerNewRating});
+      } else {
+        winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN});
+      }
+    });
+
+    // Update all losers' losses, pearls, rating
+    var allPlayers = getAllPlayersAliveOrDead();
+    for (var i = 0; i < allPlayers.length; i++) {
+      
+      // Update all losers in database
+      if (allPlayers[i].id !== winner.id) {
+        var id = allPlayers[i].id;
+
+        var query = usersRef.orderByChild("displayName").equalTo(id);
+        query.once("value", function(snapshot) {
+          var users = snapshot.val();
+          var userKeys = Object.keys(users);
+          var userKey = userKeys[0];
+          var user = users[userKey];
+
+          var loserRef = dataBase.ref(`users/` + userKey);
+
+          if (updateRatings) {
+            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE, rating: loserNewRating});
+          } else {
+            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE});
+          }
+        });
+      }
+    }
+  }
 };
