@@ -120,7 +120,7 @@ module.exports = function(io) {
       // Update all players stats: wins, losses, pearls
       var usersRef = dataBase.ref(`users/`);
 
-      var query = usersRef.orderByKey("displayName").equalTo(winner.id);
+      var query = usersRef.orderByChild("displayName").equalTo(winner.id);
       query.once("value", function(snapshot) {
         snapshot.ref.update({ wins: snapshot.val().wins, pearls: snapshot.val().pearls });
       });
