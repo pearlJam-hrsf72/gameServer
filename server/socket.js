@@ -108,43 +108,65 @@ module.exports = function(io) {
       // If only 2 players in the game, update rating
       console.log('>>> dbPlayers: ', dbPlayers);
       var allPlayers = getAllPlayersAliveOrDead();
+
+      io.emit('gameOver', getAllPlayersAliveOrDead());
+      clearInterval(heartbeat);
+
+      // If it's a 1v1, we update the ratings of each player
       var updateRatings = allPlayers.length === 2;
       if (updateRatings) {
         var winnerRef;
         var loserRef;
         var winnerRating;
         var loserRating;
+
+        // Get winnerData
+        var winner = getAllPlayers()[0];  // winner is the only one alive
+        var winnerData = {};
+        for (var i = 0; i < dbPlayers.length; i++) {
+          if (dbPlayers[i].displayName === winner.id) {
+            winnerData = dbPlayers[i];
+          }
+        }
+
+        // Get loserData
+        var loserData = {};
+        for (var i = 0; i < dbPlayers.length; i++) {
+          if (dbPlayers[i].displayName !== winner.id) {
+            loserData = dbPlayers[i];
+          }
+        }
+        var winnerNewRating = eloCalc.getRatingIfWin(winnerData.rating, loserData.rating);
+        var loserNewRating = eloCalc.getRatingIfLose(loserData.rating, winnerData.rating);
+        console.log('winnerNewRating: ', winnerNewRating)
+        console.log('loserNewRating: ', loserNewRating)
       }       
+
+      // gamesRef.update({winner: winner.id, status: "finished"});
 
       // Update winner for this game 
       var gamesRef = dataBase.ref(`games/` + gameId.key);
-      var winner = getAllPlayers()[0];
-      gamesRef.update({winner: winner.id, status: "finished"});
-
-      io.emit('gameOver', getAllPlayersAliveOrDead());
-      clearInterval(heartbeat);
 
       // Update all players stats: wins, losses, pearls
       var usersRef = dataBase.ref(`users/`);
 
       var query = usersRef.orderByChild("displayName").equalTo(winner.id);
 
-      var dbPromises = [];
 
       // Update winner's wins, pearls, rating
-
       query.once("value", function(snapshot) {
         var users = snapshot.val();
         var userKeys = Object.keys(users);
         var winnerKey = userKeys[0];
         var winner = users[winnerKey];
 
-        // TODO: get loser.rating
-        var newRating = eloCalc.getRatingIfWin(winner.rating, loser.rating);
         winnerRef = dataBase.ref(`users/` + winnerKey);
-        winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN, rating: newRating});
+        if (updateRatings) {
+          winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN, rating: winnerNewRating});
+        } else {
+          winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN});
+        }
       });
-
 
       // Update all losers' losses, pearls, rating
       var allPlayers = getAllPlayersAliveOrDead();
@@ -165,8 +187,11 @@ module.exports = function(io) {
             loserRef = dataBase.ref(`users/` + userKey);
 
             loserRating = user.rating
-
-            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE});
+            if (updateRatings) {
+              loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE, rating: loserNewRating});
+            } else {
+              loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE});
+            }
           });
         }
       }
