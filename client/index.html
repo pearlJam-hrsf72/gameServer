@@ -24,10 +24,10 @@
 <script>
     console.log('other log');
     window.addEventListener("message", function(event) {
-        window.username = event.data;
+        window.username = event.data.displayName;
+        window.serverUrl = event.data.url;
         console.log('username is', window.username);
+        console.log('serverUrl is', window.serverUrl);
     }, true);
-    
-
 </script>
 </html>
