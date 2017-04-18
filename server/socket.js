@@ -122,7 +122,9 @@ module.exports = function(io) {
 
       var query = usersRef.orderByChild("displayName").equalTo(winner.id);
       query.once("value", function(snapshot) {
-        console.log(snapshot.val());
+        console.log('snapshot.val(): ', snapshot.val());
+        console.log('snapshot.key: ', snapshot.key;
+        console.log('snapshot.child(): ', snapshot.child());
         snapshot.ref.update({ wins: snapshot.val().wins, pearls: snapshot.val().pearls });
       });
 
