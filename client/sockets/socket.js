@@ -117,7 +117,8 @@ Client.heartBeat = function(coordinates) {
 };
 
 Client.joinLobby = function() {
-  Client.socket.emit('joinLobby', window.username);
+  var messageObj = {username: window.username, serverUrl: window.serverUrl};
+  Client.socket.emit('joinLobby', messageObj);
   //Maybe do Clietn.socket.emit('joinLobby', username);
 };
 
