@@ -117,7 +117,7 @@ module.exports = function(io) {
       clearInterval(heartbeat);
 
       // Update all players stats: wins, losses, pearls
-      var winnerRef = database.ref(`users/`);
+      var winnerRef = dataBase.ref(`users/`);
       winnerRef.orderByChild("displayName").equalTo(winner.id).once("value", function(user) {
         var wins = user.wins + 1;
         var pearls = user.pearls += PEARLS_ON_WIN;
