@@ -119,13 +119,19 @@ module.exports = function(io) {
 
       // Update all players stats: wins, losses, pearls
       var usersRef = dataBase.ref(`users/`);
-      usersRef.orderByChild("displayName").equalTo(winner.id).once("value", function(usersSnapshot) {
-        usersSnapshot.forEach((user) => {
-          var wins = user.wins + 1;
-          var pearls = user.pearls += PEARLS_ON_WIN;
-          user.ref().update({wins, pearls});
-        })
+
+      var query = usersRef.orderByKey("displayName").equalTo(winner.id);
+      query.once("value", function(snapshot) {
+        snapshot.ref.update({ wins: snapshot.val().wins, pearls: snapshot.val().pearls });
       });
+
+      // usersRef.orderByChild("displayName").equalTo(winner.id).once("value", function(usersSnapshot) {
+      //   usersSnapshot.forEach((user) => {
+      //     var wins = user.wins + 1;
+      //     var pearls = user.pearls += PEARLS_ON_WIN;
+      //     user.ref().update({wins, pearls});
+      //   })
+      // });
 
 
       // winnerRef.transaction((user) => {
