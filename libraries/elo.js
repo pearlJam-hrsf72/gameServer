@@ -24,19 +24,19 @@ var eloCalc = function() {
 
   /* Returns ELO rating after winning */
   this.getRatingIfWin = function(rating, opponentRating) {
-    var odds = this.getOdds(rating, opponentRating);
+    var odds = this.getOddsOfWin(rating, opponentRating);
     return this._getNewRating(odds, RESULTS.WIN, rating);
   };
 
   /* Returns ELO rating after losing */
   this.getRatingIfLose = function(rating, opponentRating) {
-    var odds = this.getOdds(rating, opponentRating);
+    var odds = this.getOddsOfWin(rating, opponentRating);
     return this._getNewRating(odds, RESULTS.LOSS, rating);
   };
 
   /* Return ELO rating after tie */
   this.getRatingIfTie = function(rating, opponentRating) {
-    var odds = this.getOdds(rating, opponentRating);
+    var odds = this.getOddsOfWin(rating, opponentRating);
     return this._getNewRating(odds, RESULTS.TIE, rating);
   };
 
