@@ -127,7 +127,7 @@ module.exports = function(io) {
         var users = snapshot.val();
         var userKeys = Object.keys(users);
         var winnerKey = userKeys[0];
-        var winner = users[userKey];
+        var winner = users[winnerKey];
 
         var winnerRef = dataBase.ref(`users/` + winnerKey);
         winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN});
