@@ -41,7 +41,7 @@ module.exports = {
           if (this.collided === 'top')
             this.collided = null;
         }.bind(player), 2000);
-      } else if (player.y > 735) {
+      } else if (player.y > 1800) {
         player.collided = 'bottom';
         if (player.yTo > 0) {
           player.yTo = - player.yTo;
@@ -59,7 +59,7 @@ module.exports = {
           if (this.collided === 'right')
             this.collided = null;
         }.bind(player), 2000);
-      } else if (player.x > 735) {
+      } else if (player.x > 1800) {
         player.collided = 'left';
         if (player.xTo > 0) {
           player.xTo = - player.xTo;

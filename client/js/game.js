@@ -6,12 +6,13 @@ Game.text = {};
 Game.height = 0;
 
 Game.init = function() {
-  game.state.disableVisibilityChange = true;
+  game.state.disableVisibilityChange = false;
   setGameEventHandlers();
 };
 
 Game.create = function() {
   Game.add.sprite(0, 0, 'background');
+  game.world.setBounds(0, 0, 1900, 1900);
   Client.askNewPlayer();
   Game.cursor = {x: 450, y: 300};
   Game.Player = game.add.group();
@@ -33,7 +34,10 @@ Game.create = function() {
 };
 
 Game.update = function() {
-  Game.cursor = {x: game.input.mousePointer.x, y: game.input.mousePointer.y};
+  Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
+  if (game.input.activePointer.isDown) {
+    Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
+  }
 };
 
 Game.heartBeat = function() {
@@ -44,13 +48,14 @@ Game.updatePlayerPosition = function(player) {
   var pastPlayer = Game.Players[player.id];
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer);
-    tween.to({x: player.x, y: player.y}, 10);
+    tween.to({x: player.x, y: player.y}, 16);
     tween.start();
   }
   Game.displayPlayerInfo(player);
 }
 
 Game.addNewPlayer = function(player) {
+  var username = player.id
   if (Game.Players[player.id]) {
     Game.Players[player.id].destroy();
   }
@@ -58,6 +63,10 @@ Game.addNewPlayer = function(player) {
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
   player.anchor.y = 0.5;
+  if (username === window.username) {
+    game.physics.enable(player);
+    game.camera.follow(player);
+  }
 };
 
 Game.remove = function(id) {
