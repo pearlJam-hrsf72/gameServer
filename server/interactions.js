@@ -1,12 +1,25 @@
 var velocity = require('./velocity.js');
 
-var holeCenter = {x: 375, y: 375} //current center of the board 
+
+const ballSize = 50;
+const holeSize = 128;
+const numHoles = 8;
 
 module.exports = {
+  holeCenters: [],
+
+  createHoles: function() {
+    for (let i = 0; i < numHoles; i++) {
+      let x = Math.random() * 1700 + 100;
+      let y = Math.random() * 1700 + 100;
+      module.exports.holeCenters.push({x: x, y: y});
+    }
+  },
+
   checkPlayerCollision: function(player, players) {
     for (var i = 0; i < players.length; i ++ ) {
       var distance = velocity.distanceBetween(player, players[i]).distance 
-      if (distance < 35 && distance > 1) {
+      if (distance < (ballSize + 5) && distance > 1) {
         player.collided = true;
         players[i].collided = true;
         setTimeout(function() {
@@ -32,7 +45,7 @@ module.exports = {
   },
 
   checkWallCollision: function(player) {
-      if (player.y < 15) {
+      if (player.y < 5 + ballSize / 2) {
         player.collided = 'top';
         if (player.yTo < 0) {
           player.yTo = - player.yTo;
@@ -41,7 +54,7 @@ module.exports = {
           if (this.collided === 'top')
             this.collided = null;
         }.bind(player), 2000);
-      } else if (player.y > 1800) {
+      } else if (player.y > 1905 - (ballSize / 2)) {
         player.collided = 'bottom';
         if (player.yTo > 0) {
           player.yTo = - player.yTo;
@@ -50,7 +63,7 @@ module.exports = {
           if (this.collided === 'bottom')
             this.collided = null;
         }.bind(player), 2000);
-      } else if (player.x < 15) {
+      } else if (player.x < 5 + ballSize / 2) {
         player.collided = 'right';
         if (player.xTo < 0) {
           player.xTo = - player.xTo;
@@ -59,7 +72,7 @@ module.exports = {
           if (this.collided === 'right')
             this.collided = null;
         }.bind(player), 2000);
-      } else if (player.x > 1800) {
+      } else if (player.x > 1905 - (ballSize / 2)) {
         player.collided = 'left';
         if (player.xTo > 0) {
           player.xTo = - player.xTo;
@@ -72,26 +85,36 @@ module.exports = {
   },
 
   checkHoleDeath: function(player) {
-    //need to remove player from the array on the server, if window gets refreshed 
-    //'ghost ball' appears where dead player's cursor is
-    var distance = velocity.distanceBetween(player, holeCenter);
-    if (distance.distance < 40) {
+    var death = false;
+    module.exports.holeCenters.forEach( (holeCenter) => {
+      var distance = velocity.distanceBetween(player, holeCenter);
+      if (distance.distance < (ballSize + holeSize) / 2) {
+        death = true;
+      }
+    })
+    if (death) {
       player.lives --;
       if (player.lives === 0) {
         return true;
       } else {
         module.exports.spawn(player);
       }
-    }
+    }   
     return false;
   },
 
   spawn: function(player) {
     player.x = Math.random() * 750;
     player.y = Math.random() * 750;
-    distance = velocity.distanceBetween(player, holeCenter);
+    var distance = 1900;
+    module.exports.holeCenters.forEach( (holeCenter) => {
+      tempDistance = velocity.distanceBetween(player, holeCenter);
+      if (tempDistance.distance < distance) {
+        distance = tempDistance.distance;
+      }
+    })
     module.exports.checkWallCollision(player);
-    if (distance.distance < 150 || player.collided) {
+    if (distance < 150 || player.collided) {
       player.collided = undefined;
       module.exports.spawn(player);
     }

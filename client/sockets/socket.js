@@ -26,6 +26,10 @@ var setGameEventHandlers = function() {
   	Game.death(player);
   })
 
+  Client.socket.on('holes', function(holes) {
+    Game.renderHoles(holes);
+  })
+
   Client.socket.on('remove', function(playerId) {
     Game.remove(playerId);
   });

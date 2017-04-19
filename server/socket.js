@@ -60,6 +60,8 @@ module.exports = function(io) {
             if (dbPlayers.length === allPlayers.length) {
               var gamesref = dataBase.ref('games/');
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'});
+              interactions.createHoles();
+              socket.emit('holes', interactions.holeCenters)
               heartbeat = setInterval(pulse, 16);
             }
           })
