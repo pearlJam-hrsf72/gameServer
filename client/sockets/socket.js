@@ -3,8 +3,7 @@ var Client = {};
 Client.socketConnect = function() {
   Client.socket = io.connect();
   Client.socket.on('holes', function(holes) {
-    console.log(holes);
-    Game.renderHoles(holes);
+    Game.rawHoles = holes;
   })
 }
 

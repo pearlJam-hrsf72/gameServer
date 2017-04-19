@@ -25,6 +25,11 @@ Game.create = function() {
 };
 
 Game.update = function() {
+  if (!Game.holes.length) {
+    if (Game.rawHoles) {
+      Game.renderHoles(Game.rawHoles);
+    }
+  }
   Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
   if (game.input.activePointer.isDown) {
     Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};

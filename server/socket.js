@@ -62,7 +62,9 @@ module.exports = function(io) {
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'});
               interactions.createHoles();
               heartbeat = setInterval(pulse, 16);
-              io.emit('holes', interactions.holeCenters)
+              // setTimeout(function() {
+                io.emit('holes', interactions.holeCenters)
+              // }, 1000)
             }
           })
         })
