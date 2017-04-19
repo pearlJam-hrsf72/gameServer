@@ -1,5 +1,6 @@
 var lobbyState = {
   playerNameHeight: 30,
+  isReady: false,
 
   preload: function() {
   },
@@ -14,11 +15,19 @@ var lobbyState = {
   
     var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
     rkey.onDown.addOnce(this.ready, this);
+  },
 
+  update: function() {
+    if (game.input.activePointer.isDown) {
+      this.ready();
+    }
   },
 
   ready: function() {
-    Client.ready();
+    if (!this.isReady) {
+      Client.ready();
+    }
+    this.isReady = true
   },
 
   addStartLabels: function() {
