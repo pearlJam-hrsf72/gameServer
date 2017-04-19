@@ -23,11 +23,11 @@
 <script src="sockets/socket.js" type="text/javascript"></script>
 <script>
     console.log('other log');
-    // window.addEventListener("message", function(event) {
-        window.username = 'Jeff';
-        window.serverUrl = 'https://pearljam72-staging.herokuapp.com';
+    window.addEventListener("message", function(event) {
+        window.username = event.data.displayName;
+        window.serverUrl = event.data.url;
         console.log('username is', window.username);
         console.log('serverUrl is', window.serverUrl);
-    // }, true);
+    }, true);
 </script>
 </html>
