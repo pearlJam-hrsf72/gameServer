@@ -34,7 +34,10 @@ Game.create = function() {
 };
 
 Game.update = function() {
-  Game.cursor = {x: game.input.mousePointer.x, y: game.input.mousePointer.y};
+  Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
+  if (game.input.activePointer.isDown) {
+    Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
+  }
 };
 
 Game.heartBeat = function() {
@@ -45,7 +48,7 @@ Game.updatePlayerPosition = function(player) {
   var pastPlayer = Game.Players[player.id];
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer);
-    tween.to({x: player.x, y: player.y}, 10);
+    tween.to({x: player.x, y: player.y}, 16);
     tween.start();
   }
   Game.displayPlayerInfo(player);

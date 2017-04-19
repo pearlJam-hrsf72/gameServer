@@ -60,7 +60,7 @@ module.exports = function(io) {
             if (dbPlayers.length === allPlayers.length) {
               var gamesref = dataBase.ref('games/');
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'});
-              heartbeat = setInterval(pulse, 10);
+              heartbeat = setInterval(pulse, 16);
             }
           })
         })
