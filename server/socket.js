@@ -63,7 +63,7 @@ module.exports = function(io) {
               interactions.createHoles();
               heartbeat = setInterval(pulse, 16);
               // setTimeout(function() {
-                io.emit('holes', interactions.holeCenters)
+              io.emit('holes', interactions.holeCenters)
               // }, 1000)
             }
           })
@@ -113,9 +113,9 @@ module.exports = function(io) {
 
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
-
       updatePlayerStatsInDatabase();
-      
+      dbPlayers = [];
+
     } // end gameOver
 
 
@@ -232,5 +232,6 @@ module.exports = function(io) {
         });
       }
     }
+
   }
 };
