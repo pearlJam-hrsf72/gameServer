@@ -52,6 +52,7 @@ Game.updatePlayerPosition = function(player) {
 }
 
 Game.addNewPlayer = function(player) {
+  var username = player.id
   if (Game.Players[player.id]) {
     Game.Players[player.id].destroy();
   }
@@ -59,10 +60,8 @@ Game.addNewPlayer = function(player) {
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
   player.anchor.y = 0.5;
-  console.log(player.username, window.username);
-  if (player.id === window.username) {
-    console.log('this is true');
-    game.physics.endable(player);
+  if (username === window.username) {
+    game.physics.enable(player);
     game.camera.follow(player);
   }
 };
