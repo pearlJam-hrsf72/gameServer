@@ -2,6 +2,10 @@ var Client = {};
 
 Client.socketConnect = function() {
   Client.socket = io.connect();
+  Client.socket.on('holes', function(holes) {
+    console.log(holes);
+    Game.renderHoles(holes);
+  })
 }
 
 var setGameEventHandlers = function() {
@@ -15,20 +19,18 @@ var setGameEventHandlers = function() {
     });
   });
 
+
   Client.socket.on('pulse', function(players) {
     Game.height = 0;
-  	players.forEach( (player) => {
-  		Game.updatePlayerPosition(player);
-  	})
+    players.forEach( (player) => {
+      Game.updatePlayerPosition(player);
+    })
   })
 
   Client.socket.on('death', function(player) {
-  	Game.death(player);
+    Game.death(player);
   })
 
-  Client.socket.on('holes', function(holes) {
-    Game.renderHoles(holes);
-  })
 
   Client.socket.on('remove', function(playerId) {
     Game.remove(playerId);
@@ -39,6 +41,7 @@ var setGameEventHandlers = function() {
   });
 
 };
+
 
 var setSpectateEventHandlers = function() {
   Client.socket.on('allPlayers', function(players) {

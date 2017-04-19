@@ -61,8 +61,8 @@ module.exports = function(io) {
               var gamesref = dataBase.ref('games/');
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'});
               interactions.createHoles();
-              socket.emit('holes', interactions.holeCenters)
               heartbeat = setInterval(pulse, 16);
+              io.emit('holes', interactions.holeCenters)
             }
           })
         })

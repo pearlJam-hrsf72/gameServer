@@ -18,7 +18,6 @@ Game.create = function() {
   Game.cursor = {x: 450, y: 300};
   Game.Player = game.add.group();
   Game.bound = game.add.group();
-  Game.hole = game.add.group();
 
   Game.heartBeat();
   Game.pulse = setInterval(Game.heartBeat, 10);
@@ -95,11 +94,12 @@ Game.displayPlayerInfo = function(player) {
 }
 
 Game.renderHoles = function(holes) {
+  Game.hole = game.add.group();
   holes.forEach( (hole) => {
     Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'));
   });
   Game.holes.forEach( (hole) => {
-  	hole.animations.add('explode');
+    hole.animations.add('explode');
     hole.anchor.y = 0.5;
     hole.anchor.x = 0.5;
     hole.animations.play('explode', 50, true)
