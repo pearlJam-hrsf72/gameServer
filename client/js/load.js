@@ -3,6 +3,8 @@ var loadState = {
     var loadingLabel = game.add.text(80, 150, 'loading...',
       {font: '40px Courier', fill: '#ffffff'});
 
+    game.physics.startSystem(Phaser.Physics.Arcade);
+
     game.load.image('background', 'assets/board.png');
     game.load.image('character', 'assets/ball.png');
     game.load.image('vertical', 'assets/rectanglevertical.png');

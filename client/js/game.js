@@ -6,12 +6,13 @@ Game.text = {};
 Game.height = 0;
 
 Game.init = function() {
-  game.state.disableVisibilityChange = true;
+  game.state.disableVisibilityChange = false;
   setGameEventHandlers();
 };
 
 Game.create = function() {
   Game.add.sprite(0, 0, 'background');
+  game.world.setBounds(0, 0, 1900, 1900);
   Client.askNewPlayer();
   Game.cursor = {x: 450, y: 300};
   Game.Player = game.add.group();
@@ -58,6 +59,12 @@ Game.addNewPlayer = function(player) {
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
   player.anchor.y = 0.5;
+  console.log(player.username, window.username);
+  if (player.id === window.username) {
+    console.log('this is true');
+    game.physics.endable(player);
+    game.camera.follow(player);
+  }
 };
 
 Game.remove = function(id) {
