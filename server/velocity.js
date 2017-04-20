@@ -18,9 +18,12 @@ module.exports = {
         var distance = module.exports.distanceBetween(player, mouse);
         if (player.collided) {
           if (player.collided === true) {
-            collisionVelocity = velocity * -1.5;
+            collisionVelocity = velocity * 1.5;
+            player.xTo = - player.xTo;
+            player.yTo = - player.yTo;
             player.x += player.xTo * collisionVelocity;
             player.y += player.yTo * collisionVelocity;
+            player.collided = 'player';
           } else {
             collisionVelocity = velocity * 1.5;
             player.x += player.xTo * collisionVelocity;

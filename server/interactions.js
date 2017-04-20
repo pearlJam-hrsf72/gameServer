@@ -23,11 +23,11 @@ module.exports = {
         player.collided = true;
         players[i].collided = true;
         setTimeout(function() {
-          if (this.collided === true)
+          if (this.collided === 'player')
             this.collided = null;
         }.bind(player), 500);
         setTimeout(function() {
-          if (this.collided === true)
+          if (this.collided === 'player')
             this.collided = null;
         }.bind(players[i]), 400);
         return players[i];
@@ -47,8 +47,10 @@ module.exports = {
   checkWallCollision: function(player) {
       if (player.y < 5 + ballSize / 2) {
         player.collided = 'top';
+        console.log(player, 'before checking yTo');
         if (player.yTo < 0) {
           player.yTo = - player.yTo;
+          console.log(player);
         }
         setTimeout(function() {
           if (this.collided === 'top')
