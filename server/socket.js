@@ -115,7 +115,7 @@ module.exports = function(io) {
       clearInterval(heartbeat);
       updatePlayerStatsInDatabase();
       dbPlayers = [];
-
+      interactions.holeCenters = [];
     } // end gameOver
 
 
