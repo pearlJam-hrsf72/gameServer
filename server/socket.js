@@ -60,7 +60,11 @@ module.exports = function(io) {
             if (dbPlayers.length === allPlayers.length) {
               var gamesref = dataBase.ref('games/');
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'});
+              interactions.createHoles();
               heartbeat = setInterval(pulse, 16);
+              // setTimeout(function() {
+              io.emit('holes', interactions.holeCenters)
+              // }, 1000)
             }
           })
         })
@@ -109,9 +113,9 @@ module.exports = function(io) {
 
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
-
       updatePlayerStatsInDatabase();
-      
+      dbPlayers = [];
+      interactions.holeCenters = [];
     } // end gameOver
 
 
@@ -228,5 +232,6 @@ module.exports = function(io) {
         });
       }
     }
+
   }
 };

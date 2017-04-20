@@ -1,3 +1,5 @@
+const velocity = 20;
+
 module.exports = {
   distanceBetween: function(coor1, coor2) {
     xDistance = coor2.x - coor1.x;
@@ -13,17 +15,19 @@ module.exports = {
   updatePosition: function(player, mouse) {
     if (mouse) {
       if (mouse.x > 0 && mouse.y > 0) {
-        var velocity = 10; //distance traveled every 10 ms;
         var distance = module.exports.distanceBetween(player, mouse);
         if (player.collided) {
           if (player.collided === true) {
-            velocity = - 6;
-            player.x += player.xTo * velocity;
-            player.y += player.yTo * velocity;
+            collisionVelocity = velocity * 1.5;
+            player.xTo = - player.xTo;
+            player.yTo = - player.yTo;
+            player.x += player.xTo * collisionVelocity;
+            player.y += player.yTo * collisionVelocity;
+            player.collided = 'player';
           } else {
-            velocity = 2;
-            player.x += player.xTo * velocity;
-            player.y += player.yTo * velocity;
+            collisionVelocity = velocity * 1.5;
+            player.x += player.xTo * collisionVelocity;
+            player.y += player.yTo * collisionVelocity;
           }
         } else if (distance.distance > 10) {
           player.xTo = distance.x / distance.distance;

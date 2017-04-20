@@ -12,28 +12,24 @@ Game.init = function() {
 
 Game.create = function() {
   Game.add.sprite(0, 0, 'background');
+  Game.add.sprite(0, 1152, 'background');
   game.world.setBounds(0, 0, 1900, 1900);
   Client.askNewPlayer();
   Game.cursor = {x: 450, y: 300};
   Game.Player = game.add.group();
   Game.bound = game.add.group();
-  Game.hole = game.add.group();
 
   Game.heartBeat();
   Game.pulse = setInterval(Game.heartBeat, 10);
 
-  Game.holes.push(Game.hole.create(375, 375, 'hole'));
-  Game.holes.forEach( (hole) => {
-  	hole.animations.add('explode');
-    hole.anchor.y = 0.5;
-    hole.anchor.x = 0.5;
-    hole.animations.play('explode', 50, true)
-  });
-
-  Game.bound.create(750, 0, 'vertical');
 };
 
 Game.update = function() {
+  if (!Game.holes.length) {
+    if (Game.rawHoles) {
+      Game.renderHoles(Game.rawHoles);
+    }
+  }
   Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
   if (game.input.activePointer.isDown) {
     Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
@@ -46,15 +42,19 @@ Game.heartBeat = function() {
 
 Game.updatePlayerPosition = function(player) {
   var pastPlayer = Game.Players[player.id];
+  var text = Game.text[player.username];
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer);
     tween.to({x: player.x, y: player.y}, 16);
     tween.start();
+    var textTween = Game.add.tween(text);
+    textTween.to({x: player.x, y: player.y}, 16);
+    textTween.start();
   }
-  Game.displayPlayerInfo(player);
 }
 
 Game.addNewPlayer = function(player) {
+  Game.displayPlayerInfo(player);
   var username = player.id
   if (Game.Players[player.id]) {
     Game.Players[player.id].destroy();
@@ -82,20 +82,33 @@ Game.death = function(player) {
 
 Game.displayPlayerInfo = function(player) {
   if (player.username) {
-    var username = player.username + '.'; //temp
+    var username = player.username;
     if (Game.text[username]) {
-    	Game.text[username].destroy();
+      Game.text[username].destroy();
     }
     Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
-  	var displayText = player.username + ': ' + player.lives + ' lives';
-  	var textHeight = 30 + 30 * Game.height;
-    Game.height++;
-  	var id = player.id;
-  	if (Game.text[id]) {
-  		Game.text[id].destroy();
-  	}
-  	Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
+    // var displayText = player.username + ': ' + player.lives + ' lives';
+    // var textHeight = 30 + 30 * Game.height;
+   //  Game.height++;
+    // var id = player.id;
+    // if (Game.text[id]) {
+    //  Game.text[id].destroy();
+    // }
+    // Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
   }
+}
+
+Game.renderHoles = function(holes) {
+  Game.hole = game.add.group();
+  holes.forEach( (hole) => {
+    Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'));
+  });
+  Game.holes.forEach( (hole) => {
+    hole.animations.add('explode');
+    hole.anchor.y = 0.5;
+    hole.anchor.x = 0.5;
+    hole.animations.play('explode', 50, true)
+  });
 }
 
 Game.over = function(players) {
