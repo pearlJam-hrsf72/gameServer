@@ -3,7 +3,7 @@ var velocity = require('./velocity.js');
 
 const ballSize = 100;
 const holeSize = 128;
-const numHoles = 8;
+const numHoles = 4;
 
 module.exports = {
   holeCenters: [],
@@ -29,7 +29,7 @@ module.exports = {
         setTimeout(function() {
           if (this.collided === true)
             this.collided = null;
-        }.bind(players[i]), 500);
+        }.bind(players[i]), 400);
         return players[i];
       }
     }
@@ -53,7 +53,7 @@ module.exports = {
         setTimeout(function() {
           if (this.collided === 'top')
             this.collided = null;
-        }.bind(player), 2000);
+        }.bind(player), 400);
       } else if (player.y > 1905 - (ballSize / 2)) {
         player.collided = 'bottom';
         if (player.yTo > 0) {
@@ -62,7 +62,7 @@ module.exports = {
         setTimeout(function() {
           if (this.collided === 'bottom')
             this.collided = null;
-        }.bind(player), 2000);
+        }.bind(player), 400);
       } else if (player.x < 5 + ballSize / 2) {
         player.collided = 'right';
         if (player.xTo < 0) {
@@ -71,7 +71,7 @@ module.exports = {
         setTimeout(function() {
           if (this.collided === 'right')
             this.collided = null;
-        }.bind(player), 2000);
+        }.bind(player), 400);
       } else if (player.x > 1905 - (ballSize / 2)) {
         player.collided = 'left';
         if (player.xTo > 0) {
@@ -80,7 +80,7 @@ module.exports = {
         setTimeout(function() {
           if (this.collided === 'left')
             this.collided = null;
-        }.bind(player), 2000);
+        }.bind(player), 400);
     } 
   },
 
