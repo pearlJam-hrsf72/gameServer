@@ -113,11 +113,13 @@ module.exports = function(io) {
 
       io.emit('gameOver', getAllPlayersAliveOrDead());
       clearInterval(heartbeat);
-      updatePlayerStatsInDatabase();
+
+      updateGameStats();
+      updatePlayerStats();
+      resolveBets();
       dbPlayers = [];
       interactions.holeCenters = [];
     } // end gameOver
-
 
     players.forEach( (player) => {
       var checkCollision = interactions.checkPlayerCollision(player, players);
@@ -157,12 +159,45 @@ module.exports = function(io) {
     return ready;
   }
 
-  function updatePlayerStatsInDatabase() {
-    // Update game status
-    var gamesref = dataBase.ref(`games/` + gameId.key);
-    var winner = getAllPlayers();
-    gamesref.update({winner: winner[0].id, status: "finished"});
+  function resolveBets() {
+    // Grab all bets
+    var gameRef = dataBase.ref('games/' + gameId.key)
+   
+    // For each bet, get the playerRef and update the players pearls based on
+    // if they guessed the winner correctly or not
+    gameRef.once('value', function(snapshot) {
+      const game = snapshot.val()
 
+      const bets = game.bets
+      for (var key in bets) {
+        var bet = bets[key]
+        if (bet.predictedWinner === game.winner) {
+          // Grab the user ref and update the user's pearls
+          var usersRef = dataBase.ref(`users/`);
+          var query = usersRef.orderByChild("displayName").equalTo(bet.bettorID);
+          query.once("value", function(snapshot) {
+            var users = snapshot.val();
+            var userKey = Object.keys(users)[0];
+            var user = users[userKey];
+            var userRef = dataBase.ref(`users/` + userKey);
+
+            // User will get 2x their bet value for now
+            userRef.update({pearls: user.pearls + 2 * bet.betValue});
+          });
+        }
+      }
+    });
+  }
+
+  // Update game status and winner on game end
+  function updateGameStats() {
+    var gamesRef = dataBase.ref(`games/` + gameId.key);
+    var winner = getAllPlayers();
+    gamesRef.update({winner: winner[0].id, status: "finished"});
+  }
+
+  // Update player stats on game end
+  function updatePlayerStats() {
     var allPlayers = getAllPlayersAliveOrDead();
     
     // If it's a 1v1, we update the ratings of each player, else don't update ratings
