@@ -18,7 +18,8 @@ app.use('/assets', express.static(path.join(__dirname + '/client/assets')));
 app.use('/css', express.static(path.join(__dirname + '/client/css')));
 
 app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/client/index.html');
+  // res.sendFile(__dirname + '/client/index.html');
+  res.send('hi from the heroku gameServer');
 });
 
 app.get('/spectate', function(req, res) {
