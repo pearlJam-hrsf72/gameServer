@@ -1,7 +1,7 @@
 var velocity = require('./velocity.js');
 
 
-const ballSize = 50;
+const ballSize = 100;
 const holeSize = 128;
 const numHoles = 8;
 
