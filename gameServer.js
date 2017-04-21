@@ -1,6 +1,6 @@
 var express = require('express');
 var path = require('path');
-var cors = require('express-cors');
+// var cors = require('express-cors');
 
 var app = express();
 var server = require('http').Server(app);
@@ -20,9 +20,19 @@ const defaultCorsHeaders = {
   age: 10 // Seconds.
 };
 
-app.use(cors({
-	allowedOrigins: ['http://localhost:3000/', 'http://localhost:8080/']
-}))
+app.use(function(req, res, next){
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    next();
+})
+
+app.options('*', function(req, res, next){
+    res.end();
+});
+
+// app.use(cors({
+// 	allowedOrigins: ['http://localhost:3000/', 'http://localhost:8080/']
+// }))
 
 app.use('/sockets', express.static(__dirname + '/client/sockets'));
 app.use('/js', express.static(__dirname + '/client/js'));
