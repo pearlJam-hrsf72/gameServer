@@ -19,10 +19,18 @@ const defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+
 app.use('/sockets', express.static(__dirname + '/client/sockets'));
 app.use('/js', express.static(__dirname + '/client/js'));
 app.use('/assets', express.static(path.join(__dirname + '/client/assets')));
 app.use('/css', express.static(path.join(__dirname + '/client/css')));
+
+app.use(function(req, res) {
+	if (req.method === 'options') {
+		console.log('recieved an options request');
+		res.sendStatus(200);
+	}
+})
 
 app.get('/', function(req, res) {
   // res.sendFile(__dirname + '/client/index.html');
@@ -35,10 +43,6 @@ app.get('/spectate', function(req, res) {
 	res.sendFile(__dirname + '/client/spectate.html');
 });
 
-app.use(function(req, res) {
-	console.log(req);
-	res.sendStatus(200);
-})
 
 server.listen(process.env.PORT || 3005, function() {
   console.log(`gameServer is listening on PORT ${process.env.port || 3005}`);
