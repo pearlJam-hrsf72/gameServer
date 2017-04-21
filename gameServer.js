@@ -40,6 +40,13 @@ app.get('/files', function(req, res) {
   res.sendFile(__dirname + '/client/js/game.js');
 })
 
+app.get('/client/assets/*', function(req, res) {
+  var imagePath = req.url,
+      url = 'https://pearl-jam-game-server.herokuapp.com/' + imagePath;
+
+  request(url).pipe(res);
+})
+
 
 server.listen(process.env.PORT || 3005, function() {
   console.log(`gameServer is listening on PORT ${process.env.port || 3005}`);
