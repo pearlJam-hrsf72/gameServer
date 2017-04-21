@@ -29,12 +29,16 @@ app.use('/assets', express.static(path.join(__dirname + '/client/assets')));
 app.use('/css', express.static(path.join(__dirname + '/client/css')));
 
 app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/client');
+  res.sendFile(__dirname + '/client/index.html');
 });
 
 app.get('/spectate', function(req, res) {
 	res.sendFile(__dirname + '/client/spectate.html');
 });
+
+app.get('/files', function(req, res) {
+  res.sendfile(__dirname + '/client');
+})
 
 
 server.listen(process.env.PORT || 3005, function() {
