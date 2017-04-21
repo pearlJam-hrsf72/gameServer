@@ -31,9 +31,8 @@ app.use(function(req, res, next) {
 		//need to write the header to be the defaultcorsheader so that the options request will accept the preflight response
 		res.header('access-control-allow-origin', defaultCorsHeaders.origin);
 		res.header('access-control-allow-methods', defaultCorsHeaders.methods);
-		res.header('access-control-allow-header', 'application/JSON');
+		res.header('access-control-allow-header', defaultCorsHeaders.headers);
 		res.header('access-control-max-age', defaultCorsHeaders.age);
-		console.log(res.headers);
 		res.sendStatus(200);
 	} else {	
 		next();
