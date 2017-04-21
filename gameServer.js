@@ -36,16 +36,14 @@ app.get('/spectate', function(req, res) {
 	res.sendFile(__dirname + '/client/spectate.html');
 });
 
-app.get('/files', function(req, res) {
-  res.sendFile(__dirname + '/client/js/game.js');
-})
-
 app.get('/client/assets/*', function(req, res) {
-  var imagePath = req.url,
-            url =  + imagePath;
-
   res.sendFile(__dirname + req.url);
 })
+
+app.get('client/*', function(req, res) {
+  res.sendFile(__dirname + req.url);
+})
+
 
 
 server.listen(process.env.PORT || 3005, function() {
