@@ -42,7 +42,7 @@ app.get('/files', function(req, res) {
 
 app.get('/client/assets/*', function(req, res) {
   var imagePath = req.url,
-  var url = 'https://pearl-jam-game-server.herokuapp.com/' + imagePath;
+            url = 'https://pearl-jam-game-server.herokuapp.com/' + imagePath;
 
   request(url).pipe(res);
 })
