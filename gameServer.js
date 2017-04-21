@@ -28,6 +28,8 @@ app.use('/css', express.static(path.join(__dirname + '/client/css')));
 app.use(function(req, res, next) {
 	if (req.method === 'OPTIONS') {
 		console.log('recieved an options request');
+		//need to write the header to be the defaultcorsheader so that the options request will accept the preflight response
+		res.header(defaultCorsHeaders);
 		res.sendStatus(200);
 	} else {	
 		next();
