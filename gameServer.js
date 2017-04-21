@@ -25,18 +25,20 @@ app.use('/js', express.static(__dirname + '/client/js'));
 app.use('/assets', express.static(path.join(__dirname + '/client/assets')));
 app.use('/css', express.static(path.join(__dirname + '/client/css')));
 
-app.use(function(req, res) {
-	if (req.method === 'options') {
+app.use(function(req, res, next) {
+	if (req.method === 'OPTIONS') {
 		console.log('recieved an options request');
 		res.sendStatus(200);
+	} else {	
+		next();
 	}
 })
 
 app.get('/', function(req, res) {
   // res.sendFile(__dirname + '/client/index.html');
-  res.header('Access-Control-Allow-Origin', '*');
-  console.log(res.header);
-  res.sendStatus(200);
+  // res.header('Access-Control-Allow-Origin', '*');
+  console.log('recieved a get request');
+  res.send('this is from Jeff');
 });
 
 app.get('/spectate', function(req, res) {
