@@ -37,7 +37,7 @@ app.get('/spectate', function(req, res) {
 });
 
 app.get('/files', function(req, res) {
-  res.sendFile(__dirname + '/client/js');
+  res.sendFile(__dirname + '/client/js/game.js');
 })
 
 
