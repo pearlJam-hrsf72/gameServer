@@ -27,13 +27,13 @@ app.use('/css', express.static(path.join(__dirname + '/client/css')));
 
 app.use(function(req, res, next) {
 	if (req.method === 'OPTIONS') {
-		console.log(req.headers);
+		// console.log(req.headers);
 		//need to write the header to be the defaultcorsheader so that the options request will accept the preflight response
 		res.header('access-control-allow-origin', defaultCorsHeaders.origin);
 		res.header('access-control-allow-methods', defaultCorsHeaders.methods);
 		res.header('access-control-allow-header', 'text/javascript');
 		res.header('access-control-max-age', defaultCorsHeaders.age);
-		console.log(res.headers);
+		console.log(res.header);
 		res.sendStatus(200);
 	} else {	
 		next();
