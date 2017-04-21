@@ -26,7 +26,7 @@ app.use('/css', express.static(path.join(__dirname + '/client/css')));
 
 app.get('/', function(req, res) {
   // res.sendFile(__dirname + '/client/index.html');
-  res.headers = defaultCorsHeaders;
+  res.header(defaultCorsHeaders);
   res.send('hi from the heroku gameServer');
 });
 
