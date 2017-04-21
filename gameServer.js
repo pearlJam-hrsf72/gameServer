@@ -40,7 +40,7 @@ app.get('/client/assets/*', function(req, res) {
   res.sendFile(__dirname + req.url);
 })
 
-app.get('client/*', function(req, res) {
+app.get('client/*/*', function(req, res) {
   console.log(req.url);
   res.sendFile(__dirname + req.url);
 })
