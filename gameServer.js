@@ -33,7 +33,7 @@ app.use(function(req, res, next) {
 		res.header('access-control-allow-methods', defaultCorsHeaders.methods);
 		res.header('access-control-allow-header', 'text/javascript');
 		res.header('access-control-max-age', defaultCorsHeaders.age);
-		console.log(res.header);
+		console.log(res.headers);
 		res.sendStatus(200);
 	} else {	
 		next();
