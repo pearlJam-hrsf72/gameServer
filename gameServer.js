@@ -13,10 +13,10 @@ var dataBase = require('./server/dataBase.js')
 var socketManager = require('./server/socket.js')(io);
 
 const defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
+  origin: '*',
+  methods: 'GET, POST, PUT, OPTIONS',
+  headers: 'content-type, accept',
+  age: 10 // Seconds.
 };
 
 
@@ -29,7 +29,10 @@ app.use(function(req, res, next) {
 	if (req.method === 'OPTIONS') {
 		console.log('recieved an options request');
 		//need to write the header to be the defaultcorsheader so that the options request will accept the preflight response
-		res.header('Access-Control-Allow-Origin', '*');
+		res.header('access-control-allow-origin', defaultCorsHeaders.origin);
+		res.header('access-control-allow-methods', defaultCorsHeaders.methods);
+		res.header('access-control-allow-header', 'text/javascript');
+		res.header('access-control-max-age', defaultCorsHeaders.age);
 		res.sendStatus(200);
 	} else {	
 		next();
