@@ -56,7 +56,7 @@ var lobbyState = {
     this.addStartLabels();
 
     //Draw the players
-    playerNameHeight = 30;
+    var playerNameHeight = 30;
     _.forEach(players, (player) => {
         var textStyle = {
           font: 'bold 30pt italic'
