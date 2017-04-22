@@ -5,15 +5,15 @@ var loadState = {
 
     game.physics.startSystem(Phaser.Physics.Arcade);
 
-    game.load.image('background', 'https://pearl-jam-game-server.herokuapp.com/assets/board.png');
-    game.load.image('character', 'https://pearl-jam-game-server.herokuapp.com/assets/ball.png');
-    game.load.image('vertical', 'https://pearl-jam-game-server.herokuapp.com/assets/rectanglevertical.png');
-    game.load.image('horiontal', 'https://pearl-jam-game-server.herokuapp.com/assets/rectangle.png');
-    game.load.image('joinAsPlayerButton', 'https://pearl-jam-game-server.herokuapp.com/assets/playButton.jpg');
-    game.load.image('joinAsSpectatorButton', 'https://pearl-jam-game-server.herokuapp.com/assets/spectateButton.png');
-    game.load.spritesheet('hole', 'https://pearl-jam-game-server.herokuapp.com/assets/spritmap.png', 256, 256, 38);
-    game.load.spritesheet('playerNotReady','https://pearl-jam-game-server.herokuapp.com/assets/playerNotReady.png', 138, 138, 4);
-    game.load.image('playerReady', 'https://pearl-jam-game-server.herokuapp.com/assets/playerReady.png');
+    game.load.image('background', 'https://ddu0j6ouvozck.cloudfront.net/board.png');
+    game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png');
+    game.load.image('vertical', 'https://ddu0j6ouvozck.cloudfront.net/rectanglevertical.png');
+    game.load.image('horiontal', 'https://ddu0j6ouvozck.cloudfront.net/rectangle.png');
+    game.load.image('joinAsPlayerButton', 'https://ddu0j6ouvozck.cloudfront.net/playButton.jpg');
+    game.load.image('joinAsSpectatorButton', 'https://ddu0j6ouvozck.cloudfront.net/spectateButton.png');
+    game.load.spritesheet('hole', 'https://ddu0j6ouvozck.cloudfront.net/spritmap.png', 256, 256, 38);
+    game.load.spritesheet('playerNotReady','https://ddu0j6ouvozck.cloudfront.net/playerNotReady.png', 138, 138, 4);
+    game.load.image('playerReady', 'https://ddu0j6ouvozck.cloudfront.net/playerReady.png');
   },
 
   create: function() {
