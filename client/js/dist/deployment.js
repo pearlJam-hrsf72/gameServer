@@ -210,8 +210,9 @@ var loadState = {
   },
 
   update: function() {
-    if (window.username) {
-      console.log('your username is ' + window.username);
+    console.log (user.displayName);
+    if (user.displayName) {
+      console.log('your username is ' + user.displayName);
       game.state.start('Lobby');
     }
   }
