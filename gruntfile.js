@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         ].join(' && ')
       },
       heroku: {
-        command: 'gphm'
+        command: 'git push heroku +HEAD:master'
       }
     }
   });
