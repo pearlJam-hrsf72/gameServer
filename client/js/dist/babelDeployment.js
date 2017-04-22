@@ -198,9 +198,7 @@ var loadState = {
 
   update: function update() {
     loadState.username = JSON.parse(localStorage["reduxPersist:user"]).displayName;
-    console.log(loadState.username);
     if (loadState.username) {
-      console.log('your username is ' + loadState.username);
       game.state.start('Lobby');
     }
   }
@@ -286,10 +284,8 @@ var lobbyState = {
   }
 
 };
-winW = window.innerWidth;
-winH = window.innerHeight;
-
-console.log(winW, winH);
+var winW = window.innerWidth;
+var winH = window.innerHeight;
 
 var game = new Phaser.Game(winW - 50, winH - 50, Phaser.CANVAS, document.getElementById('game'), null, true);
 

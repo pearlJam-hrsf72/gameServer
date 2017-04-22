@@ -46,10 +46,15 @@ module.exports = function(grunt) {
     ]);
   });
 
+  grunt.registerTask(['commit'], function(n) {
+    grunt.task.run([
+      'shell:gitadd'
+    ]);
+  });
 
   grunt.registerTask('deploy', function(n) {
     grunt.task.run([
-     'build', 'shell:gitadd', 'shell:heroku' 
+     'build', 'commit', 'shell:heroku' 
     ]);
   });
 
