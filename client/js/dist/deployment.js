@@ -164,7 +164,7 @@ var gameResult = {
   },
   
   drawLosers: function(losers) {
-    playerNameHeight =  80;
+    var playerNameHeight =  80;
     _.forEach(losers, (player) => {
         var textStyle = {
           font: 'bold 30pt italic'
