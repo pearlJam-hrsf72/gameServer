@@ -25,7 +25,7 @@ var loadState = {
   update: function() {
     loadState.username = JSON.parse(localStorage["reduxPersist:user"]).displayName;
     console.log(loadState.username);
-    if (username) {
+    if (loadState.username) {
       console.log('your username is ' + loadState.username);
       game.state.start('Lobby');
     }
