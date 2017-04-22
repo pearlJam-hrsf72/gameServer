@@ -124,7 +124,7 @@ Client.heartBeat = function(coordinates) {
 };
 
 Client.joinLobby = function() {
-  var messageObj = {username: window.username, serverUrl: window.serverUrl};
+  var messageObj = {username: lobbyState.username, serverUrl: 'https://pearl-jam-game-server.herokuapp.com/'};
   Client.socket.emit('joinLobby', messageObj);
   //Maybe do Clietn.socket.emit('joinLobby', username);
 };
