@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+// var cors = require('express-cors');
 
 var app = express();
 var server = require('http').Server(app);
@@ -11,6 +12,16 @@ var dataBase = require('./server/dataBase.js')
 
 
 var socketManager = require('./server/socket.js')(io);
+
+app.use(function(req, res, next){
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+    next();
+})
+
+app.options('*', function(req, res, next){
+    res.end();
+});
 
 app.use('/sockets', express.static(__dirname + '/client/sockets'));
 app.use('/js', express.static(__dirname + '/client/js'));
@@ -24,6 +35,17 @@ app.get('/', function(req, res) {
 app.get('/spectate', function(req, res) {
 	res.sendFile(__dirname + '/client/spectate.html');
 });
+
+app.get('/client/assets/*', function(req, res) {
+  res.sendFile(__dirname + req.url);
+})
+
+app.get('/client/*', function(req, res) {
+  console.log(req.url);
+  res.sendFile(__dirname + req.url);
+})
+
+
 
 server.listen(process.env.PORT || 3005, function() {
   console.log(`gameServer is listening on PORT ${process.env.port || 3005}`);

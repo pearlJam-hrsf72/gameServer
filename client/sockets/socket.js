@@ -1,7 +1,8 @@
 var Client = {};
 
 Client.socketConnect = function() {
-  Client.socket = io.connect();
+  Client.socket = io.connect('https://pearl-jam-game-server.herokuapp.com/');
+
   Client.socket.on('holes', function(holes) {
     Game.rawHoles = holes;
   })
@@ -123,7 +124,7 @@ Client.heartBeat = function(coordinates) {
 };
 
 Client.joinLobby = function() {
-  var messageObj = {username: window.username, serverUrl: window.serverUrl};
+  var messageObj = {username: loadState.username, serverUrl: 'https://pearl-jam-game-server.herokuapp.com/'};
   Client.socket.emit('joinLobby', messageObj);
   //Maybe do Clietn.socket.emit('joinLobby', username);
 };

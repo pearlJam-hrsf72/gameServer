@@ -47,10 +47,8 @@ module.exports = {
   checkWallCollision: function(player) {
       if (player.y < 5 + ballSize / 2) {
         player.collided = 'top';
-        console.log(player, 'before checking yTo');
         if (player.yTo < 0) {
           player.yTo = - player.yTo;
-          console.log(player);
         }
         setTimeout(function() {
           if (this.collided === 'top')
