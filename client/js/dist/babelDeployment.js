@@ -64,7 +64,9 @@ Game.addNewPlayer = function (player) {
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
   player.anchor.y = 0.5;
-  if (username === window.username) {
+  console.log(username, loadState.username);
+  if (username === loadState.username) {
+    console.log('in the right if statement');
     game.physics.enable(player);
     game.camera.follow(player);
   }
