@@ -28,22 +28,21 @@ app.use('/js', express.static(__dirname + '/client/js'));
 app.use('/assets', express.static(path.join(__dirname + '/client/assets')));
 app.use('/css', express.static(path.join(__dirname + '/client/css')));
 
-app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/client/index.html');
-});
+// app.get('/', function(req, res) {
+//   res.sendFile(__dirname + '/client/index.html');
+// });
 
 app.get('/spectate', function(req, res) {
 	res.sendFile(__dirname + '/client/spectate.html');
 });
 
-app.get('/client/assets/*', function(req, res) {
-  res.sendFile(__dirname + req.url);
-})
+// app.get('/client/assets/*', function(req, res) {
+//   res.sendFile(__dirname + req.url);
+// })
 
-app.get('/client/*', function(req, res) {
-  console.log(req.url);
-  res.sendFile(__dirname + req.url);
-})
+// app.get('/client/socket.io/socket.io.js', function(req, res) {
+//   res.sendFile(__dirname + req.url);
+// })
 
 
 
