@@ -61,7 +61,7 @@ module.exports = function (io) {
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
               interactions.createHoles()
               heartbeat = setInterval(function() {
-                var deaths = pulse(players)
+                var deaths = pulse(getAllPlayers());
                 if (deaths === true) {
                   io.emit('gameOver', getAllPlayersAliveOrDead());
                   clearInterval(heartbeat)
