@@ -212,7 +212,7 @@ module.exports = function (io) {
   }
 
   // Update player stats on game end
-  function updatePlayerStats () {
+  function updatePlayerStatsInDatabase () {
     var allPlayers = getAllPlayersAliveOrDead()
 
     // If it's a 1v1, we update the ratings of each player, else don't update ratings

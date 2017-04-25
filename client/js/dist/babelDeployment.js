@@ -208,11 +208,6 @@ var loadState = {
     if (window.spectate) {
       game.state.start('Spectate');
     };
-    if (localStorage["reduxPersist:user"]) {
-      loadState.username = JSON.parse(localStorage["reduxPersist:user"]).displayName;
-    } else {
-      loadState.username = prompt('What is your username?');
-    }
   },
 
   // getAvatar: function (uid, avatar) {
