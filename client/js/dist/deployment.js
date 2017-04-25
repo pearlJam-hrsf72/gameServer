@@ -250,9 +250,10 @@ var loadState = {
   // },
 
   update: function () {
-  loadState.username = JSON.parse(localStorage['reduxPersist:user']).displayName
-  loadState.colorID = JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11))
+    loadState.username = JSON.parse(localStorage['reduxPersist:user']).displayName
+    loadState.colorID = JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11))
     if (loadState.username) {
+      console.log('game is starting')
       game.state.start('Lobby')
     }
   }

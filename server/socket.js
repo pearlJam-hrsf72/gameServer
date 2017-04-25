@@ -50,7 +50,6 @@ module.exports = function (io) {
       var allPlayers = getAllPlayers()
 
       if (allReady(allPlayers)) {
-        console.log('Game is starting.')
         allPlayers.forEach((player) => {
           id = player.id
           var usersref = dataBase.ref('users/')
@@ -60,7 +59,7 @@ module.exports = function (io) {
               var gamesref = dataBase.ref('games/')
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
               interactions.createHoles()
-
+              console.log('game is starting');
               heartbeat = setInterval(function() {
                 var deaths = pulse(getAllPlayers())
                 if (deaths === true) {
