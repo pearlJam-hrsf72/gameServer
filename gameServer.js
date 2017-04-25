@@ -28,9 +28,9 @@ app.use('/js', express.static(__dirname + '/client/js'));
 app.use('/assets', express.static(path.join(__dirname + '/client/assets')));
 app.use('/css', express.static(path.join(__dirname + '/client/css')));
 
-app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/client/index.html');
-});
+// app.get('/', function(req, res) {
+//   res.sendFile(__dirname + '/client/index.html');
+// });
 
 app.get('/spectate', function(req, res) {
 	res.sendFile(__dirname + '/client/spectate.html');
