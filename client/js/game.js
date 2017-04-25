@@ -1,94 +1,92 @@
-var Game = {};
-Game.Players = {};
-Game.boundaries = [];
-Game.holes = [];
-Game.text = {};
-Game.height = 0;
+var Game = {}
+Game.Players = {}
+Game.boundaries = []
+Game.holes = []
+Game.text = {}
+Game.height = 0
 
-Game.init = function() {
-  game.state.disableVisibilityChange = false;
-  setGameEventHandlers();
-};
+Game.init = function () {
+  game.state.disableVisibilityChange = false
+  setGameEventHandlers()
+}
 
-Game.create = function() {
-  Game.add.sprite(0, 0, 'background');
-  Game.add.sprite(0, 1152, 'background');
-  game.world.setBounds(0, 0, 1900, 1900);
-  Client.askNewPlayer();
-  Game.cursor = {x: 450, y: 300};
-  Game.Player = game.add.group();
-  Game.bound = game.add.group();
+Game.create = function () {
+  Game.add.sprite(0, 0, 'background')
+  Game.add.sprite(0, 1152, 'background')
+  game.world.setBounds(0, 0, 1900, 1900)
+  Client.askNewPlayer()
+  Game.cursor = {x: 450, y: 300}
+  Game.Player = game.add.group()
+  Game.bound = game.add.group()
 
-  Game.heartBeat();
-  Game.pulse = setInterval(Game.heartBeat, 10);
+  Game.heartBeat()
+  Game.pulse = setInterval(Game.heartBeat, 10)
+}
 
-};
-
-Game.update = function() {
+Game.update = function () {
   if (!Game.holes.length) {
     if (Game.rawHoles) {
-      Game.renderHoles(Game.rawHoles);
+      Game.renderHoles(Game.rawHoles)
     }
   }
-  Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
+  Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY}
   if (game.input.activePointer.isDown) {
-    Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
-  }
-};
-
-Game.heartBeat = function() {
-  Client.heartBeat(Game.cursor);
-};
-
-Game.updatePlayerPosition = function(player) {
-  var pastPlayer = Game.Players[player.id];
-  var text = Game.text[player.username];
-  if (pastPlayer) {
-    var tween = Game.add.tween(pastPlayer);
-    tween.to({x: player.x, y: player.y}, 16);
-    tween.start();
-    var textTween = Game.add.tween(text);
-    textTween.to({x: player.x, y: player.y}, 16);
-    textTween.start();
+    Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY}
   }
 }
 
-Game.addNewPlayer = function(player) {
-  Game.displayPlayerInfo(player);
+Game.heartBeat = function () {
+  Client.heartBeat(Game.cursor)
+}
+
+Game.updatePlayerPosition = function (player) {
+  var pastPlayer = Game.Players[player.id]
+  var text = Game.text[player.username]
+  if (pastPlayer) {
+    var tween = Game.add.tween(pastPlayer)
+    tween.to({x: player.x, y: player.y}, 16)
+    tween.start()
+    var textTween = Game.add.tween(text)
+    textTween.to({x: player.x, y: player.y}, 16)
+    textTween.start()
+  }
+}
+
+Game.addNewPlayer = function (player) {
+  Game.displayPlayerInfo(player)
   var username = player.id
   if (Game.Players[player.id]) {
-    Game.Players[player.id].destroy();
+    Game.Players[player.id].destroy()
   }
-  Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
-  var player = Game.Players[player.id];
-  player.anchor.x = 0.5;
-  player.anchor.y = 0.5;
-  console.log(username, loadState.username);
+  Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character')
+  var player = Game.Players[player.id]
+  player.anchor.x = 0.5
+  player.anchor.y = 0.5
+  console.log(username, loadState.username)
   if (username === loadState.username) {
-    console.log('in the right if statement');
-    game.physics.enable(player);
-    game.camera.follow(player);
+    console.log('in the right if statement')
+    game.physics.enable(player)
+    game.camera.follow(player)
   }
-};
+}
 
-Game.remove = function(id) {
-  Game.Players[id].destroy();
-  delete Game.Players[id];
-};
+Game.remove = function (id) {
+  Game.Players[id].destroy()
+  delete Game.Players[id]
+}
 
+Game.death = function (player) {
+  player = Game.Players[player.id]
+  player.kill()
+}
 
-Game.death = function(player) {
-  player = Game.Players[player.id];
-  player.kill();
-};
-
-Game.displayPlayerInfo = function(player) {
+Game.displayPlayerInfo = function (player) {
   if (player.username) {
-    var username = player.username;
+    var username = player.username
     if (Game.text[username]) {
-      Game.text[username].destroy();
+      Game.text[username].destroy()
     }
-    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
+    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' })
     // var displayText = player.username + ': ' + player.lives + ' lives';
     // var textHeight = 30 + 30 * Game.height;
    //  Game.height++;
@@ -100,25 +98,25 @@ Game.displayPlayerInfo = function(player) {
   }
 }
 
-Game.renderHoles = function(holes) {
-  Game.hole = game.add.group();
-  holes.forEach( (hole) => {
-    Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'));
-  });
-  Game.holes.forEach( (hole) => {
-    hole.animations.add('explode');
-    hole.anchor.y = 0.5;
-    hole.anchor.x = 0.5;
+Game.renderHoles = function (holes) {
+  Game.hole = game.add.group()
+  holes.forEach((hole) => {
+    Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'))
+  })
+  Game.holes.forEach((hole) => {
+    hole.animations.add('explode')
+    hole.anchor.y = 0.5
+    hole.anchor.x = 0.5
     hole.animations.play('explode', 50, true)
-  });
+  })
 }
 
-Game.over = function(players) {
-  //pass the players object to results to display
-  game.state.start('Results', true, false, players);
-  Client.disconnect();
-  Game.Players = {};
-  Game.boundaries = [];
-  Game.holes = [];
-  Game.text = {};
+Game.over = function (players) {
+  // pass the players object to results to display
+  game.state.start('Results', true, false, players)
+  Client.disconnect()
+  Game.Players = {}
+  Game.boundaries = []
+  Game.holes = []
+  Game.text = {}
 }

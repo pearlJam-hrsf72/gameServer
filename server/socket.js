@@ -1,67 +1,65 @@
-var  _ = require('lodash');
-var velocity = require('./velocity.js');
-var interactions = require('./interactions.js');
-var dataBase = require('./dataBase.js');
-var eloCalc = require('../libraries/elo.js');
+var _ = require('lodash')
+var velocity = require('./velocity.js')
+var interactions = require('./interactions.js')
+var dataBase = require('./dataBase.js')
+var eloCalc = require('../libraries/elo.js')
 
-var gameId;
-var heartbeat;
-var dbPlayers = [];
-var gameServerUrl;
+var gameId
+var heartbeat
+var dbPlayers = []
+var gameServerUrl
 
-const PEARLS_ON_WIN = 80;
-const PEARLS_ON_LOSE = 20;
+const PEARLS_ON_WIN = 80
+const PEARLS_ON_LOSE = 20
 
-module.exports = function(io) {
-  
-  var lastPlayerId = 0;
-  const defaultLives = 3;
+module.exports = function (io) {
+  var lastPlayerId = 0
+  const defaultLives = 3
 
-  io.on('connection', function(socket) {
-    console.log('Connected.');
+  io.on('connection', function (socket) {
+    console.log('Connected.')
 
-    socket.on('addNewPlayer', function() {
-      socket.player = socket.player || {};
+    socket.on('addNewPlayer', function () {
+      socket.player = socket.player || {}
       socket.player.username = socket.player.id
-      socket.player.lives = defaultLives;
-      interactions.spawn(socket.player);
-      socket.emit('allPlayers', getAllPlayers());
-      socket.broadcast.emit('newPlayer', socket.player);
-    });
+      socket.player.lives = defaultLives
+      interactions.spawn(socket.player)
+      socket.emit('allPlayers', getAllPlayers())
+      socket.broadcast.emit('newPlayer', socket.player)
+    })
 
-    socket.on('heartBeat', function(data) {
+    socket.on('heartBeat', function (data) {
       if (socket.player) {
-        socket.player.mouse = data;
+        socket.player.mouse = data
       }
-    });
+    })
 
-    socket.on('newSpectator', function() {
-      socket.emit('allPlayers', getAllPlayers());
-    });
-    
-    socket.on('joinLobby', function({username, serverUrl}) {
-      gameServerUrl = serverUrl;
-      socket.player = {id: username || lastPlayerId++, ready: false, lives: defaultLives};
-      io.emit('renderInfo', getAllPlayers());
-    });
+    socket.on('newSpectator', function () {
+      socket.emit('allPlayers', getAllPlayers())
+    })
 
-    socket.on('playerReady', function() {
-  
-      socket.player.ready = true;
-      var allPlayers = getAllPlayers();
-    
+    socket.on('joinLobby', function ({username, serverUrl}) {
+      gameServerUrl = serverUrl
+      socket.player = {id: username || lastPlayerId++, ready: false, lives: defaultLives}
+      io.emit('renderInfo', getAllPlayers())
+    })
+
+    socket.on('playerReady', function () {
+      socket.player.ready = true
+      var allPlayers = getAllPlayers()
+
       if (allReady(allPlayers)) {
-        console.log('Game is starting.');
+        console.log('Game is starting.')
         allPlayers.forEach((player) => {
-          id = player.id;
-          var usersref = dataBase.ref('users/');
-          usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
-            dbPlayers.push(data.val());
+          id = player.id
+          var usersref = dataBase.ref('users/')
+          usersref.orderByChild('displayName').equalTo(id).on('child_added', function (data) {
+            dbPlayers.push(data.val())
             if (dbPlayers.length === allPlayers.length) {
-              var gamesref = dataBase.ref('games/');
-              gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'});
-              interactions.createHoles();
-              heartbeat = setInterval(pulse, 16);
+              var gamesref = dataBase.ref('games/')
+              gameId = gamesref.push({status: 'in-progress', winner: 'TBD', players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
+              interactions.createHoles()
+              heartbeat = setInterval(pulse, 16)
               // setTimeout(function() {
               io.emit('holes', interactions.holeCenters)
               // }, 1000)
@@ -69,103 +67,101 @@ module.exports = function(io) {
           })
         })
       }
-      io.emit('renderInfo', allPlayers);
+      io.emit('renderInfo', allPlayers)
+    })
 
-    });
+    socket.on('disconnect', function () {
+      io.emit('renderInfo', getAllPlayers())
+    })
+  })
 
-
-
-    socket.on('disconnect', function() {
-      io.emit('renderInfo', getAllPlayers());
-    });
-  });
-
-  function getAllPlayers() {
-    var players = [];
+  function getAllPlayers () {
+    var players = []
     // console.log('sockets in server', io.sockets.connected);
-    Object.keys(io.sockets.connected).forEach(function(socketID) {
-      var player = io.sockets.connected[socketID].player;
+    Object.keys(io.sockets.connected).forEach(function (socketID) {
+      var player = io.sockets.connected[socketID].player
       if (player && player.lives > 0) {
-        players.push(player);
+        players.push(player)
       }
-    });
-    
-    return players;
+    })
+
+    return players
   }
 
-  function getAllPlayersAliveOrDead() {
-     var players = [];
+  function getAllPlayersAliveOrDead () {
+    var players = []
     // console.log('sockets in server', io.sockets.connected);
-    Object.keys(io.sockets.connected).forEach(function(socketID) {
-      var player = io.sockets.connected[socketID].player;
+    Object.keys(io.sockets.connected).forEach(function (socketID) {
+      var player = io.sockets.connected[socketID].player
       if (player) {
-        players.push(player);
+        players.push(player)
       }
-    });
-    
-    return players; 
+    })
+
+    return players
   }
 
-  function pulse() {
-    var players = getAllPlayers();  // only returns alive players
+  function pulse () {
+    var players = getAllPlayers()  // only returns alive players
 
-    if (gameOver(players)) { //if the game is over
+    if (gameOver(players)) {
+ // if the game is over
 
-      io.emit('gameOver', getAllPlayersAliveOrDead());
-      clearInterval(heartbeat);
+      io.emit('gameOver', getAllPlayersAliveOrDead())
+      clearInterval(heartbeat)
 
-      updateGameStats();
-      updatePlayerStats();
-      resolveBets();
-      dbPlayers = [];
-      interactions.holeCenters = [];
+      updateGameStats()
+      updatePlayerStats()
+      resolveBets()
+      dbPlayers = []
+      interactions.holeCenters = []
     } // end gameOver
 
-    players.forEach( (player) => {
-      var checkCollision = interactions.checkPlayerCollision(player, players);
+    players.forEach((player) => {
+      var checkCollision = interactions.checkPlayerCollision(player, players)
       if (checkCollision) {
-        interactions.collision(player, checkCollision);
+        interactions.collision(player, checkCollision)
       }
-      interactions.checkWallCollision(player);
-      velocity.updatePosition(player, player.mouse);
-      var dead = interactions.checkHoleDeath(player);
+      interactions.checkWallCollision(player)
+      velocity.updatePosition(player, player.mouse)
+      var dead = interactions.checkHoleDeath(player)
       if (dead) {
-        io.emit('death', player);
+        io.emit('death', player)
       }
-    });
-    io.emit('pulse', players);
+    })
+    io.emit('pulse', players)
   }
-  //returns whether the game is over
-  //This is true when there is only one player left with more than 1 lives
-  function gameOver(players) {
+  // returns whether the game is over
+  // This is true when there is only one player left with more than 1 lives
+  function gameOver (players) {
     var numPlayersAlive = _.reduce(players, (acc, player) => {
-      return player.lives > 0 ? acc + 1 : acc;
+      return player.lives > 0 ? acc + 1 : acc
     }, 0)
 
-    if (numPlayersAlive > 1) { //more than one playera alive
-      return false;
+    if (numPlayersAlive > 1) { // more than one playera alive
+      return false
     } else {
-      return true;
+      return true
     }
   }
 
-  function allReady(players) {
-    var ready = true;
+  function allReady (players) {
+    var ready = true
     players.forEach((player) => {
       if (!player.ready) {
-        ready = false;
+        ready = false
       }
-    });
-    return ready;
+    })
+    return ready
   }
 
-  function resolveBets() {
+  function resolveBets () {
     // Grab all bets
     var gameRef = dataBase.ref('games/' + gameId.key)
-   
+
     // For each bet, get the playerRef and update the players pearls based on
     // if they guessed the winner correctly or not
-    gameRef.once('value', function(snapshot) {
+    gameRef.once('value', function (snapshot) {
       const game = snapshot.val()
 
       const bets = game.bets
@@ -173,100 +169,97 @@ module.exports = function(io) {
         var bet = bets[key]
         if (bet.predictedWinner === game.winner) {
           // Grab the user ref and update the user's pearls
-          var usersRef = dataBase.ref(`users/`);
-          var query = usersRef.orderByChild("displayName").equalTo(bet.bettorID);
-          query.once("value", function(snapshot) {
-            var users = snapshot.val();
-            var userKey = Object.keys(users)[0];
-            var user = users[userKey];
-            var userRef = dataBase.ref(`users/` + userKey);
+          var usersRef = dataBase.ref(`users/`)
+          var query = usersRef.orderByChild('displayName').equalTo(bet.bettorID)
+          query.once('value', function (snapshot) {
+            var users = snapshot.val()
+            var userKey = Object.keys(users)[0]
+            var user = users[userKey]
+            var userRef = dataBase.ref(`users/` + userKey)
 
             // User will get 2x their bet value for now
-            userRef.update({pearls: user.pearls + 2 * bet.betValue});
-          });
+            userRef.update({pearls: user.pearls + 2 * bet.betValue})
+          })
         }
       }
-    });
+    })
   }
 
   // Update game status and winner on game end
-  function updateGameStats() {
-    var gamesRef = dataBase.ref(`games/` + gameId.key);
-    var winner = getAllPlayers();
-    gamesRef.update({winner: winner[0].id, status: "finished"});
+  function updateGameStats () {
+    var gamesRef = dataBase.ref(`games/` + gameId.key)
+    var winner = getAllPlayers()
+    gamesRef.update({winner: winner[0].id, status: 'finished'})
   }
 
   // Update player stats on game end
-  function updatePlayerStats() {
-    var allPlayers = getAllPlayersAliveOrDead();
-    
-    // If it's a 1v1, we update the ratings of each player, else don't update ratings
-    var updateRatings = allPlayers.length === 2;
-    if (updateRatings) {
+  function updatePlayerStats () {
+    var allPlayers = getAllPlayersAliveOrDead()
 
-      var winner = getAllPlayers()[0];  // winner is the only one alive
-      var winnerData = {};
+    // If it's a 1v1, we update the ratings of each player, else don't update ratings
+    var updateRatings = allPlayers.length === 2
+    if (updateRatings) {
+      var winner = getAllPlayers()[0]  // winner is the only one alive
+      var winnerData = {}
       for (var i = 0; i < dbPlayers.length; i++) {
         if (dbPlayers[i].displayName === winner.id) {
-          winnerData = dbPlayers[i];
+          winnerData = dbPlayers[i]
         }
       }
 
-      var loserData = {};
+      var loserData = {}
       for (var i = 0; i < dbPlayers.length; i++) {
         if (dbPlayers[i].displayName !== winner.id) {
-          loserData = dbPlayers[i];
+          loserData = dbPlayers[i]
         }
       }
 
-      var winnerNewRating = eloCalc.getRatingIfWin(winnerData.rating, loserData.rating);
-      var loserNewRating = eloCalc.getRatingIfLose(loserData.rating, winnerData.rating);
-    }       
-
-    var gamesRef = dataBase.ref(`games/` + gameId.key);
-    var usersRef = dataBase.ref(`users/`);
-
-    // Update winner's wins, pearls, rating
-    var query = usersRef.orderByChild("displayName").equalTo(winner.id);
-    query.once("value", function(snapshot) {
-      var users = snapshot.val();
-      var userKeys = Object.keys(users);
-      var winnerKey = userKeys[0];
-      var winner = users[winnerKey];
-
-      var winnerRef = dataBase.ref(`users/` + winnerKey);
-      if (updateRatings) {
-        winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN, rating: winnerNewRating});
-      } else {
-        winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN});
-      }
-    });
-
-    // Update all losers' losses, pearls, rating
-    var allPlayers = getAllPlayersAliveOrDead();
-    for (var i = 0; i < allPlayers.length; i++) {
-      
-      // Update all losers in database
-      if (allPlayers[i].id !== winner.id) {
-        var id = allPlayers[i].id;
-
-        var query = usersRef.orderByChild("displayName").equalTo(id);
-        query.once("value", function(snapshot) {
-          var users = snapshot.val();
-          var userKeys = Object.keys(users);
-          var userKey = userKeys[0];
-          var user = users[userKey];
-
-          var loserRef = dataBase.ref(`users/` + userKey);
-
-          if (updateRatings) {
-            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE, rating: loserNewRating});
-          } else {
-            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE});
-          }
-        });
-      }
+      var winnerNewRating = eloCalc.getRatingIfWin(winnerData.rating, loserData.rating)
+      var loserNewRating = eloCalc.getRatingIfLose(loserData.rating, winnerData.rating)
     }
 
+    var gamesRef = dataBase.ref(`games/` + gameId.key)
+    var usersRef = dataBase.ref(`users/`)
+
+    // Update winner's wins, pearls, rating
+    var query = usersRef.orderByChild('displayName').equalTo(winner.id)
+    query.once('value', function (snapshot) {
+      var users = snapshot.val()
+      var userKeys = Object.keys(users)
+      var winnerKey = userKeys[0]
+      var winner = users[winnerKey]
+
+      var winnerRef = dataBase.ref(`users/` + winnerKey)
+      if (updateRatings) {
+        winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN, rating: winnerNewRating})
+      } else {
+        winnerRef.update({wins: winner.wins + 1, pearls: winner.pearls + PEARLS_ON_WIN})
+      }
+    })
+
+    // Update all losers' losses, pearls, rating
+    var allPlayers = getAllPlayersAliveOrDead()
+    for (var i = 0; i < allPlayers.length; i++) {
+      // Update all losers in database
+      if (allPlayers[i].id !== winner.id) {
+        var id = allPlayers[i].id
+
+        var query = usersRef.orderByChild('displayName').equalTo(id)
+        query.once('value', function (snapshot) {
+          var users = snapshot.val()
+          var userKeys = Object.keys(users)
+          var userKey = userKeys[0]
+          var user = users[userKey]
+
+          var loserRef = dataBase.ref(`users/` + userKey)
+
+          if (updateRatings) {
+            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE, rating: loserNewRating})
+          } else {
+            loserRef.update({losses: user.losses + 1, pearls: user.pearls + PEARLS_ON_LOSE})
+          }
+        })
+      }
+    }
   }
-};
+}
