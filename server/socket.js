@@ -112,7 +112,6 @@ module.exports = function (io) {
     return players
   }
 
-<<<<<<< HEAD
   // returns whether the game is over
   // This is true when there is only one player left with more than 1 lives
 
@@ -145,7 +144,6 @@ module.exports = function (io) {
   // }
   //returns whether the game is over
   //This is true when there is only one player left with more than 1 lives
-=======
   var handleGameover = function() {
     io.emit('gameOver', getAllPlayersAliveOrDead());
     clearInterval(heartbeat);
@@ -154,7 +152,6 @@ module.exports = function (io) {
     interactions.holeCenters = [];
   }
 
->>>>>>> refactoring
   function gameOver(players) {
     var numPlayersAlive = _.reduce(players, (acc, player) => {
       return player.lives > 0 ? acc + 1 : acc
