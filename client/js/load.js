@@ -82,7 +82,6 @@ var loadState = {
   update: function () {
   loadState.username = JSON.parse(localStorage['reduxPersist:user']).displayName
   loadState.colorID = JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11))
-  update: function() {
     if (loadState.username) {
       game.state.start('Lobby')
     }
