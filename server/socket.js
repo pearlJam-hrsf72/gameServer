@@ -216,8 +216,8 @@ module.exports = function (io) {
 
     // If it's a 1v1, we update the ratings of each player, else don't update ratings
     var updateRatings = allPlayers.length === 2
+    var winner = getAllPlayers()[0]  // winner is the only one alive
     if (updateRatings) {
-      var winner = getAllPlayers()[0]  // winner is the only one alive
       var winnerData = {}
       for (var i = 0; i < dbPlayers.length; i++) {
         if (dbPlayers[i].displayName === winner.id) {
