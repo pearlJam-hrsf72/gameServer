@@ -54,20 +54,17 @@ module.exports = function (io) {
         allPlayers.forEach((player) => {
           id = player.id
           var usersref = dataBase.ref('users/')
-          usersref.orderByChild('displayName').equalTo(id).on('child_added', function (data) {
+          usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
             dbPlayers.push(data.val())
             if (dbPlayers.length === allPlayers.length) {
               var gamesref = dataBase.ref('games/')
               gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
               interactions.createHoles()
+
               heartbeat = setInterval(function() {
-                var deaths = pulse(getAllPlayers());
+                var deaths = pulse(getAllPlayers())
                 if (deaths === true) {
-                  io.emit('gameOver', getAllPlayersAliveOrDead());
-                  clearInterval(heartbeat)
-                  updatePlayerStatsInDatabase()
-                  dbPlayers = []
-                  interactions.holeCenters = []
+                  handleGameover()
                 } else if (deaths.length) {
                   deaths.forEach( (player) => {
                     io.emit('death', player)
@@ -77,6 +74,7 @@ module.exports = function (io) {
               }, 16)
               io.emit('holes', interactions.holeCenters)
             }
+
           })
         })
       }
@@ -114,6 +112,7 @@ module.exports = function (io) {
     return players
   }
 
+<<<<<<< HEAD
   // returns whether the game is over
   // This is true when there is only one player left with more than 1 lives
 
@@ -146,6 +145,16 @@ module.exports = function (io) {
   // }
   //returns whether the game is over
   //This is true when there is only one player left with more than 1 lives
+=======
+  var handleGameover = function() {
+    io.emit('gameOver', getAllPlayersAliveOrDead());
+    clearInterval(heartbeat);
+    updatePlayerStatsInDatabase();
+    dbPlayers = [];
+    interactions.holeCenters = [];
+  }
+
+>>>>>>> refactoring
   function gameOver(players) {
     var numPlayersAlive = _.reduce(players, (acc, player) => {
       return player.lives > 0 ? acc + 1 : acc
