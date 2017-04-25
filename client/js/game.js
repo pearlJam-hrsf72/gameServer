@@ -58,7 +58,7 @@ Game.addNewPlayer = function (player) {
   if (Game.Players[player.id]) {
     Game.Players[player.id].destroy()
   }
-  Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character')
+  Game.Players[player.id] = Game.Player.create(player.x, player.y, `${player.colorID}`)
   var player = Game.Players[player.id]
   player.anchor.x = 0.5
   player.anchor.y = 0.5

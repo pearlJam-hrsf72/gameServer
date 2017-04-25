@@ -1,16 +1,15 @@
-module.exports = function(grunt) {
-
+module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    
+
     concat: {
       bar: {src: ['./client/js/*.js'],
-        dest: './client/js/dist/deployment.js'},
+        dest: './client/js/dist/deployment.js'}
     },
 
     uglify: {
       bar: {src: './client/js/dist/babelDeployment.js',
-            dest: './client/js/dist/deployment.min.js'},
+        dest: './client/js/dist/deployment.min.js'}
     },
 
     shell: {
@@ -27,35 +26,34 @@ module.exports = function(grunt) {
         command: 'git push heroku +HEAD:master'
       }
     }
-  });
+  })
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-shell');
-  grunt.loadNpmTasks('grunt-exec');
+  grunt.loadNpmTasks('grunt-contrib-uglify')
+  grunt.loadNpmTasks('grunt-contrib-concat')
+  grunt.loadNpmTasks('grunt-shell')
+  grunt.loadNpmTasks('grunt-exec')
 
-  grunt.registerTask('babel', function(n) {
+  grunt.registerTask('babel', function (n) {
     grunt.task.run([
       'shell:babel'
-    ]);
-  });
+    ])
+  })
 
-  grunt.registerTask('build', function(n) {
+  grunt.registerTask('build', function (n) {
     grunt.task.run([
       'concat', 'babel', 'uglify'
-    ]);
-  });
+    ])
+  })
 
-  grunt.registerTask(['commit'], function(n) {
+  grunt.registerTask(['commit'], function (n) {
     grunt.task.run([
       'shell:gitadd'
-    ]);
-  });
+    ])
+  })
 
-  grunt.registerTask('deploy', function(n) {
+  grunt.registerTask('deploy', function (n) {
     grunt.task.run([
-     'build', 'commit', 'shell:heroku' 
-    ]);
-  });
-
-};
+      'build', 'commit', 'shell:heroku'
+    ])
+  })
+}

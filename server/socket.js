@@ -38,9 +38,9 @@ module.exports = function (io) {
       socket.emit('allPlayers', getAllPlayers())
     })
 
-    socket.on('joinLobby', function ({username, serverUrl}) {
+    socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
       gameServerUrl = serverUrl
-      socket.player = {id: username || lastPlayerId++, ready: false, lives: defaultLives}
+      socket.player = {id: username || lastPlayerId++, colorID, ready: false, lives: defaultLives}
       io.emit('renderInfo', getAllPlayers())
     })
 

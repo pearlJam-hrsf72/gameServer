@@ -1,94 +1,92 @@
-var Game = {};
-Game.Players = {};
-Game.boundaries = [];
-Game.holes = [];
-Game.text = {};
-Game.height = 0;
+var Game = {}
+Game.Players = {}
+Game.boundaries = []
+Game.holes = []
+Game.text = {}
+Game.height = 0
 
-Game.init = function() {
-  game.state.disableVisibilityChange = false;
-  setGameEventHandlers();
-};
+Game.init = function () {
+  game.state.disableVisibilityChange = false
+  setGameEventHandlers()
+}
 
-Game.create = function() {
-  Game.add.sprite(0, 0, 'background');
-  Game.add.sprite(0, 1152, 'background');
-  game.world.setBounds(0, 0, 1900, 1900);
-  Client.askNewPlayer();
-  Game.cursor = {x: 450, y: 300};
-  Game.Player = game.add.group();
-  Game.bound = game.add.group();
+Game.create = function () {
+  Game.add.sprite(0, 0, 'background')
+  Game.add.sprite(0, 1152, 'background')
+  game.world.setBounds(0, 0, 1900, 1900)
+  Client.askNewPlayer()
+  Game.cursor = {x: 450, y: 300}
+  Game.Player = game.add.group()
+  Game.bound = game.add.group()
 
-  Game.heartBeat();
-  Game.pulse = setInterval(Game.heartBeat, 10);
+  Game.heartBeat()
+  Game.pulse = setInterval(Game.heartBeat, 10)
+}
 
-};
-
-Game.update = function() {
+Game.update = function () {
   if (!Game.holes.length) {
     if (Game.rawHoles) {
-      Game.renderHoles(Game.rawHoles);
+      Game.renderHoles(Game.rawHoles)
     }
   }
-  Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
+  Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY}
   if (game.input.activePointer.isDown) {
-    Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY};
-  }
-};
-
-Game.heartBeat = function() {
-  Client.heartBeat(Game.cursor);
-};
-
-Game.updatePlayerPosition = function(player) {
-  var pastPlayer = Game.Players[player.id];
-  var text = Game.text[player.username];
-  if (pastPlayer) {
-    var tween = Game.add.tween(pastPlayer);
-    tween.to({x: player.x, y: player.y}, 16);
-    tween.start();
-    var textTween = Game.add.tween(text);
-    textTween.to({x: player.x, y: player.y}, 16);
-    textTween.start();
+    Game.cursor = {x: game.input.activePointer.worldX, y: game.input.activePointer.worldY}
   }
 }
 
-Game.addNewPlayer = function(player) {
-  Game.displayPlayerInfo(player);
+Game.heartBeat = function () {
+  Client.heartBeat(Game.cursor)
+}
+
+Game.updatePlayerPosition = function (player) {
+  var pastPlayer = Game.Players[player.id]
+  var text = Game.text[player.username]
+  if (pastPlayer) {
+    var tween = Game.add.tween(pastPlayer)
+    tween.to({x: player.x, y: player.y}, 16)
+    tween.start()
+    var textTween = Game.add.tween(text)
+    textTween.to({x: player.x, y: player.y}, 16)
+    textTween.start()
+  }
+}
+
+Game.addNewPlayer = function (player) {
+  Game.displayPlayerInfo(player)
   var username = player.id
   if (Game.Players[player.id]) {
-    Game.Players[player.id].destroy();
+    Game.Players[player.id].destroy()
   }
-  Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
-  var player = Game.Players[player.id];
-  player.anchor.x = 0.5;
-  player.anchor.y = 0.5;
-  console.log(username, loadState.username);
+  Game.Players[player.id] = Game.Player.create(player.x, player.y, `${player.colorID}`)
+  var player = Game.Players[player.id]
+  player.anchor.x = 0.5
+  player.anchor.y = 0.5
+  console.log(username, loadState.username)
   if (username === loadState.username) {
-    console.log('in the right if statement');
-    game.physics.enable(player);
-    game.camera.follow(player);
+    console.log('in the right if statement')
+    game.physics.enable(player)
+    game.camera.follow(player)
   }
-};
+}
 
-Game.remove = function(id) {
-  Game.Players[id].destroy();
-  delete Game.Players[id];
-};
+Game.remove = function (id) {
+  Game.Players[id].destroy()
+  delete Game.Players[id]
+}
 
+Game.death = function (player) {
+  player = Game.Players[player.id]
+  player.kill()
+}
 
-Game.death = function(player) {
-  player = Game.Players[player.id];
-  player.kill();
-};
-
-Game.displayPlayerInfo = function(player) {
+Game.displayPlayerInfo = function (player) {
   if (player.username) {
-    var username = player.username;
+    var username = player.username
     if (Game.text[username]) {
-      Game.text[username].destroy();
+      Game.text[username].destroy()
     }
-    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' });
+    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' })
     // var displayText = player.username + ': ' + player.lives + ' lives';
     // var textHeight = 30 + 30 * Game.height;
    //  Game.height++;
@@ -100,28 +98,29 @@ Game.displayPlayerInfo = function(player) {
   }
 }
 
-Game.renderHoles = function(holes) {
-  Game.hole = game.add.group();
-  holes.forEach( (hole) => {
-    Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'));
-  });
-  Game.holes.forEach( (hole) => {
-    hole.animations.add('explode');
-    hole.anchor.y = 0.5;
-    hole.anchor.x = 0.5;
+Game.renderHoles = function (holes) {
+  Game.hole = game.add.group()
+  holes.forEach((hole) => {
+    Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'))
+  })
+  Game.holes.forEach((hole) => {
+    hole.animations.add('explode')
+    hole.anchor.y = 0.5
+    hole.anchor.x = 0.5
     hole.animations.play('explode', 50, true)
-  });
+  })
 }
 
-Game.over = function(players) {
-  //pass the players object to results to display
-  game.state.start('Results', true, false, players);
-  Client.disconnect();
-  Game.Players = {};
-  Game.boundaries = [];
-  Game.holes = [];
-  Game.text = {};
+Game.over = function (players) {
+  // pass the players object to results to display
+  game.state.start('Results', true, false, players)
+  Client.disconnect()
+  Game.Players = {}
+  Game.boundaries = []
+  Game.holes = []
+  Game.text = {}
 }
+
 var gameResult = {
   init: function(params) {
     console.log('params', params);
@@ -187,137 +186,187 @@ var gameResult = {
   
 
 };
+var database = require('../../server/dataBase.js')
+// let game, localStorage, Phaser // just for less erroring in the code
+
 var loadState = {
-  preload: function() {
+  preload: function () {
     var loadingLabel = game.add.text(80, 150, 'loading...',
-      {font: '40px Courier', fill: '#ffffff'});
+      {font: '40px Courier', fill: '#ffffff'})
+    // const uid = JSON.parse(localStorage['reduxPersist:user']).uid
+    // const avatar = JSON.parse(localStorage['reduxPersist:user']).avatar ? JSON.parse(localStorage['reduxPersist:user']).avatar : null
 
-    game.physics.startSystem(Phaser.Physics.Arcade);
+    // this.getAvatar(uid, avatar)
+    // .then((avatarImage) => {
+    //   game.load.image('character', avatarImage)
+    // })
 
-    game.load.image('background', 'https://ddu0j6ouvozck.cloudfront.net/board.png');
-    game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png');
-    game.load.image('vertical', 'https://ddu0j6ouvozck.cloudfront.net/rectanglevertical.png');
-    game.load.image('horiontal', 'https://ddu0j6ouvozck.cloudfront.net/rectangle.png');
-    game.load.image('joinAsPlayerButton', 'https://ddu0j6ouvozck.cloudfront.net/playButton.jpg');
-    game.load.image('joinAsSpectatorButton', 'https://ddu0j6ouvozck.cloudfront.net/spectateButton.png');
-    game.load.spritesheet('hole', 'https://ddu0j6ouvozck.cloudfront.net/spritmap.png', 256, 256, 38);
-    game.load.spritesheet('playerNotReady','https://ddu0j6ouvozck.cloudfront.net/playerNotReady.png', 138, 138, 4);
-    game.load.image('playerReady', 'https://ddu0j6ouvozck.cloudfront.net/playerReady.png');
+    // load all images 0 - 11
+
+    game.physics.startSystem(Phaser.Physics.Arcade)
+    game.load.image('background', 'https://ddu0j6ouvozck.cloudfront.net/board.png')
+    // game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png')
+    game.load.image('0', 'https://ddu0j6ouvozck.cloudfront.net/0.png')
+    game.load.image('1', 'https://ddu0j6ouvozck.cloudfront.net/1.png')
+    game.load.image('2', 'https://ddu0j6ouvozck.cloudfront.net/2.png')
+    game.load.image('3', 'https://ddu0j6ouvozck.cloudfront.net/3.png')
+    game.load.image('4', 'https://ddu0j6ouvozck.cloudfront.net/4.png')
+    game.load.image('5', 'https://ddu0j6ouvozck.cloudfront.net/5.png')
+    game.load.image('6', 'https://ddu0j6ouvozck.cloudfront.net/6.png')
+    game.load.image('7', 'https://ddu0j6ouvozck.cloudfront.net/7.png')
+    game.load.image('8', 'https://ddu0j6ouvozck.cloudfront.net/8.png')
+    game.load.image('9', 'https://ddu0j6ouvozck.cloudfront.net/9.png')
+    game.load.image('10', 'https://ddu0j6ouvozck.cloudfront.net/10.png')
+    game.load.image('11', 'https://ddu0j6ouvozck.cloudfront.net/11.png')
+
+    game.load.image('vertical', 'https://ddu0j6ouvozck.cloudfront.net/rectanglevertical.png')
+    game.load.image('horiontal', 'https://ddu0j6ouvozck.cloudfront.net/rectangle.png')
+    game.load.image('joinAsPlayerButton', 'https://ddu0j6ouvozck.cloudfront.net/playButton.jpg')
+    game.load.image('joinAsSpectatorButton', 'https://ddu0j6ouvozck.cloudfront.net/spectateButton.png')
+    game.load.spritesheet('hole', 'https://ddu0j6ouvozck.cloudfront.net/spritmap.png', 256, 256, 38)
+    game.load.spritesheet('playerNotReady', 'https://ddu0j6ouvozck.cloudfront.net/playerNotReady.png', 138, 138, 4)
+    game.load.image('playerReady', 'https://ddu0j6ouvozck.cloudfront.net/playerReady.png')
   },
 
-  create: function() {
+  create: function () {
     if (window.spectate) {
-      game.state.start('Spectate');
+      game.state.start('Spectate')
     };
   },
 
-  update: function() {
-    loadState.username = JSON.parse(localStorage["reduxPersist:user"]).displayName;
+  // getAvatar: function (uid, avatar) {
+  //   return new Promise((resolve, reject) => {
+  //     if (!avatar) {
+  //       let randomAvatar = Math.floor((Math.random() * 11))
+  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${randomAvatar}.png`)
+  //     }
+  //     if (typeof avatar === 'number') {
+  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${avatar}.png`)
+  //     }
+  //     if (typeof avatar === 'string') {
+  //       this.getAvatarImage(uid)
+  //       .then(avatarImage => {
+  //         resolve(avatarImage)
+  //       })
+  //     }
+  //   })
+  // },
+
+  // getAvatarImage: function (uid) {
+  //   return new Promise((resolve, reject) => {
+  //     database.ref(`users/${uid}.avatarColorID`).once('value')
+  //     .then((snap) => {
+  //       resolve(snap.val())
+  //     })
+  //     .catch(error => console.log('error', error))
+  //   })
+  // },
+
+  update: function () {
+    loadState.username = JSON.parse(localStorage['reduxPersist:user']).displayName
+    loadState.colorID = JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11))
     if (loadState.username) {
-      game.state.start('Lobby');
+      game.state.start('Lobby')
     }
   }
 
 }
+
 var lobbyState = {
   playerNameHeight: 30,
   isReady: false,
 
-  preload: function() {
+  preload: function () {
   },
 
-  create: function() {
-    Client.socketConnect();
-    setLobbyEventHandlers();
-    //Maybe you have to add a username like
-    //Client.joinLobby(client.username);
-    Client.joinLobby();
+  create: function () {
+    Client.socketConnect()
+    setLobbyEventHandlers()
+    // Maybe you have to add a username like
+    // Client.joinLobby(client.username);
+    Client.joinLobby()
 
-  
-    var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
-    rkey.onDown.addOnce(this.ready, this);
+    var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R)
+    rkey.onDown.addOnce(this.ready, this)
   },
 
-  update: function() {
+  update: function () {
     if (game.input.activePointer.isDown) {
-      this.ready();
+      this.ready()
     }
   },
 
-  ready: function() {
+  ready: function () {
     if (!this.isReady) {
-      Client.ready();
+      Client.ready()
     }
     this.isReady = true
   },
 
-  addStartLabels: function() {
-    var welcomeLabel = game.add.text(game.world.width /2, 30, 
-    "Welcome to Game Server 1", 
-      {font: '35px Arial', fill: '#000000' });
-    welcomeLabel.anchor.set(0.5);
+  addStartLabels: function () {
+    var welcomeLabel = game.add.text(game.world.width / 2, 30,
+    'Welcome to Game Server 1',
+      {font: '35px Arial', fill: '#000000' })
+    welcomeLabel.anchor.set(0.5)
 
-    var startLabel = game.add.text(game.world.width/2, game.world.height - 20,
-      "press the 'R' key when you're ready", 
-      {font: '35px Arial', fill: '#000000' });
+    var startLabel = game.add.text(game.world.width / 2, game.world.height - 20,
+      "press the 'R' key when you're ready",
+      {font: '35px Arial', fill: '#000000' })
     startLabel.anchor.set(0.5)
   },
 
-  renderServerInfo: function(players) {
-
+  renderServerInfo: function (players) {
     if (this.allReady(players)) {
-      removeAllSocketListeners();
-      game.state.start('Game');
+      removeAllSocketListeners()
+      game.state.start('Game')
     }
 
-    //remove all the elements
-    game.world.children = [];
+    // remove all the elements
+    game.world.children = []
 
-    //Add the starting labels
-    this.addStartLabels();
+    // Add the starting labels
+    this.addStartLabels()
 
-    //Draw the players
-    var playerNameHeight = 30;
+    // Draw the players
+    var playerNameHeight = 30
     _.forEach(players, (player) => {
-        var textStyle = {
-          font: 'bold 30pt italic'
-        }
-        var playerName = game.add.text(80, playerNameHeight, player.id, textStyle);
-        if (player.ready) { //add the ready symbol
-          var playerReady = game.add.button(playerName.x + playerName.width, playerNameHeight, 'playerReady');
-        } else { //add the not ready symbol
-          var playerNotReady = game.add.sprite(playerName.x + playerName.width, playerNameHeight, 'playerNotReady');
+      var textStyle = {
+        font: 'bold 30pt italic'
+      }
+      var playerName = game.add.text(80, playerNameHeight, player.id, textStyle)
+      if (player.ready) { // add the ready symbol
+        var playerReady = game.add.button(playerName.x + playerName.width, playerNameHeight, 'playerReady')
+      } else { // add the not ready symbol
+        var playerNotReady = game.add.sprite(playerName.x + playerName.width, playerNameHeight, 'playerNotReady')
 
-          playerNotReady.scale.set(0.5);
-          playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true);
-          playerNotReady.play('toggle');
-
-        }
-        playerNameHeight += 150;
+        playerNotReady.scale.set(0.5)
+        playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true)
+        playerNotReady.play('toggle')
+      }
+      playerNameHeight += 150
     })
   },
 
-  allReady: function(players) {
+  allReady: function (players) {
     return players.reduce((acc, curr) => {
-     return acc && curr.ready
+      return acc && curr.ready
     }, true)
   }
 
+}
 
+var winW = window.innerWidth
+var winH = window.innerHeight
 
-};
-var winW = window.innerWidth;
-var winH = window.innerHeight;
+var game = new Phaser.Game(winW - 50, winH - 50, Phaser.CANVAS, document.getElementById('game'), null, true)
 
-var game = new Phaser.Game(winW - 50, winH - 50, Phaser.CANVAS, document.getElementById('game'), null, true);
-
-game.state.add('Load', loadState);
-game.state.add('Menu', menuState);
-game.state.add('Lobby', lobbyState);
-game.state.add('Game', Game);
-game.state.add('Spectate', spectateState);
-game.state.add('Results', gameResult);
-game.state.start('Load');
+game.state.add('Load', loadState)
+game.state.add('Menu', menuState)
+game.state.add('Lobby', lobbyState)
+game.state.add('Game', Game)
+game.state.add('Spectate', spectateState)
+game.state.add('Results', gameResult)
+game.state.start('Load')
 
 var menuState = {
   create: function() {
