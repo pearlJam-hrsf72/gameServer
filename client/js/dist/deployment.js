@@ -42,6 +42,7 @@ Game.heartBeat = function () {
 Game.updatePlayerPosition = function (player) {
   var pastPlayer = Game.Players[player.id]
   var text = Game.text[player.username]
+  console.log('move player');
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer)
     tween.to({x: player.x, y: player.y}, 16)
@@ -250,8 +251,8 @@ var loadState = {
   // },
 
   update: function () {
-    loadState.username = JSON.parse(localStorage['reduxPersist:user']).displayName
-    loadState.colorID = JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11))
+    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : prompt('What is your username?')
+    loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar : Math.floor((Math.random() * 11))
     if (loadState.username) {
       console.log('game is starting')
       game.state.start('Lobby')
@@ -273,7 +274,7 @@ var lobbyState = {
     // Maybe you have to add a username like
     // Client.joinLobby(client.username);
     Client.joinLobby()
-
+    game.state.backgroundColor = '#333'
     var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R)
     rkey.onDown.addOnce(this.ready, this)
   },
@@ -292,14 +293,14 @@ var lobbyState = {
   },
 
   addStartLabels: function () {
-    var welcomeLabel = game.add.text(game.world.width / 2, 30,
+    var welcomeLabel = game.add.text(game.world.width / 2, 50,
     'Welcome to Game Server 1',
-      {font: '35px Arial', fill: '#000000' })
+      {font: '35px Arial', fill: '#ffbfda' })
     welcomeLabel.anchor.set(0.5)
 
-    var startLabel = game.add.text(game.world.width / 2, game.world.height - 20,
-      "press the 'R' key when you're ready",
-      {font: '35px Arial', fill: '#000000' })
+    var startLabel = game.add.text(game.world.width / 2, game.world.height - 50,
+      "click when you are ready",
+      {font: '35px Arial', fill: '#ffbfda' })
     startLabel.anchor.set(0.5)
   },
 
@@ -316,10 +317,11 @@ var lobbyState = {
     this.addStartLabels()
 
     // Draw the players
-    var playerNameHeight = 30
+    var playerNameHeight = 80
     _.forEach(players, (player) => {
       var textStyle = {
-        font: 'bold 30pt italic'
+        font: 'bold 30pt italic',
+        fill: '#f001f2'
       }
       var playerName = game.add.text(80, playerNameHeight, player.id, textStyle)
       if (player.ready) { // add the ready symbol
@@ -331,7 +333,7 @@ var lobbyState = {
         playerNotReady.animations.add('toggle', [0, 1, 2, 3], 12, true)
         playerNotReady.play('toggle')
       }
-      playerNameHeight += 150
+      playerNameHeight += 75
     })
   },
 
@@ -346,7 +348,7 @@ var lobbyState = {
 var winW = window.innerWidth
 var winH = window.innerHeight
 
-var game = new Phaser.Game(winW - 50, winH - 50, Phaser.CANVAS, document.getElementById('game'), null, true)
+var game = new Phaser.Game(winW - 50, winH - 50, Phaser.CANVAS, document.getElementById('game'), null, false)
 
 game.state.add('Load', loadState)
 game.state.add('Menu', menuState)
