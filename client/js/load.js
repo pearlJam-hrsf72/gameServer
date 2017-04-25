@@ -5,19 +5,9 @@ var loadState = {
   preload: function () {
     var loadingLabel = game.add.text(80, 150, 'loading...',
       {font: '40px Courier', fill: '#ffffff'})
-    // const uid = JSON.parse(localStorage['reduxPersist:user']).uid
-    // const avatar = JSON.parse(localStorage['reduxPersist:user']).avatar ? JSON.parse(localStorage['reduxPersist:user']).avatar : null
-
-    // this.getAvatar(uid, avatar)
-    // .then((avatarImage) => {
-    //   game.load.image('character', avatarImage)
-    // })
-
-    // load all images 0 - 11
 
     game.physics.startSystem(Phaser.Physics.Arcade)
     game.load.image('background', 'https://ddu0j6ouvozck.cloudfront.net/board.png')
-    // game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png')
     game.load.image('0', 'https://ddu0j6ouvozck.cloudfront.net/0.png')
     game.load.image('1', 'https://ddu0j6ouvozck.cloudfront.net/1.png')
     game.load.image('2', 'https://ddu0j6ouvozck.cloudfront.net/2.png')
@@ -30,7 +20,6 @@ var loadState = {
     game.load.image('9', 'https://ddu0j6ouvozck.cloudfront.net/9.png')
     game.load.image('10', 'https://ddu0j6ouvozck.cloudfront.net/10.png')
     game.load.image('11', 'https://ddu0j6ouvozck.cloudfront.net/11.png')
-
     game.load.image('vertical', 'https://ddu0j6ouvozck.cloudfront.net/rectanglevertical.png')
     game.load.image('horiontal', 'https://ddu0j6ouvozck.cloudfront.net/rectangle.png')
     game.load.image('joinAsPlayerButton', 'https://ddu0j6ouvozck.cloudfront.net/playButton.jpg')
