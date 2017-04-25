@@ -1,4 +1,4 @@
-var firebase = require('firebase');
+var firebase = require('firebase')
 
 const config = {
   apiKey: 'AIzaSyAr-h45K0XxMQf2PzQdzVW8EJH7upLsxiI',
@@ -9,6 +9,4 @@ const config = {
 
 const firebaseApp = firebase.initializeApp(config)
 
-module.exports = firebaseApp.database();
-
-
+module.exports = firebaseApp.database()

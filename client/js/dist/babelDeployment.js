@@ -60,7 +60,7 @@ Game.addNewPlayer = function (player) {
   if (Game.Players[player.id]) {
     Game.Players[player.id].destroy();
   }
-  Game.Players[player.id] = Game.Player.create(player.x, player.y, 'character');
+  Game.Players[player.id] = Game.Player.create(player.x, player.y, '' + player.colorID);
   var player = Game.Players[player.id];
   player.anchor.x = 0.5;
   player.anchor.y = 0.5;
@@ -114,7 +114,7 @@ Game.renderHoles = function (holes) {
 };
 
 Game.over = function (players) {
-  //pass the players object to results to display
+  // pass the players object to results to display
   game.state.start('Results', true, false, players);
   Client.disconnect();
   Game.Players = {};
@@ -122,6 +122,7 @@ Game.over = function (players) {
   Game.holes = [];
   Game.text = {};
 };
+
 var gameResult = {
   init: function init(params) {
     console.log('params', params);
@@ -175,14 +176,38 @@ var gameResult = {
   }
 
 };
+var database = require('../../server/dataBase.js');
+// let game, localStorage, Phaser // just for less erroring in the code
+
 var loadState = {
   preload: function preload() {
     var loadingLabel = game.add.text(80, 150, 'loading...', { font: '40px Courier', fill: '#ffffff' });
+    // const uid = JSON.parse(localStorage['reduxPersist:user']).uid
+    // const avatar = JSON.parse(localStorage['reduxPersist:user']).avatar ? JSON.parse(localStorage['reduxPersist:user']).avatar : null
+
+    // this.getAvatar(uid, avatar)
+    // .then((avatarImage) => {
+    //   game.load.image('character', avatarImage)
+    // })
+
+    // load all images 0 - 11
 
     game.physics.startSystem(Phaser.Physics.Arcade);
-
     game.load.image('background', 'https://ddu0j6ouvozck.cloudfront.net/board.png');
-    game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png');
+    // game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png')
+    game.load.image('0', 'https://ddu0j6ouvozck.cloudfront.net/0.png');
+    game.load.image('1', 'https://ddu0j6ouvozck.cloudfront.net/1.png');
+    game.load.image('2', 'https://ddu0j6ouvozck.cloudfront.net/2.png');
+    game.load.image('3', 'https://ddu0j6ouvozck.cloudfront.net/3.png');
+    game.load.image('4', 'https://ddu0j6ouvozck.cloudfront.net/4.png');
+    game.load.image('5', 'https://ddu0j6ouvozck.cloudfront.net/5.png');
+    game.load.image('6', 'https://ddu0j6ouvozck.cloudfront.net/6.png');
+    game.load.image('7', 'https://ddu0j6ouvozck.cloudfront.net/7.png');
+    game.load.image('8', 'https://ddu0j6ouvozck.cloudfront.net/8.png');
+    game.load.image('9', 'https://ddu0j6ouvozck.cloudfront.net/9.png');
+    game.load.image('10', 'https://ddu0j6ouvozck.cloudfront.net/10.png');
+    game.load.image('11', 'https://ddu0j6ouvozck.cloudfront.net/11.png');
+
     game.load.image('vertical', 'https://ddu0j6ouvozck.cloudfront.net/rectanglevertical.png');
     game.load.image('horiontal', 'https://ddu0j6ouvozck.cloudfront.net/rectangle.png');
     game.load.image('joinAsPlayerButton', 'https://ddu0j6ouvozck.cloudfront.net/playButton.jpg');
@@ -198,14 +223,44 @@ var loadState = {
     };
   },
 
+  // getAvatar: function (uid, avatar) {
+  //   return new Promise((resolve, reject) => {
+  //     if (!avatar) {
+  //       let randomAvatar = Math.floor((Math.random() * 11))
+  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${randomAvatar}.png`)
+  //     }
+  //     if (typeof avatar === 'number') {
+  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${avatar}.png`)
+  //     }
+  //     if (typeof avatar === 'string') {
+  //       this.getAvatarImage(uid)
+  //       .then(avatarImage => {
+  //         resolve(avatarImage)
+  //       })
+  //     }
+  //   })
+  // },
+
+  // getAvatarImage: function (uid) {
+  //   return new Promise((resolve, reject) => {
+  //     database.ref(`users/${uid}.avatarColorID`).once('value')
+  //     .then((snap) => {
+  //       resolve(snap.val())
+  //     })
+  //     .catch(error => console.log('error', error))
+  //   })
+  // },
+
   update: function update() {
-    loadState.username = JSON.parse(localStorage["reduxPersist:user"]).displayName;
+    loadState.username = JSON.parse(localStorage['reduxPersist:user']).displayName;
+    loadState.colorID = JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor(Math.random() * 11);
     if (loadState.username) {
       game.state.start('Lobby');
     }
   }
 
 };
+
 var lobbyState = {
   playerNameHeight: 30,
   isReady: false,
@@ -215,8 +270,8 @@ var lobbyState = {
   create: function create() {
     Client.socketConnect();
     setLobbyEventHandlers();
-    //Maybe you have to add a username like
-    //Client.joinLobby(client.username);
+    // Maybe you have to add a username like
+    // Client.joinLobby(client.username);
     Client.joinLobby();
 
     var rkey = game.input.keyboard.addKey(Phaser.Keyboard.R);
@@ -237,7 +292,7 @@ var lobbyState = {
   },
 
   addStartLabels: function addStartLabels() {
-    var welcomeLabel = game.add.text(game.world.width / 2, 30, "Welcome to Game Server 1", { font: '35px Arial', fill: '#000000' });
+    var welcomeLabel = game.add.text(game.world.width / 2, 30, 'Welcome to Game Server 1', { font: '35px Arial', fill: '#000000' });
     welcomeLabel.anchor.set(0.5);
 
     var startLabel = game.add.text(game.world.width / 2, game.world.height - 20, "press the 'R' key when you're ready", { font: '35px Arial', fill: '#000000' });
@@ -245,19 +300,18 @@ var lobbyState = {
   },
 
   renderServerInfo: function renderServerInfo(players) {
-
     if (this.allReady(players)) {
       removeAllSocketListeners();
       game.state.start('Game');
     }
 
-    //remove all the elements
+    // remove all the elements
     game.world.children = [];
 
-    //Add the starting labels
+    // Add the starting labels
     this.addStartLabels();
 
-    //Draw the players
+    // Draw the players
     var playerNameHeight = 30;
     _.forEach(players, function (player) {
       var textStyle = {
@@ -265,10 +319,10 @@ var lobbyState = {
       };
       var playerName = game.add.text(80, playerNameHeight, player.id, textStyle);
       if (player.ready) {
-        //add the ready symbol
+        // add the ready symbol
         var playerReady = game.add.button(playerName.x + playerName.width, playerNameHeight, 'playerReady');
       } else {
-        //add the not ready symbol
+        // add the not ready symbol
         var playerNotReady = game.add.sprite(playerName.x + playerName.width, playerNameHeight, 'playerNotReady');
 
         playerNotReady.scale.set(0.5);
@@ -286,6 +340,7 @@ var lobbyState = {
   }
 
 };
+
 var winW = window.innerWidth;
 var winH = window.innerHeight;
 
