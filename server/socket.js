@@ -3,6 +3,7 @@ var velocity = require('./velocity.js')
 var interactions = require('./interactions.js')
 var dataBase = require('./dataBase.js')
 var eloCalc = require('../libraries/elo.js')
+var pulse = require('./pulse.js')
 
 var gameId
 var heartbeat
@@ -49,21 +50,30 @@ module.exports = function (io) {
       var allPlayers = getAllPlayers()
 
       if (allReady(allPlayers)) {
-        console.log('Game is starting.')
         allPlayers.forEach((player) => {
           id = player.id
           var usersref = dataBase.ref('users/')
-          usersref.orderByChild('displayName').equalTo(id).on('child_added', function (data) {
+          usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
             dbPlayers.push(data.val())
             if (dbPlayers.length === allPlayers.length) {
               var gamesref = dataBase.ref('games/')
-              gameId = gamesref.push({status: 'in-progress', winner: 'TBD', players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
+              gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
               interactions.createHoles()
-              heartbeat = setInterval(pulse, 16)
-              // setTimeout(function() {
+              console.log('game is starting');
+              heartbeat = setInterval(function() {
+                var deaths = pulse(getAllPlayers())
+                if (deaths === true) {
+                  handleGameover()
+                } else if (deaths.length) {
+                  deaths.forEach( (player) => {
+                    io.emit('death', player)
+                  })
+                }
+                io.emit('pulse', getAllPlayers())
+              }, 16)
               io.emit('holes', interactions.holeCenters)
-              // }, 1000)
             }
+
           })
         })
       }
@@ -101,39 +111,47 @@ module.exports = function (io) {
     return players
   }
 
-  function pulse () {
-    var players = getAllPlayers()  // only returns alive players
-
-    if (gameOver(players)) {
- // if the game is over
-
-      io.emit('gameOver', getAllPlayersAliveOrDead())
-      clearInterval(heartbeat)
-
-      updateGameStats()
-      updatePlayerStats()
-      resolveBets()
-      dbPlayers = []
-      interactions.holeCenters = []
-    } // end gameOver
-
-    players.forEach((player) => {
-      var checkCollision = interactions.checkPlayerCollision(player, players)
-      if (checkCollision) {
-        interactions.collision(player, checkCollision)
-      }
-      interactions.checkWallCollision(player)
-      velocity.updatePosition(player, player.mouse)
-      var dead = interactions.checkHoleDeath(player)
-      if (dead) {
-        io.emit('death', player)
-      }
-    })
-    io.emit('pulse', players)
-  }
   // returns whether the game is over
   // This is true when there is only one player left with more than 1 lives
-  function gameOver (players) {
+
+  // function pulse() {
+  //   var players = getAllPlayers();  // only returns alive players
+
+  //   if (gameOver(players)) { //if the game is over
+
+  //     io.emit('gameOver', getAllPlayersAliveOrDead());
+  //     clearInterval(heartbeat);
+  //     updatePlayerStatsInDatabase();
+  //     dbPlayers = [];
+  //     interactions.holeCenters = [];
+  //   } // end gameOver
+
+
+  //   players.forEach( (player) => {
+  //     var checkCollision = interactions.checkPlayerCollision(player, players);
+  //     if (checkCollision) {
+  //       interactions.collision(player, checkCollision);
+  //     }
+  //     interactions.checkWallCollision(player);
+  //     velocity.updatePosition(player, player.mouse);
+  //     var dead = interactions.checkHoleDeath(player);
+  //     if (dead) {
+  //       io.emit('death', player);
+  //     }
+  //   });
+  //   io.emit('pulse', players);
+  // }
+  //returns whether the game is over
+  //This is true when there is only one player left with more than 1 lives
+  var handleGameover = function() {
+    io.emit('gameOver', getAllPlayersAliveOrDead());
+    clearInterval(heartbeat);
+    updatePlayerStatsInDatabase();
+    dbPlayers = [];
+    interactions.holeCenters = [];
+  }
+
+  function gameOver(players) {
     var numPlayersAlive = _.reduce(players, (acc, player) => {
       return player.lives > 0 ? acc + 1 : acc
     }, 0)
@@ -193,7 +211,7 @@ module.exports = function (io) {
   }
 
   // Update player stats on game end
-  function updatePlayerStats () {
+  function updatePlayerStatsInDatabase () {
     var allPlayers = getAllPlayersAliveOrDead()
 
     // If it's a 1v1, we update the ratings of each player, else don't update ratings

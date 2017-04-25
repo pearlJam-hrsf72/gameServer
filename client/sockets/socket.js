@@ -1,8 +1,7 @@
 var Client = {}
 
 Client.socketConnect = function () {
-  Client.socket = io.connect('https://pearl-jam-game-server.herokuapp.com/')
-
+  Client.socket = io.connect()//'https://pearl-jam-game-server.herokuapp.com/')
   Client.socket.on('holes', function (holes) {
     Game.rawHoles = holes
   })
