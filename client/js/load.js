@@ -1,5 +1,3 @@
-var database = require('../../server/dataBase.js')
-// let game, localStorage, Phaser // just for less erroring in the code
 
 var loadState = {
   preload: function () {
