@@ -1,13 +1,22 @@
-var dataBase = require('../../server/dataBase.js')
+var database = require('../../server/dataBase.js')
+let game, localStorage, Phaser // just for less erroring in the code
 
 var loadState = {
   preload: function () {
     var loadingLabel = game.add.text(80, 150, 'loading...',
       {font: '40px Courier', fill: '#ffffff'})
+    const uid = JSON.parse(localStorage['reduxPersist:user']).uid
+    const avatar = JSON.parse(localStorage['reduxPersist:user']).avatar ? JSON.parse(localStorage['reduxPersist:user']).avatar : null
 
     game.physics.startSystem(Phaser.Physics.Arcade)
 
+    this.getAvatar(uid, avatar)
+    .then((avatarImage) => {
+      game.load.image('character', avatarImage)
+    })
+
     game.load.image('background', 'https://ddu0j6ouvozck.cloudfront.net/board.png')
+    // game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png')
     game.load.image('character', 'https://ddu0j6ouvozck.cloudfront.net/ball.png')
     game.load.image('vertical', 'https://ddu0j6ouvozck.cloudfront.net/rectanglevertical.png')
     game.load.image('horiontal', 'https://ddu0j6ouvozck.cloudfront.net/rectangle.png')
@@ -24,9 +33,27 @@ var loadState = {
     };
   },
 
+  getAvatar: function (uid, avatar) {
+    return new Promise((resolve, reject) => {
+      if (!avatar) {
+        let randomAvatar = Math.floor((Math.random() * 11))
+        resolve(`https://ddu0j6ouvozck.cloudfront.net/${randomAvatar}.png`)
+      }
+      if (typeof avatar === 'number') {
+        resolve(`https://ddu0j6ouvozck.cloudfront.net/${avatar}.png`)
+      }
+      if (typeof avatar === 'string') {
+        this.getAvatarImage(uid)
+        .then(avatarImage => {
+          resolve(avatarImage)
+        })
+      }
+    })
+  },
+
   getAvatarImage: function (uid) {
     return new Promise((resolve, reject) => {
-      const q = base.ref(`users/${uid}.avatarColorID`).once('value')
+      database.ref(`users/${uid}.avatarColorID`).once('value')
       .then((snap) => {
         resolve(snap.val())
       })
@@ -35,23 +62,7 @@ var loadState = {
   },
 
   update: function () {
-    const uid = JSON.parse(localStorage['reduxPersist:user']).uid
-    const avatar = JSON.parse(localStorage['reduxPersist:user']).avatar ? JSON.parse(localStorage['reduxPersist:user']).avatar : null
-    if (!avatar) {
-      // make them choose a color
-    }
-    if (typeof avatar === 'number') {
-      loadState.avatarImage = `../client/assets/avatarColors/${avatar}.png`
-    }
-    if (typeof avatar === 'string') {
-      const promise = this.getAvatarImage(uid)
-      promise.then(avatarImage => {
-        loadState.avatar = avatarImage
-      })
-    }
-
     loadState.username = JSON.parse(localStorage['reduxPersist:user']).displayName
-
     if (loadState.username) {
       game.state.start('Lobby')
     }
