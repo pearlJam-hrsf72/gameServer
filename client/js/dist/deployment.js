@@ -4,6 +4,7 @@ Game.boundaries = []
 Game.holes = []
 Game.text = {}
 Game.height = 0
+Game.hearts = {}
 
 Game.init = function () {
   game.state.disableVisibilityChange = false
@@ -43,6 +44,7 @@ Game.heartBeat = function () {
 Game.updatePlayerPosition = function (player) {
   var pastPlayer = Game.Players[player.id]
   var text = Game.text[player.username]
+  var hearts = Game.hearts[player.id]
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer)
     tween.to({x: player.x, y: player.y}, 16)
@@ -50,6 +52,17 @@ Game.updatePlayerPosition = function (player) {
     var textTween = Game.add.tween(text)
     textTween.to({x: player.x, y: player.y}, 16)
     textTween.start()
+    if (player.lives !== hearts.length) {
+      var heart = hearts.pop()
+      heart.destroy()
+    }
+    var space = -20 
+    for (var i = 0; i < player.lives; i++) {
+      var heartTween = Game.add.tween(hearts[i])
+      heartTween.to({x: player.x + space, y: player.y + 10}, 16)
+      heartTween.start()
+      space += 20
+    }
   }
 }
 
@@ -77,6 +90,14 @@ Game.remove = function (id) {
 }
 
 Game.death = function (player) {
+  var text = Game.text[player.id]
+  text.destroy()
+  heart = Game.hearts[player.id][0]
+  heart.destroy()
+  if (player.id === loadState.username) {
+    console.log('you lost')
+    var gameoverLabel = game.add.text(player.x, player.y, 'Game Over', {font: '50px Arial', fill: '#fff'})
+  }
   player = Game.Players[player.id]
   player.kill()
 }
@@ -87,18 +108,17 @@ Game.displayPlayerInfo = function (player) {
     if (Game.text[username]) {
       Game.text[username].destroy()
     }
-    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' })
+    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#fff' })
     let text = Game.text[username]
+    text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5)
     text.anchor.x = 0.5
     text.anchor.y = 0.5
-    // var displayText = player.username + ': ' + player.lives + ' lives';
-    // var textHeight = 30 + 30 * Game.height;
-   //  Game.height++;
-    // var id = player.id;
-    // if (Game.text[id]) {
-    //  Game.text[id].destroy();
-    // }
-    // Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
+    Game.hearts[player.id] = []
+    var space = -20
+    for (var i = 0; i < player.lives; i++) {
+      Game.hearts[player.id].push(game.add.sprite(player.x + space, player.y + 10, 'heart'))
+      space += 20
+    }
   }
 }
 
@@ -211,6 +231,7 @@ var loadState = {
     game.load.spritesheet('hole', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/explosionSprite.png', 300, 300, 81)
     game.load.spritesheet('playerNotReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerNotReady.png', 138, 138, 4)
     game.load.image('playerReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerReady.png')
+    game.load.image('heart', 'assets/heartSprite.png')
   },
 
   create: function () {
@@ -220,7 +241,7 @@ var loadState = {
     if (window.spectate) {
       game.state.start('Spectate')
     };
-    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : null
+    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : prompt('what is your name?')// null
     loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11)) : Math.floor((Math.random() * 11))
     if (!loadState.username) {
       Client.needUsername();
