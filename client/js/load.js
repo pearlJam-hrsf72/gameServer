@@ -20,7 +20,7 @@ var loadState = {
     game.load.image('horiontal', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/rectangle.png')
     game.load.image('joinAsPlayerButton', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playButton.jpg')
     game.load.image('joinAsSpectatorButton', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/spectateButton.png')
-    game.load.spritesheet('hole', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/spritmap.png', 256, 256, 38)
+    game.load.spritesheet('hole', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/explosionSprite.png', 300, 300, 81)
     game.load.spritesheet('playerNotReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerNotReady.png', 138, 138, 4)
     game.load.image('playerReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerReady.png')
   },
