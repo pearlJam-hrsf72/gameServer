@@ -2,7 +2,7 @@
 version: '2'
 
 services:
-  gameserver:
+  gameserver1:
     image: gameserver:latest
     build:
       context: .
@@ -10,4 +10,33 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - 3005:3005
+      - 3001:3005
+  gameserver2:
+    image: gameserver:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3002:3005
+  gameserver3:
+    image: gameserver:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3003:3005
+  gameserver4:
+    image: gameserver:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3004:3005
+
+      
