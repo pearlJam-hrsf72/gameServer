@@ -1,7 +1,7 @@
 var winW = window.innerWidth
 var winH = window.innerHeight
 
-var game = new Phaser.Game(winW - 50, winH - 50, Phaser.CANVAS, document.getElementById('game'), null, true)
+var game = new Phaser.Game(winW - 50, winH - 50, Phaser.CANVAS, document.getElementById('game'), null, false)
 
 game.state.add('Load', loadState)
 game.state.add('Menu', menuState)

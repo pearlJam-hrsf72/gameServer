@@ -8,12 +8,13 @@ Game.height = 0
 Game.init = function () {
   game.state.disableVisibilityChange = false
   setGameEventHandlers()
+  game.physics.startSystem(Phaser.Physics.Arcade)
 }
 
 Game.create = function () {
-  Game.add.sprite(0, 0, 'background')
-  Game.add.sprite(0, 1152, 'background')
+  game.state.backgroundColor = '#333'
   game.world.setBounds(0, 0, 1900, 1900)
+
   Client.askNewPlayer()
   Game.cursor = {x: 450, y: 300}
   Game.Player = game.add.group()
@@ -42,7 +43,6 @@ Game.heartBeat = function () {
 Game.updatePlayerPosition = function (player) {
   var pastPlayer = Game.Players[player.id]
   var text = Game.text[player.username]
-  console.log('move player');
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer)
     tween.to({x: player.x, y: player.y}, 16)
@@ -64,8 +64,8 @@ Game.addNewPlayer = function (player) {
   player.anchor.x = 0.5
   player.anchor.y = 0.5
   console.log(username, loadState.username)
+  console.log(player)
   if (username === loadState.username) {
-    console.log('in the right if statement')
     game.physics.enable(player)
     game.camera.follow(player)
   }
@@ -88,6 +88,9 @@ Game.displayPlayerInfo = function (player) {
       Game.text[username].destroy()
     }
     Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' })
+    let text = Game.text[username]
+    text.anchor.x = 0.5
+    text.anchor.y = 0.5
     // var displayText = player.username + ': ' + player.lives + ' lives';
     // var textHeight = 30 + 30 * Game.height;
    //  Game.height++;
