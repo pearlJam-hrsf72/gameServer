@@ -8,11 +8,13 @@ Game.height = 0
 Game.init = function () {
   game.state.disableVisibilityChange = false
   setGameEventHandlers()
+  game.physics.startSystem(Phaser.Physics.Arcade)
 }
 
 Game.create = function () {
-  Game.add.sprite(0, 0, 'background')
-  Game.add.sprite(0, 1152, 'background')
+  game.state.backgroundColor = '#333'
+  game.world.setBounds(0, 0, 1900, 1900)
+
   Client.askNewPlayer()
   Game.cursor = {x: 450, y: 300}
   Game.Player = game.add.group()
@@ -62,6 +64,7 @@ Game.addNewPlayer = function (player) {
   player.anchor.x = 0.5
   player.anchor.y = 0.5
   console.log(username, loadState.username)
+  console.log(player)
   if (username === loadState.username) {
     game.physics.enable(player)
     game.camera.follow(player)

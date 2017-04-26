@@ -3,7 +3,8 @@ var gameResult = {
     lobbyState.isReady = false
     console.log('params', params);
 
-    game.world.setBounds(0, 0, winW, winH)
+    game.world.setBounds(0, 0, winW - 50, winH - 50)
+    // game.stage.backgroundColor = '#333'; 
 
     var winners = _.filter(params, function(player) {
       return player.lives > 0
@@ -20,17 +21,16 @@ var gameResult = {
 
     //Display the winner
     var nameLabel = game.add.text(game.world.width / 2, 40, `Winner: Player ${winner.id} `,
-      {font: '50px Arial', fill: '#000000'});
+      {font: '50px Arial', fill: '#ffbfda'});
     nameLabel.anchor.set(0.5); 
   //  console.log('backgroundColor', game.stage.backgroundColor(0xbada55));
-   console.log('game stage', game.stage);
 
    //Dispaly the losers
    this.drawLosers(losers);
 
     var startLabel = game.add.text(game.world.width/2, game.world.height - 40,
       'click to return to the lobby', 
-      {font: '25px Arial', fill: '#000000' });
+      {font: '25px Arial', fill: '#f001f2' });
     startLabel.anchor.set(0.5);
   },
   
@@ -44,7 +44,8 @@ var gameResult = {
     var playerNameHeight =  80;
     _.forEach(losers, (player) => {
         var textStyle = {
-          font: 'bold 30pt italic'
+          font: 'bold 30pt italic',
+          fill: '#ffbfda'
         }
         var loserText = game.add.text(80, playerNameHeight, 'Loser', textStyle);
         var playerName = game.add.text(loserText.x + loserText.width + 30, playerNameHeight, player.id, textStyle);
@@ -52,10 +53,6 @@ var gameResult = {
     })
 
   },
-  preload: function() {
-    game.stage.backgroundColor = 0xbada55; 
-  },
-  
   toLobby: function() {
     game.state.start('Lobby');
   }

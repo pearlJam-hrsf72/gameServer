@@ -1,7 +1,8 @@
 var Client = {}
 
 Client.socketConnect = function () {
-  Client.socket = io.connect(window.currentGame.link) //|| 'https://pearl-jam-game-server.herokuapp.com/')
+  Client.socket = io.connect() //window.currentGame.link)
+  console.log(window.currentGame);
   Client.socket.on('holes', function (holes) {
     Game.rawHoles = holes
   })
@@ -84,7 +85,7 @@ var setLobbyEventHandlers = function () {
   })
 
   Client.socket.on('yourUsername', function(username) {
-    loadState.username = username;
+    loadState.username = username
   })
 }
 

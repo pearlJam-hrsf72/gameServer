@@ -4,8 +4,6 @@ var loadState = {
     var loadingLabel = game.add.text(80, 150, 'loading...',
       {font: '40px Courier', fill: '#ffffff'})
 
-    game.physics.startSystem(Phaser.Physics.Arcade)
-    game.load.image('background', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/board.png')
     game.load.image('0', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/0.png')
     game.load.image('1', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/1.png')
     game.load.image('2', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/2.png')
