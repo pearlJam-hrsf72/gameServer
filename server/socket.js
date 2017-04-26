@@ -159,6 +159,8 @@ module.exports = function (io) {
     clearInterval(heartbeat)
     if (!guests) {
       updatePlayerStatsInDatabase()
+      updateGameStats()
+      resolveBets()
     }
     guests = true;
     dbPlayers = []
