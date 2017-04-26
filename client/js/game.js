@@ -92,7 +92,7 @@ Game.remove = function (id) {
 Game.death = function (player) {
   var text = Game.text[player.id]
   text.destroy()
-  heart = Game.hearts[player.id][0]
+  var heart = Game.hearts[player.id][0]
   heart.destroy()
   if (player.id === loadState.username) {
     console.log('you lost')
