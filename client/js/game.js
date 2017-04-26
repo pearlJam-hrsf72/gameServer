@@ -105,6 +105,10 @@ Game.death = function (player) {
 Game.displayPlayerInfo = function (player) {
   if (player.username) {
     var username = player.username
+    var hearts = Game.hearts[player.id]
+    if (hearts) {
+      hearts.forEach( (heart) => heart.destroy()) 
+    }
     if (Game.text[username]) {
       Game.text[username].destroy()
     }

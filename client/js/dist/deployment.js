@@ -105,6 +105,10 @@ Game.death = function (player) {
 Game.displayPlayerInfo = function (player) {
   if (player.username) {
     var username = player.username
+    var hearts = Game.hearts[player.id]
+    if (hearts) {
+      hearts.forEach( (heart) => heart.destroy()) 
+    }
     if (Game.text[username]) {
       Game.text[username].destroy()
     }
@@ -231,7 +235,7 @@ var loadState = {
     game.load.spritesheet('hole', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/explosionSprite.png', 300, 300, 81)
     game.load.spritesheet('playerNotReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerNotReady.png', 138, 138, 4)
     game.load.image('playerReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerReady.png')
-    game.load.image('heart', 'assets/heartSprite.png')
+    game.load.image('heart', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/heartSprite.png')
   },
 
   create: function () {
@@ -241,7 +245,7 @@ var loadState = {
     if (window.spectate) {
       game.state.start('Spectate')
     };
-    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : prompt('what is your name?')// null
+    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : null
     loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11)) : Math.floor((Math.random() * 11))
     if (!loadState.username) {
       Client.needUsername();
@@ -300,7 +304,7 @@ var lobbyState = {
   },
 
   renderServerInfo: function (players) {
-    if (this.allReady(players)) {
+    if (this.allReady(players) && players.length > 1) {
       removeAllSocketListeners()
       game.state.start('Game')
     }
