@@ -10,11 +10,13 @@ Game.height = 0;
 Game.init = function () {
   game.state.disableVisibilityChange = false;
   setGameEventHandlers();
+  game.physics.startSystem(Phaser.Physics.Arcade);
 };
 
 Game.create = function () {
-  Game.add.sprite(0, 0, 'background');
-  Game.add.sprite(0, 1152, 'background');
+  game.state.backgroundColor = '#333';
+  game.world.setBounds(0, 0, 1900, 1900);
+
   Client.askNewPlayer();
   Game.cursor = { x: 450, y: 300 };
   Game.Player = game.add.group();
@@ -64,6 +66,7 @@ Game.addNewPlayer = function (player) {
   player.anchor.x = 0.5;
   player.anchor.y = 0.5;
   console.log(username, loadState.username);
+  console.log(player);
   if (username === loadState.username) {
     game.physics.enable(player);
     game.camera.follow(player);
@@ -107,10 +110,10 @@ Game.renderHoles = function (holes) {
     Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'));
   });
   Game.holes.forEach(function (hole) {
-    hole.animations.add('explode');
+    hole.animations.add('explode', [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]);
     hole.anchor.y = 0.5;
     hole.anchor.x = 0.5;
-    hole.animations.play('explode', 50, true);
+    hole.animations.play('explode', 20, true);
   });
 };
 
@@ -129,7 +132,8 @@ var gameResult = {
     lobbyState.isReady = false;
     console.log('params', params);
 
-    game.world.setBounds(0, 0, winW, winH);
+    game.world.setBounds(0, 0, winW - 50, winH - 50);
+    // game.stage.backgroundColor = '#333'; 
 
     var winners = _.filter(params, function (player) {
       return player.lives > 0;
@@ -144,15 +148,14 @@ var gameResult = {
     console.log('losers', losers);
 
     //Display the winner
-    var nameLabel = game.add.text(game.world.width / 2, 40, 'Winner: Player ' + winner.id + ' ', { font: '50px Arial', fill: '#000000' });
+    var nameLabel = game.add.text(game.world.width / 2, 40, 'Winner: Player ' + winner.id + ' ', { font: '50px Arial', fill: '#f001f2' });
     nameLabel.anchor.set(0.5);
     //  console.log('backgroundColor', game.stage.backgroundColor(0xbada55));
-    console.log('game stage', game.stage);
 
     //Dispaly the losers
     this.drawLosers(losers);
 
-    var startLabel = game.add.text(game.world.width / 2, game.world.height - 40, 'click to return to the lobby', { font: '25px Arial', fill: '#000000' });
+    var startLabel = game.add.text(game.world.width / 2, game.world.height - 40, 'click to return to the lobby', { font: '25px Arial', fill: '#f001f2' });
     startLabel.anchor.set(0.5);
   },
 
@@ -166,17 +169,14 @@ var gameResult = {
     var playerNameHeight = 80;
     _.forEach(losers, function (player) {
       var textStyle = {
-        font: 'bold 30pt italic'
+        font: 'bold 30pt italic',
+        fill: '#ffbfda'
       };
       var loserText = game.add.text(80, playerNameHeight, 'Loser', textStyle);
       var playerName = game.add.text(loserText.x + loserText.width + 30, playerNameHeight, player.id, textStyle);
       playerNameHeight += 150;
     });
   },
-  preload: function preload() {
-    game.stage.backgroundColor = 0xbada55;
-  },
-
   toLobby: function toLobby() {
     game.state.start('Lobby');
   }
@@ -187,8 +187,6 @@ var loadState = {
   preload: function preload() {
     var loadingLabel = game.add.text(80, 150, 'loading...', { font: '40px Courier', fill: '#ffffff' });
 
-    game.physics.startSystem(Phaser.Physics.Arcade);
-    game.load.image('background', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/board.png');
     game.load.image('0', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/0.png');
     game.load.image('1', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/1.png');
     game.load.image('2', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/2.png');
@@ -205,7 +203,7 @@ var loadState = {
     game.load.image('horiontal', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/rectangle.png');
     game.load.image('joinAsPlayerButton', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playButton.jpg');
     game.load.image('joinAsSpectatorButton', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/spectateButton.png');
-    game.load.spritesheet('hole', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/spritmap.png', 256, 256, 38);
+    game.load.spritesheet('hole', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/explosionSprite.png', 300, 300, 81);
     game.load.spritesheet('playerNotReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerNotReady.png', 138, 138, 4);
     game.load.image('playerReady', 'https://s3-us-west-1.amazonaws.com/pearljamhrsf72/playerReady.png');
   },
