@@ -1,6 +1,9 @@
 var gameResult = {
   init: function(params) {
+    lobbyState.isReady = false
     console.log('params', params);
+
+    game.world.setBounds(0, 0, winW, winH)
 
     var winners = _.filter(params, function(player) {
       return player.lives > 0
@@ -25,22 +28,18 @@ var gameResult = {
    //Dispaly the losers
    this.drawLosers(losers);
 
-
-
-
-
-
     var startLabel = game.add.text(game.world.width/2, game.world.height - 40,
-      'Press the "p" key to return to the main menu', 
+      'click to return to the lobby', 
       {font: '25px Arial', fill: '#000000' });
     startLabel.anchor.set(0.5);
-
-
-    //add main menu listen input
-    var pkey = game.input.keyboard.addKey(Phaser.Keyboard.P)
-    pkey.onDown.addOnce(this.toLobby, this);
   },
   
+  update: function() {
+    if(game.input.activePointer.isDown) {
+      game.state.start('Load')
+    }
+  },
+
   drawLosers: function(losers) {
     var playerNameHeight =  80;
     _.forEach(losers, (player) => {

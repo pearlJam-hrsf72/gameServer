@@ -9,6 +9,7 @@ var gameId
 var heartbeat
 var dbPlayers = []
 var gameServerUrl
+var guests = true;
 
 const PEARLS_ON_WIN = 80
 const PEARLS_ON_LOSE = 20
@@ -19,6 +20,10 @@ module.exports = function (io) {
 
   io.on('connection', function (socket) {
     console.log('Connected.')
+
+    socket.on('needUsername', function() {
+      socket.emit('yourUsername', 'Guest ' + lastPlayerId++)
+    })
 
     socket.on('addNewPlayer', function () {
       socket.player = socket.player || {}
@@ -41,40 +46,31 @@ module.exports = function (io) {
 
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
       gameServerUrl = serverUrl
-      socket.player = {id: username || lastPlayerId++, colorID, ready: false, lives: defaultLives}
+      socket.player = {id: username, colorID, ready: false, lives: defaultLives}
       io.emit('renderInfo', getAllPlayers())
     })
 
     socket.on('playerReady', function () {
-      socket.player.ready = true
+      if (socket.player) {
+        socket.player.ready = true
+      }
       var allPlayers = getAllPlayers()
 
       if (allReady(allPlayers)) {
+        startGame()
         allPlayers.forEach((player) => {
           id = player.id
-          var usersref = dataBase.ref('users/')
-          usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
-            dbPlayers.push(data.val())
-            if (dbPlayers.length === allPlayers.length) {
-              var gamesref = dataBase.ref('games/')
-              gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
-              interactions.createHoles()
-              console.log('game is starting');
-              heartbeat = setInterval(function() {
-                var deaths = pulse(getAllPlayers())
-                if (deaths === true) {
-                  handleGameover()
-                } else if (deaths.length) {
-                  deaths.forEach( (player) => {
-                    io.emit('death', player)
-                  })
-                }
-                io.emit('pulse', getAllPlayers())
-              }, 16)
-              io.emit('holes', interactions.holeCenters)
-            }
-
-          })
+          if (!(id.slice(0, 5) === 'Guest')) {
+            var usersref = dataBase.ref('users/')
+            usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
+              dbPlayers.push(data.val())
+              if (dbPlayers.length === allPlayers.length) {
+                guests = false;
+                var gamesref = dataBase.ref('games/')
+                gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
+              }
+            })
+          }
         })
       }
       io.emit('renderInfo', allPlayers)
@@ -111,6 +107,23 @@ module.exports = function (io) {
     return players
   }
 
+  function startGame () {
+    interactions.createHoles()
+    console.log('game is starting');
+    heartbeat = setInterval(function() {
+      var deaths = pulse(getAllPlayers())
+      if (deaths === true) {
+        handleGameover()
+      } else if (deaths.length) {
+        deaths.forEach( (player) => {
+          io.emit('death', player)
+        })
+      }
+      io.emit('pulse', getAllPlayers())
+    }, 16)
+    io.emit('holes', interactions.holeCenters)
+  }
+
   // returns whether the game is over
   // This is true when there is only one player left with more than 1 lives
 
@@ -144,11 +157,18 @@ module.exports = function (io) {
   //returns whether the game is over
   //This is true when there is only one player left with more than 1 lives
   var handleGameover = function() {
-    io.emit('gameOver', getAllPlayersAliveOrDead());
-    clearInterval(heartbeat);
-    updatePlayerStatsInDatabase();
-    dbPlayers = [];
-    interactions.holeCenters = [];
+    io.emit('gameOver', getAllPlayersAliveOrDead())
+    clearInterval(heartbeat)
+    if (!guests) {
+      updatePlayerStatsInDatabase()
+    }
+    guests = true;
+    dbPlayers = []
+    interactions.holeCenters = []
+    var sockets = io.sockets.sockets
+    for (var socket in sockets) {
+      sockets[socket].disconnect(true)
+    }
   }
 
   function gameOver(players) {

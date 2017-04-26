@@ -13,7 +13,6 @@ Game.init = function () {
 Game.create = function () {
   Game.add.sprite(0, 0, 'background')
   Game.add.sprite(0, 1152, 'background')
-  game.world.setBounds(0, 0, 1900, 1900)
   Client.askNewPlayer()
   Game.cursor = {x: 450, y: 300}
   Game.Player = game.add.group()
@@ -42,7 +41,6 @@ Game.heartBeat = function () {
 Game.updatePlayerPosition = function (player) {
   var pastPlayer = Game.Players[player.id]
   var text = Game.text[player.username]
-  console.log('move player');
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer)
     tween.to({x: player.x, y: player.y}, 16)
@@ -65,7 +63,6 @@ Game.addNewPlayer = function (player) {
   player.anchor.y = 0.5
   console.log(username, loadState.username)
   if (username === loadState.username) {
-    console.log('in the right if statement')
     game.physics.enable(player)
     game.camera.follow(player)
   }
@@ -88,6 +85,9 @@ Game.displayPlayerInfo = function (player) {
       Game.text[username].destroy()
     }
     Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' })
+    let text = Game.text[username]
+    text.anchor.x = 0.5
+    text.anchor.y = 0.5
     // var displayText = player.username + ': ' + player.lives + ' lives';
     // var textHeight = 30 + 30 * Game.height;
    //  Game.height++;
@@ -124,7 +124,10 @@ Game.over = function (players) {
 
 var gameResult = {
   init: function(params) {
+    lobbyState.isReady = false
     console.log('params', params);
+
+    game.world.setBounds(0, 0, winW, winH)
 
     var winners = _.filter(params, function(player) {
       return player.lives > 0
@@ -149,22 +152,18 @@ var gameResult = {
    //Dispaly the losers
    this.drawLosers(losers);
 
-
-
-
-
-
     var startLabel = game.add.text(game.world.width/2, game.world.height - 40,
-      'Press the "p" key to return to the main menu', 
+      'click to return to the lobby', 
       {font: '25px Arial', fill: '#000000' });
     startLabel.anchor.set(0.5);
-
-
-    //add main menu listen input
-    var pkey = game.input.keyboard.addKey(Phaser.Keyboard.P)
-    pkey.onDown.addOnce(this.toLobby, this);
   },
   
+  update: function() {
+    if(game.input.activePointer.isDown) {
+      game.state.start('Load')
+    }
+  },
+
   drawLosers: function(losers) {
     var playerNameHeight =  80;
     _.forEach(losers, (player) => {
@@ -217,42 +216,21 @@ var loadState = {
   },
 
   create: function () {
+    Client.socketConnect()
+    setLobbyEventHandlers()
+
     if (window.spectate) {
       game.state.start('Spectate')
     };
+    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : null
+    loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11)) : Math.floor((Math.random() * 11))
+    if (!loadState.username) {
+      Client.needUsername();
+    }
   },
 
-  // getAvatar: function (uid, avatar) {
-  //   return new Promise((resolve, reject) => {
-  //     if (!avatar) {
-  //       let randomAvatar = Math.floor((Math.random() * 11))
-  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${randomAvatar}.png`)
-  //     }
-  //     if (typeof avatar === 'number') {
-  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${avatar}.png`)
-  //     }
-  //     if (typeof avatar === 'string') {
-  //       this.getAvatarImage(uid)
-  //       .then(avatarImage => {
-  //         resolve(avatarImage)
-  //       })
-  //     }
-  //   })
-  // },
-
-  // getAvatarImage: function (uid) {
-  //   return new Promise((resolve, reject) => {
-  //     database.ref(`users/${uid}.avatarColorID`).once('value')
-  //     .then((snap) => {
-  //       resolve(snap.val())
-  //     })
-  //     .catch(error => console.log('error', error))
-  //   })
-  // },
 
   update: function () {
-    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : prompt('What is your username?')
-    loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar : Math.floor((Math.random() * 11))
     if (loadState.username) {
       console.log('game is starting')
       game.state.start('Lobby')
@@ -269,8 +247,6 @@ var lobbyState = {
   },
 
   create: function () {
-    Client.socketConnect()
-    setLobbyEventHandlers()
     // Maybe you have to add a username like
     // Client.joinLobby(client.username);
     Client.joinLobby()

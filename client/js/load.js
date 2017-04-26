@@ -28,42 +28,21 @@ var loadState = {
   },
 
   create: function () {
+    Client.socketConnect()
+    setLobbyEventHandlers()
+
     if (window.spectate) {
       game.state.start('Spectate')
     };
+    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : null
+    loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11)) : Math.floor((Math.random() * 11))
+    if (!loadState.username) {
+      Client.needUsername();
+    }
   },
 
-  // getAvatar: function (uid, avatar) {
-  //   return new Promise((resolve, reject) => {
-  //     if (!avatar) {
-  //       let randomAvatar = Math.floor((Math.random() * 11))
-  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${randomAvatar}.png`)
-  //     }
-  //     if (typeof avatar === 'number') {
-  //       resolve(`https://ddu0j6ouvozck.cloudfront.net/${avatar}.png`)
-  //     }
-  //     if (typeof avatar === 'string') {
-  //       this.getAvatarImage(uid)
-  //       .then(avatarImage => {
-  //         resolve(avatarImage)
-  //       })
-  //     }
-  //   })
-  // },
-
-  // getAvatarImage: function (uid) {
-  //   return new Promise((resolve, reject) => {
-  //     database.ref(`users/${uid}.avatarColorID`).once('value')
-  //     .then((snap) => {
-  //       resolve(snap.val())
-  //     })
-  //     .catch(error => console.log('error', error))
-  //   })
-  // },
 
   update: function () {
-    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : prompt('What is your username?')
-    loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar : Math.floor((Math.random() * 11))
     if (loadState.username) {
       console.log('game is starting')
       game.state.start('Lobby')

@@ -6,8 +6,6 @@ var lobbyState = {
   },
 
   create: function () {
-    Client.socketConnect()
-    setLobbyEventHandlers()
     // Maybe you have to add a username like
     // Client.joinLobby(client.username);
     Client.joinLobby()
