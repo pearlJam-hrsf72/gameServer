@@ -29,5 +29,7 @@ node_modules/
 bower_components/
 client/js/dist/
 !client/js/dist/phaser.min.js
+client/.DS_Store
+client/assets/.DS_Store
 
 bundle.js
