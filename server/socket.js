@@ -45,6 +45,7 @@ module.exports = function (io) {
       socket.emit('holes', interactions.holeCenters)
     })
 
+
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
       gameServerUrl = serverUrl
       socket.player = {id: username, colorID, ready: false, lives: defaultLives}
