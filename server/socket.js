@@ -305,16 +305,15 @@ module.exports = function (io) {
       }
     }
   }
-}
-
-
-var doesUserExist = function(username) {
-  var exists = false
-  var players = getAllPlayers();
-  players.forEach( player => {
-    if (player.id === username) {
-      exists = true
-    }
-  })
-  return exists
+  
+  var doesUserExist = function(username) {
+    var exists = false
+    var players = getAllPlayers()
+    players.forEach( player => {
+      if (player.id === username) {
+        exists = true
+      }
+    })
+    return exists
+  }
 }
