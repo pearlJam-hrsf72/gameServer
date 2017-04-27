@@ -42,7 +42,9 @@ module.exports = function (io) {
 
     socket.on('newSpectator', function () {
       socket.emit('allPlayers', getAllPlayers())
+      socket.emit('holes', interactions.holeCenters)
     })
+
 
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
       gameServerUrl = serverUrl
@@ -51,9 +53,7 @@ module.exports = function (io) {
     })
 
     socket.on('playerReady', function () {
-      if (socket.player) {
-        socket.player.ready = true
-      }
+      socket.player.ready = true
       var allPlayers = getAllPlayers()
 
       if (allReady(allPlayers)) {
@@ -161,6 +161,8 @@ module.exports = function (io) {
     clearInterval(heartbeat)
     if (!guests) {
       updatePlayerStatsInDatabase()
+      updateGameStats()
+      resolveBets()
     }
     guests = true;
     dbPlayers = []
@@ -190,7 +192,7 @@ module.exports = function (io) {
         ready = false
       }
     })
-    return ready
+    return ready && players.length > 1
   }
 
   function resolveBets () {

@@ -1,10 +1,11 @@
 var Client = {}
 
 Client.socketConnect = function () {
-  Client.socket = io.connect() //window.currentGame.link)
+  Client.socket = io.connect()//window.currentGame.link)
   console.log(window.currentGame);
   Client.socket.on('holes', function (holes) {
     Game.rawHoles = holes
+    spectateState.rawHoles = holes
   })
 }
 
@@ -61,7 +62,7 @@ var setSpectateEventHandlers = function () {
   })
 
   Client.socket.on('gameOver', function (players) {
-    Game.over(players)
+    spectateState.over(players)
   })
 }
 

@@ -21,7 +21,7 @@ var gameResult = {
 
     //Display the winner
     var nameLabel = game.add.text(game.world.width / 2, 40, `Winner: Player ${winner.id} `,
-      {font: '50px Arial', fill: '#ffbfda'});
+      {font: '50px Arial', fill: '#f001f2'});
     nameLabel.anchor.set(0.5); 
   //  console.log('backgroundColor', game.stage.backgroundColor(0xbada55));
 
@@ -49,7 +49,7 @@ var gameResult = {
         }
         var loserText = game.add.text(80, playerNameHeight, 'Loser', textStyle);
         var playerName = game.add.text(loserText.x + loserText.width + 30, playerNameHeight, player.id, textStyle);
-        playerNameHeight += 150;
+        playerNameHeight += 75;
     })
 
   },

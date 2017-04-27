@@ -40,7 +40,7 @@ var lobbyState = {
   },
 
   renderServerInfo: function (players) {
-    if (this.allReady(players)) {
+    if (this.allReady(players) && players.length > 1) {
       removeAllSocketListeners()
       game.state.start('Game')
     }

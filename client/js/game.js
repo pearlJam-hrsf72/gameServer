@@ -4,6 +4,7 @@ Game.boundaries = []
 Game.holes = []
 Game.text = {}
 Game.height = 0
+Game.hearts = {}
 
 Game.init = function () {
   game.state.disableVisibilityChange = false
@@ -21,7 +22,7 @@ Game.create = function () {
   Game.bound = game.add.group()
 
   Game.heartBeat()
-  Game.pulse = setInterval(Game.heartBeat, 10)
+  Game.pulse = setInterval(Game.heartBeat, 16)
 }
 
 Game.update = function () {
@@ -43,6 +44,7 @@ Game.heartBeat = function () {
 Game.updatePlayerPosition = function (player) {
   var pastPlayer = Game.Players[player.id]
   var text = Game.text[player.username]
+  var hearts = Game.hearts[player.id]
   if (pastPlayer) {
     var tween = Game.add.tween(pastPlayer)
     tween.to({x: player.x, y: player.y}, 16)
@@ -50,6 +52,17 @@ Game.updatePlayerPosition = function (player) {
     var textTween = Game.add.tween(text)
     textTween.to({x: player.x, y: player.y}, 16)
     textTween.start()
+    if (player.lives !== hearts.length) {
+      var heart = hearts.pop()
+      heart.destroy()
+    }
+    var space = -20 
+    for (var i = 0; i < player.lives; i++) {
+      var heartTween = Game.add.tween(hearts[i])
+      heartTween.to({x: player.x + space, y: player.y + 10}, 16)
+      heartTween.start()
+      space += 20
+    }
   }
 }
 
@@ -77,6 +90,14 @@ Game.remove = function (id) {
 }
 
 Game.death = function (player) {
+  var text = Game.text[player.id]
+  text.destroy()
+  var heart = Game.hearts[player.id][0]
+  heart.destroy()
+  if (player.id === loadState.username) {
+    console.log('you lost')
+    var gameoverLabel = game.add.text(player.x, player.y, 'Game Over', {font: '50px Arial', fill: '#fff'})
+  }
   player = Game.Players[player.id]
   player.kill()
 }
@@ -84,21 +105,24 @@ Game.death = function (player) {
 Game.displayPlayerInfo = function (player) {
   if (player.username) {
     var username = player.username
+    var hearts = Game.hearts[player.id]
+    if (hearts) {
+      hearts.forEach( (heart) => heart.destroy()) 
+    }
     if (Game.text[username]) {
       Game.text[username].destroy()
     }
-    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#000000' })
+    Game.text[username] = game.add.text(player.x, player.y, username, {font: '18px Arial', fill: '#fff' })
     let text = Game.text[username]
+    text.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5)
     text.anchor.x = 0.5
     text.anchor.y = 0.5
-    // var displayText = player.username + ': ' + player.lives + ' lives';
-    // var textHeight = 30 + 30 * Game.height;
-   //  Game.height++;
-    // var id = player.id;
-    // if (Game.text[id]) {
-    //  Game.text[id].destroy();
-    // }
-    // Game.text[id] = game.add.text(760, textHeight, displayText, {font: '18px Arial', fill: '#000000' });
+    Game.hearts[player.id] = []
+    var space = -20
+    for (var i = 0; i < player.lives; i++) {
+      Game.hearts[player.id].push(game.add.sprite(player.x + space, player.y + 10, 'heart'))
+      space += 20
+    }
   }
 }
 
@@ -108,10 +132,10 @@ Game.renderHoles = function (holes) {
     Game.holes.push(Game.hole.create(hole.x, hole.y, 'hole'))
   })
   Game.holes.forEach((hole) => {
-    hole.animations.add('explode')
+    hole.animations.add('explode', [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36])
     hole.anchor.y = 0.5
     hole.anchor.x = 0.5
-    hole.animations.play('explode', 50, true)
+    hole.animations.play('explode', 20, true)
   })
 }
 
