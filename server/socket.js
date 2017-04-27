@@ -42,6 +42,7 @@ module.exports = function (io) {
 
     socket.on('newSpectator', function () {
       socket.emit('allPlayers', getAllPlayers())
+      socket.emit('holes', interactions.holeCenters)
     })
 
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {

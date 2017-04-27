@@ -5,6 +5,7 @@ Client.socketConnect = function () {
   console.log(window.currentGame);
   Client.socket.on('holes', function (holes) {
     Game.rawHoles = holes
+    spectateState.rawHoles = holes
   })
 }
 

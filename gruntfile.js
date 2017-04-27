@@ -3,7 +3,7 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     concat: {
-      bar: {src: ['./client/js/*.js'],
+      bar: {src: ['./client/js/spectate.js', './client/js/*.js', './client/js/main.js'],
         dest: './client/js/dist/deployment.js'}
     },
 
