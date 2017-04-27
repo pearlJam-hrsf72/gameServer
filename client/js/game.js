@@ -22,7 +22,7 @@ Game.create = function () {
   Game.bound = game.add.group()
 
   Game.heartBeat()
-  Game.pulse = setInterval(Game.heartBeat, 10)
+  Game.pulse = setInterval(Game.heartBeat, 16)
 }
 
 Game.update = function () {

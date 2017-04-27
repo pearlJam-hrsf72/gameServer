@@ -61,7 +61,7 @@ var setSpectateEventHandlers = function () {
   })
 
   Client.socket.on('gameOver', function (players) {
-    Game.over(players)
+    spectateState.over(players)
   })
 }
 

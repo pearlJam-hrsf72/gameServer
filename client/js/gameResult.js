@@ -49,7 +49,7 @@ var gameResult = {
         }
         var loserText = game.add.text(80, playerNameHeight, 'Loser', textStyle);
         var playerName = game.add.text(loserText.x + loserText.width + 30, playerNameHeight, player.id, textStyle);
-        playerNameHeight += 150;
+        playerNameHeight += 75;
     })
 
   },

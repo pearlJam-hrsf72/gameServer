@@ -104,8 +104,8 @@ module.exports = {
   },
 
   spawn: function(player) {
-    player.x = Math.random() * 750;
-    player.y = Math.random() * 750;
+    player.x = Math.random() * 1900;
+    player.y = Math.random() * 1900;
     var distance = 1900;
     module.exports.holeCenters.forEach( (holeCenter) => {
       tempDistance = velocity.distanceBetween(player, holeCenter);

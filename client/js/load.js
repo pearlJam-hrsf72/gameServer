@@ -30,7 +30,9 @@ var loadState = {
     Client.socketConnect()
     setLobbyEventHandlers()
 
+    console.log(window.spectate)
     if (window.spectate) {
+      console.log('spectate')
       game.state.start('Spectate')
     };
     loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : null
