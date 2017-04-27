@@ -52,6 +52,8 @@ module.exports = function (io) {
         gameServerUrl = serverUrl
         socket.player = {id: username, colorID, ready: false, lives: defaultLives}
         io.emit('renderInfo', getAllPlayers())
+      } else {
+        socket.emit('renderInfo', getAllPlayers())
       }
     })
 
@@ -305,7 +307,7 @@ module.exports = function (io) {
       }
     }
   }
-  
+
   var doesUserExist = function(username) {
     var exists = false
     var players = getAllPlayers()
