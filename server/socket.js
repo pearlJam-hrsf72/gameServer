@@ -58,27 +58,29 @@ module.exports = function (io) {
     })
 
     socket.on('playerReady', function () {
-      socket.player.ready = true
-      var allPlayers = getAllPlayers()
+      if (socket.player) {
+        socket.player.ready = true
+        var allPlayers = getAllPlayers()
 
-      if (allReady(allPlayers)) {
-        startGame()
-        allPlayers.forEach((player) => {
-          id = player.id
-          if (!(id.slice(0, 5) === 'Guest')) {
-            var usersref = dataBase.ref('users/')
-            usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
-              dbPlayers.push(data.val())
-              if (dbPlayers.length === allPlayers.length) {
-                guests = false;
-                var gamesref = dataBase.ref('games/')
-                gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
-              }
-            })
-          }
-        })
+        if (allReady(allPlayers)) {
+          startGame()
+          allPlayers.forEach((player) => {
+            id = player.id
+            if (!(id.slice(0, 5) === 'Guest')) {
+              var usersref = dataBase.ref('users/')
+              usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
+                dbPlayers.push(data.val())
+                if (dbPlayers.length === allPlayers.length) {
+                  guests = false;
+                  var gamesref = dataBase.ref('games/')
+                  gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
+                }
+              })
+            }
+          })
+        }
+        io.emit('renderInfo', allPlayers)
       }
-      io.emit('renderInfo', allPlayers)
     })
 
     socket.on('disconnect', function () {
