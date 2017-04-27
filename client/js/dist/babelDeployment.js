@@ -24,14 +24,27 @@ spectateState.create = function () {
 
   spectateState.pulse = setInterval(spectateState.heartBeat, 16);
   Client.askNewSpectator();
+  spectateState.cursors = game.input.keyboard.createCursorKeys();
+  var directions = game.add.text(winW / 2, 50, 'use the arrow keys to pan the camera', { font: '35px Arial', fill: '#ffbfda' });
+  directions.anchor.set(0.5);
 };
 
 spectateState.update = function () {
   if (!spectateState.holes.length) {
     if (spectateState.rawHoles) {
-      console.log('holes are rendered');
       spectateState.renderHoles(spectateState.rawHoles);
     }
+  }
+  if (spectateState.cursors.up.isDown) {
+    game.camera.y -= 16;
+  } else if (spectateState.cursors.down.isDown) {
+    game.camera.y += 16;
+  }
+
+  if (spectateState.cursors.left.isDown) {
+    game.camera.x -= 16;
+  } else if (spectateState.cursors.right.isDown) {
+    game.camera.x += 16;
   }
 };
 
@@ -116,7 +129,9 @@ spectateState.displayPlayerInfo = function (player) {
     spectateState.hearts[player.id] = [];
     var space = -20;
     for (var i = 0; i < player.lives; i++) {
-      spectateState.hearts[player.id].push(game.add.sprite(player.x + space, player.y + 10, 'heart'));
+      var heart = game.add.sprite(player.x + space, player.y + 10, 'heart');
+      heart.anchor.x = 0.5;
+      spectateState.hearts[player.id].push(heart);
       space += 20;
     }
   }
@@ -244,6 +259,15 @@ Game.death = function (player) {
   if (player.id === loadState.username) {
     console.log('you lost');
     var gameoverLabel = game.add.text(player.x, player.y, 'Game Over', { font: '50px Arial', fill: '#fff' });
+    setTimeout(function () {
+      Client.disconnect();
+      console.log('start spectate');
+      Game.Players = {};
+      Game.boundaries = [];
+      Game.holes = [];
+      Game.text = {};
+      game.state.start('Spectate');
+    }, 5000);
   }
   player = Game.Players[player.id];
   player.kill();
@@ -269,7 +293,9 @@ Game.displayPlayerInfo = function (player) {
     Game.hearts[player.id] = [];
     var space = -20;
     for (var i = 0; i < player.lives; i++) {
-      Game.hearts[player.id].push(game.add.sprite(player.x + space, player.y + 10, 'heart'));
+      var heart = game.add.sprite(player.x + space, player.y + 10, 'heart');
+      heart.anchor.x = 0.5;
+      Game.hearts[player.id].push(heart);
       space += 20;
     }
   }

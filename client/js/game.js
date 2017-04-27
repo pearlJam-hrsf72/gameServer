@@ -97,6 +97,15 @@ Game.death = function (player) {
   if (player.id === loadState.username) {
     console.log('you lost')
     var gameoverLabel = game.add.text(player.x, player.y, 'Game Over', {font: '50px Arial', fill: '#fff'})
+    setTimeout(function() {
+      Client.disconnect()
+      console.log('start spectate')
+      Game.Players = {}
+      Game.boundaries = []
+      Game.holes = []
+      Game.text = {}
+      game.state.start('Spectate')
+    }, 5000)
   }
   player = Game.Players[player.id]
   player.kill()
@@ -120,7 +129,9 @@ Game.displayPlayerInfo = function (player) {
     Game.hearts[player.id] = []
     var space = -20
     for (var i = 0; i < player.lives; i++) {
-      Game.hearts[player.id].push(game.add.sprite(player.x + space, player.y + 10, 'heart'))
+      var heart = game.add.sprite(player.x + space, player.y + 10, 'heart')
+      heart.anchor.x = 0.5
+      Game.hearts[player.id].push(heart)
       space += 20
     }
   }
