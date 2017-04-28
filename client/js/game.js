@@ -95,11 +95,8 @@ Game.death = function (player) {
   var heart = Game.hearts[player.id][0]
   heart.destroy()
   if (player.id === loadState.username) {
-    Game.Players = {}
-    Game.boundaries = []
-    Game.holes = []
-    Game.text = {}
-    game.state.start('Spectate')
+    console.log('you lost')
+    var gameoverLabel = game.add.text(player.x, player.y, 'Game Over', {font: '50px Arial', fill: '#fff'})
   }
   player = Game.Players[player.id]
   player.kill()
