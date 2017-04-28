@@ -49,7 +49,7 @@ module.exports = function (io) {
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
       var sockets = io.sockets.connected;
       for (var socket in sockets) {
-        if (sockets[socket].player.id === username) {
+        if (sockets[socket].player && sockets[socket].player.id === username) {
           sockets[socket].disconnect()
         }
       }
@@ -86,6 +86,7 @@ module.exports = function (io) {
 
     socket.on('disconnect', function () {
       io.emit('renderInfo', getAllPlayers())
+      io.emit('notReady')
     })
   })
 
