@@ -50,6 +50,7 @@ module.exports = function (io) {
       var sockets = io.sockets.connected;
       for (var socket in sockets) {
         if (sockets[socket].player && sockets[socket].player.id === username) {
+          console.log(sockets[socket].player)
           sockets[socket].disconnect()
         }
       }
