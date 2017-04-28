@@ -35,7 +35,7 @@ var loadState = {
       console.log('spectate')
       game.state.start('Spectate')
     };
-    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName : null
+    loadState.username = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).displayName || window.username : window.username
     loadState.colorID = localStorage['reduxPersist:user'] ? JSON.parse(localStorage['reduxPersist:user']).avatar || Math.floor((Math.random() * 11)) : Math.floor((Math.random() * 11))
     if (!loadState.username) {
       Client.needUsername();

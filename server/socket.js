@@ -47,14 +47,16 @@ module.exports = function (io) {
 
 
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
-      // var userExists = doesUserExist(username)
-      // if (!userExists) {
-        gameServerUrl = serverUrl
-        socket.player = {id: username, colorID, ready: false, lives: defaultLives}
-        io.emit('renderInfo', getAllPlayers())
-      // } else {
-      //   socket.emit('renderInfo', getAllPlayers())
-      // }
+      var sockets = io.sockets.connected;
+      for (let socket in sockets) {
+        if (sockets[socket].player && sockets[socket].player.id === username) {
+          console.log(sockets[socket].player)
+          sockets[socket].disconnect()
+        }
+      }
+      gameServerUrl = serverUrl
+      socket.player = {id: username, colorID, ready: false, lives: defaultLives}
+      io.emit('renderInfo', getAllPlayers())
     })
 
     socket.on('playerReady', function () {
@@ -85,6 +87,7 @@ module.exports = function (io) {
 
     socket.on('disconnect', function () {
       io.emit('renderInfo', getAllPlayers())
+      io.emit('notReady')
     })
   })
 
