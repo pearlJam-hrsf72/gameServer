@@ -48,7 +48,7 @@ module.exports = function (io) {
 
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
       var sockets = io.sockets.connected;
-      for (var socket in sockets) {
+      for (let socket in sockets) {
         if (sockets[socket].player && sockets[socket].player.id === username) {
           console.log(sockets[socket].player)
           sockets[socket].disconnect()
