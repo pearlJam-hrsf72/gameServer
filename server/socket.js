@@ -47,33 +47,40 @@ module.exports = function (io) {
 
 
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
-      gameServerUrl = serverUrl
-      socket.player = {id: username, colorID, ready: false, lives: defaultLives}
-      io.emit('renderInfo', getAllPlayers())
+      // var userExists = doesUserExist(username)
+      // if (!userExists) {
+        gameServerUrl = serverUrl
+        socket.player = {id: username, colorID, ready: false, lives: defaultLives}
+        io.emit('renderInfo', getAllPlayers())
+      // } else {
+      //   socket.emit('renderInfo', getAllPlayers())
+      // }
     })
 
     socket.on('playerReady', function () {
-      socket.player.ready = true
-      var allPlayers = getAllPlayers()
+      // if (socket.player) {
+        socket.player.ready = true
+        var allPlayers = getAllPlayers()
 
-      if (allReady(allPlayers)) {
-        startGame()
-        allPlayers.forEach((player) => {
-          id = player.id
-          if (!(id.slice(0, 5) === 'Guest')) {
-            var usersref = dataBase.ref('users/')
-            usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
-              dbPlayers.push(data.val())
-              if (dbPlayers.length === allPlayers.length) {
-                guests = false;
-                var gamesref = dataBase.ref('games/')
-                gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
-              }
-            })
-          }
-        })
-      }
-      io.emit('renderInfo', allPlayers)
+        if (allReady(allPlayers)) {
+          startGame()
+          allPlayers.forEach((player) => {
+            id = player.id
+            if (!(id.slice(0, 5) === 'Guest')) {
+              var usersref = dataBase.ref('users/')
+              usersref.orderByChild("displayName").equalTo(id).on("child_added", function(data) {
+                dbPlayers.push(data.val())
+                if (dbPlayers.length === allPlayers.length) {
+                  guests = false;
+                  var gamesref = dataBase.ref('games/')
+                  gameId = gamesref.push({status: "in-progress", winner: "TBD", players: dbPlayers, spectateUrl: gameServerUrl + 'spectate'})
+                }
+              })
+            }
+          })
+        }
+        io.emit('renderInfo', allPlayers)
+      // }
     })
 
     socket.on('disconnect', function () {
@@ -302,4 +309,15 @@ module.exports = function (io) {
       }
     }
   }
+
+  // var doesUserExist = function(username) {
+  //   var exists = false
+  //   var players = getAllPlayers()
+  //   players.forEach( player => {
+  //     if (player.id === username) {
+  //       exists = true
+  //     }
+  //   })
+  //   return exists
+  // }
 }
