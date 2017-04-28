@@ -47,14 +47,15 @@ module.exports = function (io) {
 
 
     socket.on('joinLobby', function ({ username, serverUrl, colorID }) {
-      // var userExists = doesUserExist(username)
-      // if (!userExists) {
-        gameServerUrl = serverUrl
-        socket.player = {id: username, colorID, ready: false, lives: defaultLives}
-        io.emit('renderInfo', getAllPlayers())
-      // } else {
-      //   socket.emit('renderInfo', getAllPlayers())
-      // }
+      var sockets = io.sockets.connected;
+      for (var socket in sockets) {
+        if (sockets[socket].player.id === username) {
+          sockets[socket].disconnect()
+        }
+      }
+      gameServerUrl = serverUrl
+      socket.player = {id: username, colorID, ready: false, lives: defaultLives}
+      io.emit('renderInfo', getAllPlayers())
     })
 
     socket.on('playerReady', function () {
